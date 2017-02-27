@@ -60,6 +60,7 @@ class ViewController extends Controller
             $publisher_year = $acqNumber->publisher->year;
             $publisher_place = $acqNumber->publisher->address->address_name;
         }
+
         if($acqNumber->donor_id == ''){
             $donor_firstname = $acqNumber->donor->donor_name->firstname;
             $donor_middlename = $acqNumber->donor->donor_name->middlename;
@@ -76,6 +77,7 @@ class ViewController extends Controller
             $donor_firstname = '';
             $donor_middlename = '';
             $donor_lastname = '';
+            $donor_year = '';
         }
         return response()->json([
             'category' => $acqNumber->material_type->type,
