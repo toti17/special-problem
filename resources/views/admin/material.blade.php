@@ -319,7 +319,7 @@
 
 					<h4>Acquisition</h4>
 
-					<div class='form-group'>
+					<div class='form-group acquisition-radio'>
 						<div class='input-group'>
 							<label class='radio-inline'>
 								<input type='radio' class='acquisition-mode' name='acquisition-mode' value="{{ old('acquisition-mode') }}" />Donated

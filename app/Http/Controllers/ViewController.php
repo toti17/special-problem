@@ -95,7 +95,6 @@ class ViewController extends Controller
             'purchased_year' => $purchased_year,
         ]);
     }
-adfsadf
     public function show(){
         if(Auth::check()){
             if (Auth::user()->type == "admin"){
