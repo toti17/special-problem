@@ -216,8 +216,7 @@ $(document).ready(function (){
 		$('.co-author0').removeClass('hidden');
 		$('#add-co-author-button').removeClass('hidden');
 		$('.publisher-field').removeClass('hidden');
-		$('.publish-radio').removeClass('hidden');
-		$('.acquisition-radio').removeClass('hidden');
+		$('.publish-radio').removeClass('hidden');		
 		$('#edit-button').addClass('hidden');
 		$('input').each(function(){
 			$(this).prop('disabled', false);
@@ -1011,7 +1010,6 @@ $(document).ready(function (){
 	$('.material-view-button').click(function(){
 		$('.co-author0').addClass('hidden');
 		$('#add-co-author-button').addClass('hidden');
-		$('.acquisition-radio').addClass('hidden');
 		$('.tag0').addClass('hidden');
 		var material_id = $(this).find('input').val();
 		$.get('material/' + material_id, function (data) {
@@ -1056,9 +1054,6 @@ $(document).ready(function (){
 				$('#publisher').val(data.publisher_name);
 				$('#published-year').val(data.publisher_year);
 				$('#place').val(data.publisher_place);
-			}
-			if(data.donor_name == ' '){
-
 			}
 		});
 
