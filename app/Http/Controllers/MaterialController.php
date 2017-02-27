@@ -130,9 +130,9 @@ class MaterialController extends Controller
         }
         else if($category == 'Photographs'){
             $photographer = Photographer::firstorNew([
-                'firstname' => trim($request->input('author-firstname')), 
-                'middlename' => trim($request->input('author-middlename')), 
-                'lastname' => trim($request->input('author-lastname'))
+                'firstname' => trim($request->input('author-firstname0')), 
+                'middlename' => trim($request->input('author-middlename0')), 
+                'lastname' => trim($request->input('author-lastname0'))
             ]);
             $photographer->save();
             $photo = new Photo;

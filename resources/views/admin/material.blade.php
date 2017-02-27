@@ -40,7 +40,6 @@
 					{{ $material->title }}
 				</td>
 				<td class='text-right action-buttons'>
-					<button type='button' class='btn btn-xs btn-warning edit-glyphicon'><span class='glyphicon glyphicon-edit'></span>
 					<button type='button' class='btn btn-xs btn-danger'><span class='glyphicon glyphicon-remove'></span>
 				</td>
 			</tr>
@@ -63,7 +62,9 @@
 				</div>
 				<div class='modal-body'>
 					<div>
-					<h4>Details</h4><button type='button' class='btn btn-default pull-right hidden' id='edit-button'>Edit</button>
+					<h4>Details</h4>
+					<button type='button' class='btn btn-default pull-right hidden edit-button' id='edit-button'>Edit</button>
+					<button type='button' class='btn btn-default pull-right cancel-edit hidden edit-button'>Cancel Edit</button>
 					</div>
 					<div class="form-group">
 						<div class="input-group">
@@ -170,7 +171,7 @@
 							</span>			
 							<div class='input-group'>
 								<span class='input-group-addon label-title'>Description</span>
-								<textarea class='form-control' placeholder='A mountain view.' name='description' rows='4' value="{{ old('description') }}"></textarea>
+								<textarea id='description' class='form-control' placeholder='A mountain view.' name='description' rows='4' value="{{ old('description') }}"></textarea>
 							</div>
 						</div>
 						<div class='multimedia hidden'>
@@ -200,7 +201,7 @@
 
 					<h4 class='author-photographer-director'>Authors</h4>
 
-					<table class='table table-bordered table-striped tables'>
+					<table class='table table-bordered table-striped tables author-table'>
 						<tbody class='table-authors'>
 
 						</tbody>		
@@ -246,7 +247,13 @@
 							<button type='button' class='btn btn-success co-author-button' id='add-producer-button'>Add Producer</button>
 						</div>
 						<input type='hidden' name='producers' id='producers'/>
-						<h4 class='prod-head'>Producer</h4>
+						<h4>Producer</h4>
+						<table class='table table-bordered table-striped tables producer-table'>
+							<tbody class='table-producers'>
+								
+							</tbody>
+						</table>						
+						<div class='prod-head'></div>
 					</div>
 					<h4 class='tags-header'>Tags</h4>
 					
@@ -281,17 +288,16 @@
 					<div class='form-group publish-radio'>
 						<div class='input-group'>
 							    <label class="a radio-inline">
-									<input type="radio" class='publish-status' name="publish-status"/>Published
+									<input type="radio" class='publish-status published' name="publish-status"/>Published
 							    </label>
 							    <label class="radio-inline">
-									<input type="radio" class='publish-status' name="publish-status"/>Unpublished
+									<input type="radio" class='publish-status unpublished' name="publish-status"/>Unpublished
 							    </label>			    
 						</div>
 						<span class="publish-status-help help-block">
 							<strong></strong>
 						</span>
 					</div>
-
 					<div class="form-group published-div {{ old('publish-status') == 'published' ? '' : 'hidden' }}">
 						<div class='input-group'>
 							<span class='input-group-addon label-title'>Publisher</span>
@@ -316,16 +322,15 @@
 						</span>													
 					</div>
 					</div>
-
+					<div class='acquisition-field'>
 					<h4>Acquisition</h4>
-
 					<div class='form-group acquisition-radio'>
 						<div class='input-group'>
 							<label class='radio-inline'>
-								<input type='radio' class='acquisition-mode' name='acquisition-mode' value="{{ old('acquisition-mode') }}" />Donated
+								<input type='radio' class='acquisition-mode donated' name='acquisition-mode' value="{{ old('acquisition-mode') }}" />Donated
 							</label>
 							<label class='radio-inline'>
-								<input type='radio' class='acquisition-mode' name='acquisition-mode' value="{{ old('acquisition-mode') }}" />Purchased
+								<input type='radio' class='acquisition-mode purchased' name='acquisition-mode' value="{{ old('acquisition-mode') }}" />Purchased
 							</label>
 						</div>
 
@@ -333,7 +338,7 @@
 							<strong></strong>
 						</span>						
 					</div>
-
+					</div>
 					<table class='table table-bordered table-striped tables table-donors'>
 						<thead>
 							<tr>
@@ -412,8 +417,11 @@
 
 				</div>
 				<div class='modal-footer'>
-					<button type='reset' id='material-reset' class='btn btn-danger'>Reset</button>
-					<button type='submit' id='material-submit' class='btn btn-success'>Add</button>
+					<div class='material-buttons'>
+						<button type='button' class='btn btn-default view-button-close' data-dismiss='modal' aria-label='Close'>Close</button>
+						<button type='reset' id='material-reset' class='btn btn-danger'>Reset</button>
+						<button type='submit' id='material-submit' class='btn btn-success'>Add</button>
+					</div>
 				</div>
 			</form>
 		</div>

@@ -211,18 +211,36 @@ $(document).ready(function (){
 	// add material script
 
 	$('#add-material-button').click(function(){
+		$('.modal-title').text('Add Material');
 		$('#material-submit').text("Add");
+		$('.table-donors').addClass('hidden');
+		$('photograph').addClass('hidden');
+		$('.cancel-edit').addClass('hidden');
 		$('.tags-header').removeClass('hidden');
+		$('.tag0').removeClass('hidden');
 		$('.author-photographer-director').removeClass('hidden');
 		$('.co-author0').removeClass('hidden');
 		$('#add-co-author-button').removeClass('hidden');
 		$('.publisher-field').removeClass('hidden');
+		$('.acquisition-field').removeClass('hidden');
 		$('.publish-radio').removeClass('hidden');
 		$('.acquisition-radio').removeClass('hidden');
 		$('#edit-button').addClass('hidden');
-		$('.tables').addClass('hidden');		
+		$('.tables').addClass('hidden');
+		$('.view-button-close').addClass('hidden');
+		$('#material-reset').removeClass('hidden');
+		$('#material-submit').removeClass('hidden');
+		$('.donated-div').addClass('hidden');
+		$('.purchased-div').addClass('hidden');			
 		$('input').each(function(){
-			$(this).prop('disabled', false);
+			if($(this).attr('name') == '_token' || $(this).attr('name') == 'size-type' 
+			|| $(this).attr('name') == 'duration-type' || $(this).attr('name') == 'material-acqNumber'){}
+			else{
+				$(this).prop('checked', false);
+				$(this).prop('disabled', false);
+				$(this).val('');
+				$('select').prop('selectedIndex', 0);
+			}
 		});
 		$('select').prop('disabled', false);		
 	});
@@ -285,6 +303,8 @@ $(document).ready(function (){
 		}
 		else if(selectValue == 'Compact Discs' || selectValue == 'Digital Versatile Discs' 
 		|| selectValue == 'Video Home Systems' || selectValue == 'Cassette Tapes'){
+			$('.multimedia').removeClass('hidden');
+			$('.author-photographer-director').text('Directors');
 			$('.add-producer').removeClass('hidden');
 			$('#add-co-author-button').text('Add Director');
 			$('.multimedia').removeClass('hidden');
@@ -297,7 +317,7 @@ $(document).ready(function (){
 			$('.photograph').addClass('hidden');
 			$('.multimedia').addClass('hidden');
 			$('.add-co-author').removeClass('hidden');
-			$('.author-photographer-director').text('Author');
+			$('.author-photographer-director').text('Authors');
 			$('#add-co-author-button').text('Add Author');
 		}
 	});
@@ -975,7 +995,7 @@ $(document).ready(function (){
 			"</span>" +
 			"<button type='button' class='btn btn-danger co-author-button delete-prod'>Delete Producer</button>"			
 		);
-		$('.prod-head').append(newProducer);
+		$('.prod-head').after().append(newProducer);
 		prodNum++;	
 	});
 
@@ -1006,88 +1026,374 @@ $(document).ready(function (){
 		for(i=0;i<tableTagsCounter;i++){
 			$('.table-tags').children().remove();
 		}
+		for(i=0;i<tableProducerCounter;i++){
+			$('table-producers').children().remove();
+		}
 		$('.tags-header').removeClass('hidden');
+		$('.cancel-edit').trigger('click');
+	});
+
+	$('.view-button-close').click(function(){
+		$('.material-close').trigger('click');
 	});
 
 	var tableAuthorCounter = 0;
 	var tableTagsCounter = 0;
+	var tableProducerCounter= 0;
+	var category ='';
+	var acqNumber ='';
+	var title = '';
+	var tagsArray = [];
+	var authorsArray = [];
+	var publisher_name ='';
+	var publisher_year= '';
+	var publisher_place = '';
+	var amount = '';
+	var purchased_year = '';
+	var address = '';
+	var donor_firstname ='';
+	var donor_middlename ='';
+	var donor_lastname ='';		
+	var donor_year ='';
+	var course ='';
+	var school ='';
+	var photo_firstname = '';
+	var photo_middlename = '';
+	var photo_lastname = '';
+	var photo_size ='';
+	var photo_type ='MB';
+	var photo_description = '';
+	var duration ='';
+	var durationArray = [];
+	var directorsArray = [];
+	var producersArray = [];
+	var length = 0;
+	var arrays = [];
 	$('.material-view-button').click(function(){
+		$('.modal-title').text('View Material');
+		$('.view-button-close').removeClass('hidden');
+		$('#material-reset').addClass('hidden');
+		$('#material-submit').addClass('hidden');
 		$('.co-author0').addClass('hidden');
 		$('#add-co-author-button').addClass('hidden');
 		$('.acquisition-radio').addClass('hidden');
 		$('.tables').removeClass('hidden');
 		$('.tag0').addClass('hidden');
+		$('#edit-button').removeClass('hidden');
 		var material_id = $(this).find('input').val();
 		$.get('material/' + material_id, function (data) {
+			category = data.category;
+			acqNumber = data.acqNumber;
+			course = data.course;
+			school = data.school;
+			title = data.title;
 			console.log(data);
-			$('.material-acqNumber').text(data.title);
-			$('#category').val(data.category);
-			$('#acqNumber').val(data.acqNumber);
-			$('#title').val(data.title);
-			for(i=0, j=0;i<(data.authors.length/3);i++, j+=3){
-				// if(i != (data.authors.length/3)-1){
-				// 	$('#add-co-author-button').trigger('click');
-				// }	
+			$('.material-acqNumber').text(title);
+			$('#category').val(category);
+			$('#acqNumber').val(acqNumber);
+			$('#title').val(title);
+			authorsArray = data.authors;
+			directorsArray = data.directors;
+			producersArray = data.producers;
+			tagsArray = data.tags;
+			if(category == 'Thesis'){
+				$('.thesis').removeClass('hidden');
+				$('#school').val(school);
+				$('#course').val(course);
+			}
+			else{
+				$('.thesis').addClass('hidden');
+			}
+			if(category == 'Compact Discs' || category == 'Cassette Tapes' || category == 'Digital Versatile Discs' || category == 'Video Home Systems'){
+				$('.multimedia').removeClass('hidden');
+				$('.add-producer').removeClass('hidden');
+				$('#add-producer-button').addClass('hidden');
+				duration = data.duration;
+				durationArray = duration.split(':');
+				$('#hours').val(durationArray[0]);
+				$('#minutes').val(durationArray[1]);
+				$('#seconds').val(durationArray[2]);
+				$('.author-photographer-director').text('Directors');
+				for(i=0, j=0;i<(producersArray.length/3);i++, j+=3){
+					var newProd = $(document.createElement('tr'));
+					newProd.after().html(
+						"<td>" + producersArray[j] + " " + producersArray[j+1] + " " + producersArray[j+2] + "</td>"
+					);
+					$('.table-producers').append(newProd);
+					tableProducerCounter++;	
+				}
+			}
+			if(authorsArray.length==0){
+				length = directorsArray.length;
+				arrays = directorsArray;
+			}
+			else{
+				length = authorsArray.length;
+				arrays = authorsArray;
+			}
+			for(i=0, j=0;i<(length/3);i++, j+=3){
 				var newAuthor = $(document.createElement('tr'));
 				newAuthor.after().html(
-					"<td>" + data.authors[j] + " " + data.authors[j+1] + " " + data.authors[j+2] + "</td>"
+					"<td>" + arrays[j] + " " + arrays[j+1] + " " + arrays[j+2] + "</td>"
 				);
 				$('.table-authors').append(newAuthor);
-				tableAuthorCounter++;
-				// $('.table-authors').append()
-				// $('#author-firstname' + i).val(data.authors[j]);
-				// $('#author-firstname' + i).prop('disabled', true);
-				// $('#author-middlename' + i).val(data.authors[j+1]);
-				// $('#author-middlename' + i).prop('disabled', true);
-				// $('#author-lastname' + i).val(data.authors[j+2]);	
-				// $('#author-lastname' + i).prop('disabled', true);	
+				tableAuthorCounter++;	
 			}
-			if(data.tags.length == 0){
+			if(tagsArray.length == 0){
 				$('.tags-header').addClass('hidden');
 			}
-			for(i=0;i<data.tags.length;i++){
+			for(i=0;i<tagsArray.length;i++){
 				var newTag = $(document.createElement('tr'));
 				newTag.after().html(
-					"<td>" + data.tags[i] + "</td>"
+					"<td>" + tagsArray[i] + "</td>"
 				);
 				$('.table-tags').append(newTag);
 				tableTagsCounter++;
 			}
 			if(data.publisher_name == ''){
 				$('.publisher-field').addClass('hidden');
+				publisher_name = '';
+				publisher_year = '';
+				publisher_place = '';
 			}
 			else{
+				publisher_name = data.publisher_name;
+				publisher_year = data.publisher_year;
+				publisher_place = data.publisher_place;
 				$('.publisher-field').removeClass('hidden');
 				$('.published-div').removeClass('hidden');
 				$('.publish-radio').addClass('hidden');
-				$('#publisher').val(data.publisher_name);
-				$('#published-year').val(data.publisher_year);
-				$('#place').val(data.publisher_place);
+				$('#publisher').val(publisher_name);
+				$('#published-year').val(publisher_year);
+				$('#place').val(publisher_place);
 			}
 			if(data.donor_year == ''){
+				amount = data.purchased_amount;
+				purchased_year = data.purchased_year;
+				address = data.purchased_address;
+				donor_firstname='';
+				donor_middlename='';
+				donor_lastname='';								
+				donor_year='';
+				$('.purchased-div').removeClass('hidden');
 				$('.table-donors').addClass('hidden');
 				$('.purchased-div').removeClass('hidden');
 				$('#amount').val(data.purchased_amount);
-				$('#purchased-year').val(data.purchased_year);
-				$('#address').val(data.purchased_address);
+				$('#purchased-year').val(purchased_year);
+				$('#address').val(address);
 			}
 			else{
+				amount ='';
+				purchased_year = '';
+				address = '';				
+				donor_firstname = data.donor_firstname;
+				donor_middlename = data.donor_middlename;
+				donor_lastname = data.donor_lastname;
+				donor_year = data.donor_year;
+				$('#donor-firstname').val(donor_firstname);
+				$('#donor-middlename').val(donor_middlename);
+				$('#donor-lastname').val(donor_lastname);
+				$('#donated-year').val(donor_year);
+				$('.purchased-div').addClass('hidden');
 				$('.table-donors').removeClass('hidden');				
-				$('.td-donor').text(data.donor_name);
-				$('.td-year').text(data.donor_year);
+				$('.td-donor').text(donor_firstname + ' ' + donor_middlename + ' ' + donor_lastname);
+				$('.td-year').text(donor_year);
 			}
-		});
+			if(category=='Photographs'){
+				$('.photograph').removeClass('hidden');
+				photo_firstname = data.photo_firstname;
+				photo_middlename = data.photo_middlename;
+				photo_lastname = data.photo_lastname;
+				photo_size = data.photo_size;
+				photo_description = data.photo_description;
+				photo_type = data.photo_type;
+				photo_year = data.photo_year;
 
-		$('input').each(function(){
-			$(this).prop('disabled', true);
-		});
-		$('select').prop('disabled', true);
-		$('button').each(function(){
-			if($(this).attr('id') == 'edit-button'){
-				$(this).removeClass('hidden');
+				$('.author-photographer-director').text('Photographer');
+				var newPhotographer = $(document.createElement('tr'));
+				newPhotographer.after().html(
+					"<td>" + photo_firstname + " " + photo_middlename + " " + photo_lastname + "</td>"
+				);
+				$('.table-authors').append(newPhotographer);
+				tableAuthorCounter++;
+				$('#size').val(photo_size);
+				$('#year').val(photo_year);
+				$('.size-type').prop('disabled', true);
+				$('.size-type').append().html(photo_type + " <span class='caret'></span>");
+				$('#description').prop('disabled', true);
+				$('#description').val(photo_description);
 			}
+			$('input').each(function(){
+			if($(this).attr('name') == '_token' || $(this).attr('name') == 'material-acqNumber'){
+			}
+			else{
+				$(this).prop('disabled', true);
+			}		
+			});
+			$('select').prop('disabled', true);
 		});
 	});
 
+	$('#edit-button').click(function(){
+		num=1;
+		tagNum=1;
+		$('#description').prop('disabled', false);
+		$('.cancel-edit').removeClass('hidden');
+		$('#edit-button').addClass('hidden');
+		$('.author-table').addClass('hidden');
+		$('.table-donors').addClass('hidden');
+		$('.table-tags').addClass('hidden');
+		$('select').prop('disabled', false);
+		$('#add-co-author-button').removeClass('hidden');
+		$('.view-button-close').addClass('hidden');		
+		$('#material-submit').removeClass('hidden');
+		$('#material-reset').removeClass('hidden');
+		$('.view-button-close').addClass('hidden');
+		$('.tag0').removeClass('hidden');
+		$('.co-author0').removeClass('hidden');
+		$('.publisher-field').removeClass('hidden');
+		$('.publish-radio').removeClass('hidden');
+		$('.acquisition-field').removeClass('hidden');
+		$('.acquisition-radio').removeClass('hidden');
+		$('.size-type').prop('disabled', false);
+		$('input').each(function(){
+			$(this).prop('disabled', false);
+		});
+		if(category == 'Compact Discs' || category == 'Cassette Tapes' || category == 'Digital Versatile Discs' || category == 'Video Home Systems'){
+			$('#add-producer-button').removeClass('hidden');
+			$('.producer-table').addClass('hidden');
+			for(i=0, j=0;i<(producersArray.length)/3;i++, j+=3){
+				if(i != (producersArray.length/3)){
+					$('#add-producer-button').trigger('click');
+				}
+				$('#prod-firstname' + (i+1)).val(producersArray[j]);
+				$('#prod-middlename' + (i+1)).val(producersArray[j+1]);
+				$('#prod-lastname' + (i+1)).val(producersArray[j+2]);	
+			}	
+		}
+		for(i=0, j=0;i<(length)/3;i++, j+=3){
+			if(i != (length/3)-1){
+				$('#add-co-author-button').trigger('click');
+			}
+			$('#author-firstname' + i).val(arrays[j]);
+			$('#author-middlename' + i).val(arrays[j+1]);
+			$('#author-lastname' + i).val(arrays[j+2]);	
+		}
+		$('#tag0').val(tagsArray[0]);
+		for(i=1;i<tagsArray.length;i++){
+			$('#add-tag').trigger('click');
+			$('#tag' + i).val(tagsArray[i]);
+		}
+		if(publisher_year != ''){
+			$('.published').prop('checked', true);
+		}
+		else{
+			$('.unpublished').prop('checked', true);
+		}
+		if(donor_year != ''){
+			$('.donated').prop('checked', true);
+			$('.donated-div').removeClass('hidden');
+			$('#donor-firstname').val(donor_firstname);
+			$('#donor-middlename').val(donor_middlename);
+			$('#donor-lastname').val(donor_lastname);
+			$('#donated-year').val(donor_year);			
+		}
+		else{
+			$('.purchased').prop('checked', true);
+			$('.purchased-div').removeClass('hidden');
+			$('#amount').val(amount);
+			$('#purchased-year').val(purchased_year);
+			$('#address').val(address);		
+		}
+	});
+
+	$('.cancel-edit').click(function(){
+		if(category == 'Compact Discs' || category == 'Cassette Tapes' || category == 'Digital Versatile Discs' || category == 'Video Home Systems'){
+			$('.author-photographer-director').text('Directors');
+			$('.add-producer').removeClass('hidden');
+			$('.producer-table').removeClass('hidden');
+		}
+		else if(category == 'Photographers'){
+			$('.author-photographer-director').text('Photographer');
+		}
+		else{
+			$('.author-photographer-director').text('Authors');
+		}
+		$('#add-producer-button').addClass('hidden');
+		$('#description').prop('disabled', true);
+		$('.size-type').prop('disabled', true);
+		$('input').each(function(){
+			if($(this).attr('name') == '_token' || $(this).attr('name') == 'material-acqNumber'){
+			}
+			else{
+				$(this).prop('disabled', true);
+			}	
+		});
+		for(i=1;i<=authorCounter;i++){
+			$('.co-author' + i).remove();
+		}
+		for(i=1;i<=prodCounter;i++){
+			$('.prod' + i).remove();
+		}		
+		for(i=1;i<=tagCounter;i++){
+			$('.tag' + i).remove();
+		}
+		if(category != 'Thesis'){
+			$('.thesis').addClass('hidden');
+		}
+		else{
+			$('.thesis').removeClass('hidden');
+		}
+		if(category != 'Photographs'){
+			$('.photograph').addClass('hidden');
+		}
+		else{
+			$('.photograph').removeClass('hidden');
+		}
+		if(donor_year != ''){
+			$('.table-donors').removeClass('hidden');
+			$('.purchased-div').addClass('hidden');
+		}
+		else{
+			$('.table-donors').addClass('hidden');
+			$('.purchased-div').removeClass('hidden');
+		}
+		if(publisher_name != ''){
+			$('.publisher-field').removeClass('hidden');
+		}
+		else{
+			$('.publisher-field').addClass('hidden');
+		}
+		if(tagsArray.length != 0){
+			$('.table-tags').removeClass('hidden');
+		}
+		$('.size-type').prop('disabled', true);
+		$('.size-type').append().html(photo_type + " <span class='caret'></span>");		
+		$('#material-reset').addClass('hidden');
+		$('#material-submit').addClass('hidden');
+		$('.view-button-close').removeClass('hidden');
+		$('.donated-div').addClass('hidden');
+		$('.acquisition-field').addClass('hidden');
+		$('.acquisition-radio').addClass('hidden');
+		$('.acquisition-field').addClass('hidden');		
+		$('.publish-radio').addClass('hidden');		
+		$('.co-author0').addClass('hidden');
+		$('.tag0').addClass('hidden');
+		$('#add-co-author-button').addClass('hidden');	
+		$('.author-table').removeClass('hidden');
+		$('select').prop('disabled', true);
+		$('.cancel-edit').addClass('hidden');
+		$('#edit-button').removeClass('hidden');
+		$('#category').val(category);
+		$('#acqNumber').val(acqNumber);
+		$('#title').val(title);
+		$('#school').val(school);
+		$('#course').val(course);
+		$('#hours').val(durationArray[0]);
+		$('#minutes').val(durationArray[1]);
+		$('#seconds').val(durationArray[2]);		
+	});
+
+	
 	// end of edit script
 });

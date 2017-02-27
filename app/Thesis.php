@@ -13,7 +13,7 @@ class Thesis extends Model
     
     public function material()
     {
-    	return $this->belongsTo(Material::class);
+    	return $this->belongsTo(Material::class, 'acqNumber');
     }
     public function course()
     {

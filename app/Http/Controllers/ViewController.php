@@ -41,6 +41,8 @@ class ViewController extends Controller
 
     public function viewMaterial(Material $acqNumber){
         $authors = [];
+        $directors =[];
+        $producers = [];
         $tags =[];
         for($i=0;$i<sizeof($acqNumber->author);$i++){
             array_push($authors, $acqNumber->author[$i]->firstname);
@@ -60,7 +62,50 @@ class ViewController extends Controller
             $publisher_year = $acqNumber->publisher->year;
             $publisher_place = $acqNumber->publisher->address->address_name;
         }
-
+        if($acqNumber->material_type->type == 'Thesis'){
+            $school = $acqNumber->thesis->first()->school->name;
+            $course =  $acqNumber->thesis->first()->course->name;
+        }
+        else{
+            $school ='';
+            $course='';
+        }
+        if($acqNumber->material_type->type == 'Photographs'){
+            $size = $acqNumber->photo->size;
+            $type = $acqNumber->photo->size_type;
+            $year = $acqNumber->photo->year;
+            $description = $acqNumber->photo->description;
+            $firstname = $acqNumber->photo->photographer->firstname;
+            $middlename = $acqNumber->photo->photographer->middlename;
+            $lastname = $acqNumber->photo->photographer->lastname;
+        }
+        else{
+            $size = '';
+            $year = '';
+            $type='';
+            $description = '';
+            $firstname = '';
+            $middlename = '';
+            $lastname = '';       
+        }
+        if($acqNumber->material_type->type == 'Compact Discs' 
+            || $acqNumber->material_type->type == 'Digital Versatile Discs' || $acqNumber->material_type->type == 'Video Home Systems' 
+            || $acqNumber->material_type->type == 'Cassette Tapes'){
+            $duration = $acqNumber->multimedia->first()->duration;
+            for($i=0;$i<sizeof($acqNumber->director);$i++){
+                array_push($directors, $acqNumber->director[$i]->firstname);
+                array_push($directors, $acqNumber->director[$i]->middlename);
+                array_push($directors, $acqNumber->director[$i]->lastname);
+            }
+            for($i=0;$i<sizeof($acqNumber->producer);$i++){
+                array_push($producers, $acqNumber->producer[$i]->firstname);
+                array_push($producers, $acqNumber->producer[$i]->middlename);
+                array_push($producers, $acqNumber->producer[$i]->lastname);
+            }            
+        }
+        else{
+            $duration = '';
+        }
         if($acqNumber->donor_id != ''){
             $donor_firstname = $acqNumber->donor->donor_name->firstname;
             $donor_middlename = $acqNumber->donor->donor_name->middlename;
@@ -84,15 +129,29 @@ class ViewController extends Controller
             'acqNumber' => $acqNumber->acqNumber,
             'title' => $acqNumber->title,
             'authors' => $authors,
+            'directors' => $directors,
+            'producers' => $producers,
             'tags' => $tags,
             'publisher_name' => $publisher_name,
             'publisher_year' => $publisher_year,
             'publisher_place' => $publisher_place,
-            'donor_name' => $donor_firstname . " " . $donor_middlename . " " . $donor_lastname,
+            'donor_firstname' => $donor_firstname,
+            'donor_middlename' => $donor_middlename,
+            'donor_lastname' => $donor_lastname,
             'donor_year' => $donor_year,
             'purchased_amount' => $amount,
             'purchased_address' => $address,
             'purchased_year' => $purchased_year,
+            'course' => $course,
+            'school' => $school,
+            'photo_size' => $size,
+            'photo_type' => $type,
+            'photo_year' => $year,
+            'photo_description' => $description,
+            'photo_firstname' => $firstname,
+            'photo_middlename' => $middlename,
+            'photo_lastname' => $lastname,
+            'duration' => $duration
         ]);
     }
     public function show(){
