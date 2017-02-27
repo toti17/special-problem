@@ -212,6 +212,7 @@ $(document).ready(function (){
 
 	$('#add-material-button').click(function(){
 		$('#material-submit').text("Add");
+		$('.tags-header').removeClass('hidden');
 		$('.author-photographer-director').removeClass('hidden');
 		$('.co-author0').removeClass('hidden');
 		$('#add-co-author-button').removeClass('hidden');
@@ -219,6 +220,7 @@ $(document).ready(function (){
 		$('.publish-radio').removeClass('hidden');
 		$('.acquisition-radio').removeClass('hidden');
 		$('#edit-button').addClass('hidden');
+		$('.tables').addClass('hidden');		
 		$('input').each(function(){
 			$(this).prop('disabled', false);
 		});
@@ -1004,6 +1006,7 @@ $(document).ready(function (){
 		for(i=0;i<tableTagsCounter;i++){
 			$('.table-tags').children().remove();
 		}
+		$('.tags-header').removeClass('hidden');
 	});
 
 	var tableAuthorCounter = 0;
@@ -1012,6 +1015,7 @@ $(document).ready(function (){
 		$('.co-author0').addClass('hidden');
 		$('#add-co-author-button').addClass('hidden');
 		$('.acquisition-radio').addClass('hidden');
+		$('.tables').removeClass('hidden');
 		$('.tag0').addClass('hidden');
 		var material_id = $(this).find('input').val();
 		$.get('material/' + material_id, function (data) {
@@ -1038,6 +1042,9 @@ $(document).ready(function (){
 				// $('#author-lastname' + i).val(data.authors[j+2]);	
 				// $('#author-lastname' + i).prop('disabled', true);	
 			}
+			if(data.tags.length == 0){
+				$('.tags-header').addClass('hidden');
+			}
 			for(i=0;i<data.tags.length;i++){
 				var newTag = $(document.createElement('tr'));
 				newTag.after().html(
@@ -1057,8 +1064,17 @@ $(document).ready(function (){
 				$('#published-year').val(data.publisher_year);
 				$('#place').val(data.publisher_place);
 			}
-			if(data.donor_name == ' '){
-
+			if(data.donor_year == ''){
+				$('.table-donors').addClass('hidden');
+				$('.purchased-div').removeClass('hidden');
+				$('#amount').val(data.purchased_amount);
+				$('#purchased-year').val(data.purchased_year);
+				$('#address').val(data.purchased_address);
+			}
+			else{
+				$('.table-donors').removeClass('hidden');				
+				$('.td-donor').text(data.donor_name);
+				$('.td-year').text(data.donor_year);
 			}
 		});
 

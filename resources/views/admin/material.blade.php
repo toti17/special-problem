@@ -200,7 +200,7 @@
 
 					<h4 class='author-photographer-director'>Authors</h4>
 
-					<table class='table table-bordered table-striped'>
+					<table class='table table-bordered table-striped tables'>
 						<tbody class='table-authors'>
 
 						</tbody>		
@@ -248,9 +248,9 @@
 						<input type='hidden' name='producers' id='producers'/>
 						<h4 class='prod-head'>Producer</h4>
 					</div>
-					<h4>Tags</h4>
+					<h4 class='tags-header'>Tags</h4>
 					
-					<table class='table table-bordered table-striped'>
+					<table class='table table-bordered table-striped tables'>
 						<tbody class='table-tags'>
 							
 						</tbody>
@@ -331,9 +331,23 @@
 
 						<span class="acquisition-mode-help help-block hidden">
 							<strong></strong>
-						</span>
-						
+						</span>						
 					</div>
+
+					<table class='table table-bordered table-striped tables table-donors'>
+						<thead>
+							<tr>
+								<th>Donor</th>
+								<th>Year donated</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td class='td-donor'></td>
+								<td class='td-year'></td>
+							</tr>
+						</tbody>
+					</table>
 
 					<div class='form-group donated-div hidden'>
 						<div class='input-group'>

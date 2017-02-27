@@ -61,7 +61,7 @@ class ViewController extends Controller
             $publisher_place = $acqNumber->publisher->address->address_name;
         }
 
-        if($acqNumber->donor_id == ''){
+        if($acqNumber->donor_id != ''){
             $donor_firstname = $acqNumber->donor->donor_name->firstname;
             $donor_middlename = $acqNumber->donor->donor_name->middlename;
             $donor_lastname = $acqNumber->donor->donor_name->lastname;
