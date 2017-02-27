@@ -1043,6 +1043,7 @@ $(document).ready(function (){
 				);
 				$('.table-tags').append(newTag);
 				tableTagsCounter++;
+				asdfasfas
 			}
 			if(data.publisher_name == ''){
 				$('.publisher-field').addClass('hidden');
