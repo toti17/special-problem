@@ -34,13 +34,13 @@
 		</thead>
 		<tbody class='text-center'>
 			@foreach ($materials as $material)
-			<tr>
+			<tr id="acq{{$material->acqNumber}}">
 				<td class='material-view-button text-left' type ='button' data-toggle='modal' data-target='#material-modal'>
 					<input type='hidden' value="{{$material->acqNumber}}" name='material-acqNumber'/>
 					{{ $material->title }}
 				</td>
 				<td class='text-right action-buttons'>
-					<button type='button' class='btn btn-xs btn-danger'><span class='glyphicon glyphicon-remove'></span>
+					<button type='button' class='btn btn-xs btn-danger delete-button' value="{{$material->acqNumber}}"><span class='glyphicon glyphicon-remove'></span>
 				</td>
 			</tr>
 			@endforeach
@@ -207,35 +207,37 @@
 						</tbody>		
 					</table>
 
-					<div class="form-group co-author0">
+					<div class="form-group co-author">
+						<span class='firstnames'>
 						<div class='input-group'>
 							<span class='input-group-addon label-title'>First Name</span>
-							<input type='text' id='author-firstname0' class='form-control' placeholder='Jose' name='author-firstname0' />
+							<input type='text' id='author-firstname' class='form-control' placeholder='Ihra' name='author-firstname' />
 						</div>
 
 						<span class="author-firstname-help0 help-block hidden">
 							<strong></strong>
-						</span>			
-						
+						</span>
+						</span>
+						<span class='middlenames'>
 						<div class='input-group'>
 							<span class='input-group-addon label-title'>Middle Name</span>
-							<input type='text' id='author-middlename0' class='form-control' placeholder='Alonso' name='author-middlename0' />
+							<input type='text' id='author-middlename' class='form-control' placeholder='Alonso' name='author-middlename' />
 						</div>
 
 						<span class="author-middlename-help0 help-block hidden">
 							<strong></strong>
 						</span>
-
+						</span>
+						<span class='lastnames'>
 						<div class='input-group'>
 							<span class='input-group-addon label-title'>Last Name</span>
-							<input type='text' id='author-lastname0' class='form-control' placeholder='Realonda' name='author-lastname0' />
+							<input type='text' id='author-lastname' class='form-control' placeholder='Realonda' name='author-lastname' />
 						</div>	
-
-						<input type='hidden' name='authors' id='authors'/>
-
 						<span class="author-lastname-help0 help-block hidden">
 							<strong></strong>
 						</span>
+						</span>
+						<input type='hidden' name='authors' id='authors'/>
 					</div>
 
 					<div class='form-group add-co-author'>
@@ -247,7 +249,7 @@
 							<button type='button' class='btn btn-success co-author-button' id='add-producer-button'>Add Producer</button>
 						</div>
 						<input type='hidden' name='producers' id='producers'/>
-						<h4>Producer</h4>
+						<h4>Producers</h4>
 						<table class='table table-bordered table-striped tables producer-table'>
 							<tbody class='table-producers'>
 								
@@ -264,10 +266,10 @@
 					</table>					
 					
 					<div class='form-group'>
-						<div class='tag0'>
+						<div class='tag'>
 						<div class='input-group'>
 							<span class='input-group-addon label-title'>Tag</span>
-							<input type='text' id='tag0' class='form-control' placeholder='Computer Science' name='tag' value="{{ old('tag') }}" />
+							<input type='text' id='tag' class='form-control' placeholder='Computer Science' name='tag' value="{{ old('tag') }}" />
 							<input type='hidden' name='tags' id='tags'/>				
 							<div class='input-group-btn'>
 								<button type='button' class='btn btn-secondary' id='add-tag'>
@@ -275,10 +277,11 @@
 								</button>
 							</div>						
 						</div>
-						<span class="tag-help0 help-block hidden">
+						<span class="tag-help help-block hidden">
 							<strong></strong>
 						</span>						
-						</div>																
+						</div>
+						<span class='tags'></span>																
 					</div>
 
 
@@ -339,7 +342,7 @@
 						</span>						
 					</div>
 					</div>
-					<table class='table table-bordered table-striped tables table-donors'>
+					<table class='table table-bordered table-striped tables table-donors hidden'>
 						<thead>
 							<tr>
 								<th>Donor</th>
@@ -418,7 +421,7 @@
 				</div>
 				<div class='modal-footer'>
 					<div class='material-buttons'>
-						<button type='button' class='btn btn-default view-button-close' data-dismiss='modal' aria-label='Close'>Close</button>
+						<button type='button' class='btn btn-default view-button-close hidden' data-dismiss='modal' aria-label='Close'>Close</button>
 						<button type='reset' id='material-reset' class='btn btn-danger'>Reset</button>
 						<button type='submit' id='material-submit' class='btn btn-success'>Add</button>
 					</div>

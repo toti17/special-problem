@@ -217,9 +217,9 @@ $(document).ready(function (){
 		$('photograph').addClass('hidden');
 		$('.cancel-edit').addClass('hidden');
 		$('.tags-header').removeClass('hidden');
-		$('.tag0').removeClass('hidden');
+		$('.tag').removeClass('hidden');
 		$('.author-photographer-director').removeClass('hidden');
-		$('.co-author0').removeClass('hidden');
+		$('.co-author').removeClass('hidden');
 		$('#add-co-author-button').removeClass('hidden');
 		$('.publisher-field').removeClass('hidden');
 		$('.acquisition-field').removeClass('hidden');
@@ -275,13 +275,16 @@ $(document).ready(function (){
 
 		// removing authors
 		for(i=1;i<=authorCounter;i++){
-			$('.co-author' + i).remove();
+			$('.delete-author').trigger('click');
 		}
 		// removing tags		
 		for(j=1;j<=tagCounter;j++){
-			$('.tag' + j).remove();
+			$('.remove-tag').trigger('click');
 		}
-		
+		for(i=1;i<prodCounter;i++){
+			$('.delete-prod').trigger('click');
+		}
+
 		selectValue = $('select').val();
 		
 		if(selectValue == 'Thesis'){
@@ -367,16 +370,6 @@ $(document).ready(function (){
 		pubStatus = "";
 		acquisitionMode = "";
 		$('.material-form').trigger('reset');
-		// $('input').each(function(){
-		// 	if($(this).attr('name') == '_token'){
-		// 	}
-		// 	else{
-		// 		// $(this).removeAttr('checked');
-		// 		$(this).prop('checked', false);
-		// 		$(this).val('');
-		// 		// $(this).removeAttr('value');	
-		// 	}
-		// });
 		$('.purchased-div').addClass('hidden');
 		$('.donated-div').addClass('hidden');
 		$('.published-div').addClass('hidden');
@@ -389,15 +382,15 @@ $(document).ready(function (){
 		$('.multimedia').addClass('hidden');
 		// removing authors
 		for(i=1;i<=authorCounter;i++){
-			$('.co-author' + i).remove();
+			$('.delete-author').trigger('click');
 		}
 		// removing producers
 		for(i=1;i<prodCounter;i++){
-			$('.prod' + i).remove();
+			$('.delete-prod').trigger('click');
 		}
 		// removing tags		
 		for(j=1;j<=tagCounter;j++){
-			$('.tag' + j).remove();
+			$('.remove-tag').trigger('click');			
 		}
 	});
 
@@ -496,58 +489,6 @@ $(document).ready(function (){
 
 		nameArray=[];
 		authorArray=[];
-		producerArray=[];
-		for(i=1; i<prodNum;i++){
-			if($('#prod-firstname' + i).val() == ""){
-				$('.prod-firstname-help' + i).removeClass('hidden');
-				$('.prod-firstname-help' +i + ' strong').text('The first name of the producer is required.');
-				errorCounter++;
-			}
-			else if($('#prod-firstname' + i).val().length > 50){
-				$('.prod-firstname-help' + i).removeClass('hidden');
-				$('.prod-firstname-help' +i + ' strong').text('The first name of the producer should not exceed 50 characters.');
-				errorCounter++;				
-			}
-			else{
-				$('.prod-firstname-help' + i).addClass('hidden');
-				nameArray.push($('#prod-firstname' + i).val());
-			}
-			if($('#prod-middlename' + i).val() == ""){
-				$('.prod-middlename-help' + i).removeClass('hidden');
-				$('.prod-middlename-help' +i + ' strong').text('The middle name of the producer is required.');
-				errorCounter++;
-			}
-			else if($('#prod-middlename' + i).val().length > 50){
-				$('.prod-middlename-help' + i).removeClass('hidden');
-				$('.prod-middlename-help' +i + ' strong').text('The middle name of the producer should not exceed 50 characters.');
-				errorCounter++;
-			}
-			else{
-				$('.prod-middlename-help' + i).addClass('hidden');
-				nameArray.push($('#prod-middlename' + i).val());
-			}
-			
-			if($('#prod-lastname' + i).val() == ""){
-				$('.prod-lastname-help' + i).removeClass('hidden');
-				$('.prod-lastname-help' +i + ' strong').text('The last name of the producer is required.');	
-				errorCounter++;
-			}
-			else if($('#prod-lastname' + i).val().length > 50){
-				$('.prod-lastname-help' + i).removeClass('hidden');
-				$('.prod-lastname-help' +i + ' strong').text('The last name of the producer should not exceed 50 characters.');	
-				errorCounter++;				
-			}
-			else{
-				$('.prod-lastname-help' + i).addClass('hidden');
-				nameArray.push($('#prod-lastname' + i).val());
-			}
-			producerArray.push(nameArray);
-			nameArray=[];						
-		}
-
-		$('#producers').val(producerArray);
-
-		nameArray=[];
 
 		var name = '';
 		if(category != 'Compact Discs' && category != 'Digital Versatile Discs' && category != 'Video Home Systems' && category != 'Cassette Tapes'){
@@ -564,6 +505,55 @@ $(document).ready(function (){
 			var minuteValue = minutePattern.test(minute);		
 			var hourValue = hourPattern.test(hour);
 			var secondValue = secondPattern.test(second);
+
+		producerArray=[];
+		nameArray=[];
+		$('.prod').each(function(){
+			if($(this).children('.prod-firstnames').children().children('input').val() == ''){
+				$(this).children('.prod-firstnames').children('span').removeClass('hidden');
+				$(this).children('.prod-firstnames').children('span').children('strong').text('The first name of the producer is required.');
+				errorCounter++;
+			}
+			else if($(this).children('.prod-firstnames').children().children('input').val() >= 50){
+				$(this).children('.prod-firstnames').children('span').removeClass('hidden');
+				$(this).children('.prod-firstnames').children('span').children('strong').text('The first name of the producer should not exceed 50 characters.');
+			}
+			else{
+				$(this).children('.prod-firstnames').children('span').addClass('hidden');
+				nameArray.push($(this).children('.prod-firstnames').children().children('input').val());
+			}
+			if($(this).children('.prod-middlenames').children().children('input').val() == ''){
+				$(this).children('.prod-middlenames').children('span').removeClass('hidden');
+				$(this).children('.prod-middlenames').children('span').children('strong').text('The middle name of the producer is required.');
+				errorCounter++;				
+			}
+			else if($(this).children('.prod-middlenames').children().children('input').val() >= 50){
+				$(this).children('.prod-middlenames').children('span').removeClass('hidden');
+				$(this).children('.prod-middlenames').children('span').children('strong').text('The middle name of the producer should not exceed 50 characters.');
+				errorCounter++;
+			}
+			else{
+				$(this).children('.prod-middlenames').children('span').addClass('hidden');
+				nameArray.push($(this).children('.prod-middlenames').children().children('input').val());
+			}
+			if($(this).children('.prod-lastnames').children().children('input').val() == ''){
+				$(this).children('.prod-lastnames').children('span').removeClass('hidden');
+				$(this).children('.prod-lastnames').children('span').children('strong').text('The last name of the producer is required.');
+				errorCounter++;				
+			}
+			else if($(this).children('.prod-lastnames').children().children('input').val() >= 50){
+				$(this).children('.prod-lastnames').children('span').removeClass('hidden');
+				$(this).children('.prod-lastnames').children('span').children('strong').text('The last name of the producer should not exceed 50 characters.');
+				errorCounter++;
+			}
+			else{
+				$(this).children('.prod-lastnames').children('span').addClass('hidden');
+				nameArray.push($(this).children('.prod-lastnames').children().children('input').val());
+			}			
+		});
+		producerArray.push(nameArray);
+		nameArray=[];
+		$('#producers').val(producerArray);
 
 			if(hour=='' && minute =='' && second == ''){
 				$('.duration-help').removeClass('hidden');
@@ -680,73 +670,72 @@ $(document).ready(function (){
 				errorCounter++;
 			}			
 		}
-		for(i=0;i<num;i++){
-			if($('#author-firstname' + i).val() == ""){
-				$('.author-firstname-help' + i).removeClass('hidden');
-				$('.author-firstname-help' +i + ' strong').text('The first name of the ' + name  +' is required.');
-				errorCounter++;
-			}
-			else if($('#author-firstname' + i).val().length > 50){
-				$('.author-firstname-help' + i).removeClass('hidden');
-				$('.author-firstname-help' +i + ' strong').text('The length of the first name should not exceed 50 characters.');
-				errorCounter++;
-			}
-			else{
-				$('.author-firstname-help' + i).addClass('hidden');
-				nameArray.push($('#author-firstname' + i).val());
-			}
-			if($('#author-middlename' + i).val() == ""){
-				$('.author-middlename-help' + i).removeClass('hidden');
-				$('.author-middlename-help' +i + ' strong').text('The middle name of the ' + name + ' is required.');
-				errorCounter++;
-			}
-			else if($('#author-middlename' + i).val().length > 50){
-				$('.author-middlename-help' + i).removeClass('hidden');
-				$('.author-middlename-help' +i + ' strong').text('The length of the middle name should not exceed 50 characters.');
-				errorCounter++;				
-			}			
-			else{
-				$('.author-middlename-help' + i).addClass('hidden');
-				nameArray.push($('#author-middlename' + i).val());
-			}
-			
-			if($('#author-lastname' + i).val() == ""){
-				$('.author-lastname-help' + i).removeClass('hidden');
-				$('.author-lastname-help' +i + ' strong').text('The last name of the ' + name + ' is required.');	
-				errorCounter++;
-			}
-			else if($('#author-lastname' + i).val().length > 50){
-				$('.author-lastname-help' + i).removeClass('hidden');
-				$('.author-lastname-help' +i + ' strong').text('The length of the last name should not exceed 50 characters.');
-				errorCounter++;				
-			}			
-			else{
-				$('.author-lastname-help' + i).addClass('hidden');
-				nameArray.push($('#author-lastname' + i).val());
-			}
-			authorArray.push(nameArray);
-			nameArray=[];
-		}
-
-		$('#authors').val(authorArray);
-
+		$('.co-author').each(function(){
+				if($(this).children('.firstnames').children().children("input").val() == ""){
+					$(this).children('.firstnames').children('span').removeClass('hidden');
+					$(this).children('.firstnames').children('span').children('strong').text('The first name of the ' + name  +' is required.');
+					errorCounter++;
+				}
+				else if($(this).children('.firstnames').children().children("input").val().length >=50){
+					$(this).children('.firstnames').children('span').removeClass('hidden');
+					$(this).children('.firstnames').children('span').removeClass('hidden');
+					$(this).children('.firstnames').children('span').children('strong').text('The first name field should not exceed 50 characters.');
+					errorCounter++;								
+				}
+				else{
+					$(this).children('.firstnames').children('span').addClass('hidden');
+					nameArray.push($(this).children('.firstnames').children().children("input").val());
+				}
+				if($(this).children('.middlenames').children().children("input").val() == ""){
+					$(this).children('.middlenames').children('span').removeClass('hidden');
+					$(this).children('.middlenames').children('span').children('strong').text('The middle name of the ' + name  +' is required.');
+					errorCounter++;
+				}
+				else if($(this).children('.middlenames').children().children("input").val().length >=50){
+					$(this).children('.middlenames').children('span').removeClass('hidden');
+					$(this).children('.middlenames').children('span').removeClass('hidden');
+					$(this).children('.middlenames').children('span').children('strong').text('The middle name field should not exceed 50 characters.');
+					errorCounter++;			
+				}
+				else{
+					$(this).children('.middlenames').children('span').addClass('hidden');
+					nameArray.push($(this).children('.middlenames').children().children("input").val());
+				}
+				if($(this).children('.lastnames').children().children("input").val() == ""){
+					$(this).children('.lastnames').children('span').removeClass('hidden');
+					$(this).children('.lastnames').children('span').children('strong').text('The last name of the ' + name  +' is required.');
+					errorCounter++;
+				}
+				else if($(this).children('.lastnames').children().children("input").val().length >=50){
+					$(this).children('.lastnames').children('span').removeClass('hidden');
+					$(this).children('.lastnames').children('span').children('strong').text('The last name field should not exceed 50 characters.');
+					errorCounter++;
+				}
+				else{
+					$(this).children('.lastnames').children('span').addClass('hidden');
+					nameArray.push($(this).children('.lastnames').children().children("input").val());
+				}					
+		});
+		
 		tagArray=[];
-		for(i=0;i<tagNum;i++){
-			if(!($('#tag' + i ).val() == "")){
-				$('.tag-help' + i).addClass('hidden');
-				tagArray.push($('#tag' + i).val());
-			}
-			if($('#tag' + i ).val().length >= 50){
-				$('.tag-help' + i).removeClass('hidden');
-				$('.tag-help' + i + ' strong').text('The tag field is required.');
-				errorCounter++;
+		$('#authors').val(nameArray);
+		$('.tag').each(function(){
+			console.log($(this).children().children('input').val());
+			if($(this).children().children('input').val() == ''){
 			}
 			else{
-				$('.tag-help' + i).addClass('hidden');
+				tagArray.push($(this).children().children('input').val());
 			}
-		}
-
+			if($(this).children().children('input').val().length >= 50){
+				$(this).children('span').removeClass('hidden');
+				$(this).children('span').children('strong').text('The tag field should not exceed 50 characters.');
+			}
+			else{
+				$(this).children('span').addClass('hidden');
+			}
+		});
 		$('#tags').val(tagArray);
+
 		if(pubStatus.length == 0){
 			$('.publish-status-help strong').text('The publish field is required.');
 			$('.publish-status-help').removeClass('hidden');
@@ -920,28 +909,34 @@ $(document).ready(function (){
 		else{
 			headType = 'Co Author';
 		}
-		var newAuthor = $(document.createElement('div')).attr('class', 'form-group co-author'+ num);
+		var newAuthor = $(document.createElement('div')).attr('class', 'form-group co-author');
 		newAuthor.after().html(
+			"<span class='firstnames'>" +
 			"<div class='input-group'>"+
 				"<span class='input-group-addon label-title'>First Name</span>" +
-				"<input type='text' id='author-firstname" + num  + "' class='form-control' placeholder='Jose' name='author-firstname" + num +  "'/>" +
+				"<input type='text' id='author-firstname' class='form-control' placeholder='Jose' name='author-firstname'/>" +
 			"</div>" +
-			"<span class='author-firstname-help" + num +  " help-block hidden'>" +
+			"<span class='author-firstname-help help-block hidden'>" +
 				"<strong></strong>" +
 			"</span>" +
+			"</span>" +
+			"<span class='middlenames'>" +
 			"<div class='input-group'>"+
 				"<span class='input-group-addon label-title'>Middle Name</span>" +
-				"<input type='text' id='author-middlename" + num  + "' class='form-control' placeholder='Salazar' name='author-middlename" + num +  "'/>" +
+				"<input type='text' id='author-middlename' class='form-control' placeholder='Salazar' name='author-middlename'/>" +
 			"</div>" +
-			"<span class='author-middlename-help" + num +  " help-block hidden'>" +
+			"<span class='author-middlename-help help-block hidden'>" +
 				"<strong></strong>" +
 			"</span>" +
+			"</span>" +
+			"<span class='lastnames'>" +
 			"<div class='input-group'>"+
 				"<span class='input-group-addon label-title'>Last Name</span>" +
-				"<input type='text' id='author-lastname" + num  + "' class='form-control' placeholder='Rizal' name='author-lastname" + num +  "'/>" +
+				"<input type='text' id='author-lastname' class='form-control' placeholder='Rizal' name='author-lastname'/>" +
 			"</div>" +
-			"<span class='author-lastname-help" + num +  " help-block hidden'>" +
+			"<span class='author-lastname-help help-block hidden'>" +
 				"<strong></strong>" +
+			"</span>" +
 			"</span>" +
 			"<button type='button' class='btn btn-danger co-author-button delete-author'>Delete " + headType + "</button>"
 		);
@@ -951,47 +946,53 @@ $(document).ready(function (){
 
 	var tagNum = 1;
 	$('#add-tag').click(function(){
-		var newTag = $(document.createElement('div')).attr('class', 'tag' + tagNum);
+		var newTag = $(document.createElement('div')).attr('class', 'tag');
 		newTag.after().html(
 			"<div class='input-group'>"  +
 			"<span class='input-group-addon label-title'>Tag</span>" +
-			"<input type='text' id='tag" + tagNum + "' class='form-control' placeholder='Computer Science' name='tag'/>" +				
+			"<input type='text' id='tag' class='form-control' placeholder='Computer Science' name='tag'/>" +				
 			"<span class='input-group-btn'>" +
 				"<button type='button' class='btn btn-secondary remove-tag'>" +
 					"<span class='glyphicon glyphicon-minus'></span>" +
 				"</button>" +
 			"</span>" +
 			"</div>" +
-			"<span class='tag-help" + tagNum +  " help-block hidden'>" +"<strong></strong>" +"</span>"			
+			"<span class='tag-help help-block hidden'>" +"<strong></strong>" +"</span>"			
 		);
-		$('.tag' + (tagNum-1)).after(newTag);
+		$('.tags').append(newTag);
 		tagNum++;
 	});
 
 	var prodNum = 1;
 	$('body').on('click', '#add-producer-button', function(){
-		var newProducer = $(document.createElement('div')).attr('class', 'form-group prod' + prodNum);
+		var newProducer = $(document.createElement('div')).attr('class', 'form-group prod');
 		newProducer.after().html(
+			"<span class='prod-firstnames'>" +
 			"<div class='input-group'>"+
 				"<span class='input-group-addon label-title'>First Name</span>" +
-				"<input type='text' id='prod-firstname" + prodNum  + "' class='form-control' placeholder='Jose' name='prod-firstname" + prodNum +  "'/>" +
+				"<input type='text' id='prod-firstname' class='form-control' placeholder='Jose' name='prod-firstname'/>" +
 			"</div>" +
-			"<span class='prod-firstname-help" + prodNum +  " help-block hidden'>" +
+			"<span class='prod-firstname-help help-block hidden'>" +
 				"<strong></strong>" +
 			"</span>" +
+			"</span>" +
+			"<span class='prod-middlenames'>" +
 			"<div class='input-group'>"+
 				"<span class='input-group-addon label-title'>Middle Name</span>" +
-				"<input type='text' id='prod-middlename" + prodNum  + "' class='form-control' placeholder='Salazar' name='prod-middlename" + prodNum +  "'/>" +
+				"<input type='text' id='prod-middlename' class='form-control' placeholder='Salazar' name='prod-middlename'/>" +
 			"</div>" +
-			"<span class='prod-middlename-help" + prodNum +  " help-block hidden'>" +
+			"<span class='prod-middlename-help help-block hidden'>" +
 				"<strong></strong>" +
 			"</span>" +
+			"</span>" +
+			"<span class='prod-lastnames'>" +
 			"<div class='input-group'>"+
 				"<span class='input-group-addon label-title'>Last Name</span>" +
-				"<input type='text' id='prod-lastname" + prodNum  + "' class='form-control' placeholder='Rizal' name='prod-lastname" + prodNum +  "'/>" +
+				"<input type='text' id='prod-lastname' class='form-control' placeholder='Rizal' name='prod-lastname'/>" +
 			"</div>" +
-			"<span class='prod-lastname-help" + prodNum +  " help-block hidden'>" +
+			"<span class='prod-lastname-help help-block hidden'>" +
 				"<strong></strong>" +
+			"</span>" +
 			"</span>" +
 			"<button type='button' class='btn btn-danger co-author-button delete-prod'>Delete Producer</button>"			
 		);
@@ -1019,6 +1020,7 @@ $(document).ready(function (){
 	// edit script
 
 	$('.material-close').click(function(){
+		$('.add-producer').addClass('hidden');
 		$('#material-reset').trigger('click');	
 		for(i=0;i<tableAuthorCounter;i++){
 			$('.table-authors').children().remove();
@@ -1027,7 +1029,7 @@ $(document).ready(function (){
 			$('.table-tags').children().remove();
 		}
 		for(i=0;i<tableProducerCounter;i++){
-			$('table-producers').children().remove();
+			$('.table-producers').children().remove();
 		}
 		$('.tags-header').removeClass('hidden');
 		$('.cancel-edit').trigger('click');
@@ -1074,11 +1076,11 @@ $(document).ready(function (){
 		$('.view-button-close').removeClass('hidden');
 		$('#material-reset').addClass('hidden');
 		$('#material-submit').addClass('hidden');
-		$('.co-author0').addClass('hidden');
+		$('.co-author').addClass('hidden');
 		$('#add-co-author-button').addClass('hidden');
 		$('.acquisition-radio').addClass('hidden');
 		$('.tables').removeClass('hidden');
-		$('.tag0').addClass('hidden');
+		$('.tag').addClass('hidden');
 		$('#edit-button').removeClass('hidden');
 		var material_id = $(this).find('input').val();
 		$.get('material/' + material_id, function (data) {
@@ -1104,7 +1106,9 @@ $(document).ready(function (){
 			else{
 				$('.thesis').addClass('hidden');
 			}
+
 			if(category == 'Compact Discs' || category == 'Cassette Tapes' || category == 'Digital Versatile Discs' || category == 'Video Home Systems'){
+				$('.add-producer').removeClass('hidden');
 				$('.multimedia').removeClass('hidden');
 				$('.add-producer').removeClass('hidden');
 				$('#add-producer-button').addClass('hidden');
@@ -1114,6 +1118,7 @@ $(document).ready(function (){
 				$('#minutes').val(durationArray[1]);
 				$('#seconds').val(durationArray[2]);
 				$('.author-photographer-director').text('Directors');
+				console.log(producersArray.length);
 				for(i=0, j=0;i<(producersArray.length/3);i++, j+=3){
 					var newProd = $(document.createElement('tr'));
 					newProd.after().html(
@@ -1122,6 +1127,9 @@ $(document).ready(function (){
 					$('.table-producers').append(newProd);
 					tableProducerCounter++;	
 				}
+			}
+			else{
+				$('.add-producer').addClass('hidden');
 			}
 			if(authorsArray.length==0){
 				length = directorsArray.length;
@@ -1223,6 +1231,9 @@ $(document).ready(function (){
 				$('#description').prop('disabled', true);
 				$('#description').val(photo_description);
 			}
+			else{
+				$('.photograph').addClass('hidden');
+			}
 			$('input').each(function(){
 			if($(this).attr('name') == '_token' || $(this).attr('name') == 'material-acqNumber'){
 			}
@@ -1249,8 +1260,8 @@ $(document).ready(function (){
 		$('#material-submit').removeClass('hidden');
 		$('#material-reset').removeClass('hidden');
 		$('.view-button-close').addClass('hidden');
-		$('.tag0').removeClass('hidden');
-		$('.co-author0').removeClass('hidden');
+		$('.tag').removeClass('hidden');
+		$('.co-author').removeClass('hidden');
 		$('.publisher-field').removeClass('hidden');
 		$('.publish-radio').removeClass('hidden');
 		$('.acquisition-field').removeClass('hidden');
@@ -1266,24 +1277,46 @@ $(document).ready(function (){
 				if(i != (producersArray.length/3)){
 					$('#add-producer-button').trigger('click');
 				}
-				$('#prod-firstname' + (i+1)).val(producersArray[j]);
-				$('#prod-middlename' + (i+1)).val(producersArray[j+1]);
-				$('#prod-lastname' + (i+1)).val(producersArray[j+2]);	
-			}	
+			}
+			i = 0;
+			$('.prod').each(function(){
+				$(this).children('.prod-firstnames').children('.input-group').children('input').val(producersArray[i]);
+				$(this).children('.prod-middlenames').children('.input-group').children('input').val(producersArray[i+1]);
+				$(this).children('.prod-lastnames').children('.input-group').children('input').val(producersArray[i+2]);
+			});
 		}
 		for(i=0, j=0;i<(length)/3;i++, j+=3){
 			if(i != (length/3)-1){
 				$('#add-co-author-button').trigger('click');
 			}
-			$('#author-firstname' + i).val(arrays[j]);
-			$('#author-middlename' + i).val(arrays[j+1]);
-			$('#author-lastname' + i).val(arrays[j+2]);	
 		}
-		$('#tag0').val(tagsArray[0]);
+		i=0;
+
+		$('.co-author').each(function(){
+			$(this).children('.firstnames').children('.input-group').children('input').val(arrays[i]);
+			$(this).children('.middlenames').children('.input-group').children('input').val(arrays[i+1]);
+			$(this).children('.lastnames').children('.input-group').children('input').val(arrays[i+2]);
+			i+=3;
+		});
+
+		if(category == 'Photographs'){
+			$('.co-author').each(function(){
+				$(this).children('.firstnames').children('.input-group').children('input').val(photo_firstname);
+				$(this).children('.middlenames').children('.input-group').children('input').val(photo_middlename);
+				$(this).children('.lastnames').children('.input-group').children('input').val(photo_lastname);
+			});
+		}
+
 		for(i=1;i<tagsArray.length;i++){
 			$('#add-tag').trigger('click');
-			$('#tag' + i).val(tagsArray[i]);
 		}
+
+		i=0;
+		$('.tag').each(function(){
+			$(this).children('.input-group').children('input').val(tagsArray[i]);
+			i++;
+		});
+
 		if(publisher_year != ''){
 			$('.published').prop('checked', true);
 		}
@@ -1330,13 +1363,13 @@ $(document).ready(function (){
 			}	
 		});
 		for(i=1;i<=authorCounter;i++){
-			$('.co-author' + i).remove();
+			$('.delete-author').trigger('click');
 		}
 		for(i=1;i<=prodCounter;i++){
-			$('.prod' + i).remove();
+			$('.delete-prod').trigger('click');
 		}		
 		for(i=1;i<=tagCounter;i++){
-			$('.tag' + i).remove();
+			$('.remove-tag').trigger('click');
 		}
 		if(category != 'Thesis'){
 			$('.thesis').addClass('hidden');
@@ -1377,8 +1410,8 @@ $(document).ready(function (){
 		$('.acquisition-radio').addClass('hidden');
 		$('.acquisition-field').addClass('hidden');		
 		$('.publish-radio').addClass('hidden');		
-		$('.co-author0').addClass('hidden');
-		$('.tag0').addClass('hidden');
+		$('.co-author').addClass('hidden');
+		$('.tag').addClass('hidden');
 		$('#add-co-author-button').addClass('hidden');	
 		$('.author-table').removeClass('hidden');
 		$('select').prop('disabled', true);
@@ -1391,9 +1424,29 @@ $(document).ready(function (){
 		$('#course').val(course);
 		$('#hours').val(durationArray[0]);
 		$('#minutes').val(durationArray[1]);
-		$('#seconds').val(durationArray[2]);		
+		$('#seconds').val(durationArray[2]);	
 	});
-
-	
 	// end of edit script
+	$('.delete-button').click(function(){
+		material_id = $(this).val();
+		$.ajax({
+
+			headers: {
+			'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+			},
+			
+			type: "DELETE",
+			
+			url: 'material/' + material_id,
+			
+			success: function (data) {
+			console.log(data);
+			$("#acq" + material_id).remove();
+			},
+			
+			error: function (data) {
+			console.log('Error:', data);
+			}
+		});		
+	});
 });

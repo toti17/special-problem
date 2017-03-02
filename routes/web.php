@@ -27,6 +27,8 @@ Route::get('dashboard/material', 'ViewController@materialDashboard');
 
 Route::get('dashboard/material/{acqNumber}', 'ViewController@viewMaterial');
 
+Route::delete('dashboard/material/{acqNumber}', 'DeleteController@deleteMaterial');
+
 Route::get('/', 'ViewController@show');
 
 Auth::routes();
