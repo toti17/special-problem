@@ -334,7 +334,7 @@ $(document).ready(function (){
 		}
 		else{
 			$('.published-div').addClass('hidden');
-			$(this).val('unpublished');
+			$(this).val('');
 		}
 	});
 
@@ -720,7 +720,6 @@ $(document).ready(function (){
 		tagArray=[];
 		$('#authors').val(nameArray);
 		$('.tag').each(function(){
-			console.log($(this).children().children('input').val());
 			if($(this).children().children('input').val() == ''){
 			}
 			else{
@@ -893,6 +892,7 @@ $(document).ready(function (){
 			}
 		}
 
+		console.log("Error counter: " + errorCounter);
 
 		if(errorCounter != 0){
 			return false;
@@ -1118,7 +1118,6 @@ $(document).ready(function (){
 				$('#minutes').val(durationArray[1]);
 				$('#seconds').val(durationArray[2]);
 				$('.author-photographer-director').text('Directors');
-				console.log(producersArray.length);
 				for(i=0, j=0;i<(producersArray.length/3);i++, j+=3){
 					var newProd = $(document.createElement('tr'));
 					newProd.after().html(
@@ -1318,13 +1317,13 @@ $(document).ready(function (){
 		});
 
 		if(publisher_year != ''){
-			$('.published').prop('checked', true);
+			$('.published').trigger('click');
 		}
 		else{
-			$('.unpublished').prop('checked', true);
+			$('.unpublished').trigger('click');
 		}
 		if(donor_year != ''){
-			$('.donated').prop('checked', true);
+			$('.donated').trigger('click');
 			$('.donated-div').removeClass('hidden');
 			$('#donor-firstname').val(donor_firstname);
 			$('#donor-middlename').val(donor_middlename);
@@ -1332,7 +1331,7 @@ $(document).ready(function (){
 			$('#donated-year').val(donor_year);			
 		}
 		else{
-			$('.purchased').prop('checked', true);
+			$('.purchased').trigger('click');
 			$('.purchased-div').removeClass('hidden');
 			$('#amount').val(amount);
 			$('#purchased-year').val(purchased_year);
@@ -1447,6 +1446,6 @@ $(document).ready(function (){
 			error: function (data) {
 			console.log('Error:', data);
 			}
-		});		
+		});
 	});
 });

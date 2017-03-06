@@ -13,7 +13,7 @@ class Publisher extends Model
     
     public function material()
     {
-    	return $this->hasMany(Material::class);
+        return $this->hasMany(Material::class);
     }
     public function publisher_name()
     {
@@ -21,6 +21,6 @@ class Publisher extends Model
     }
     public function address()
     {
-    	return $this->belongsTo(Address::class);
+        return $this->belongsTo(Address::class);
     }
 }

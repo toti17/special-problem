@@ -56,7 +56,7 @@ class Material extends Model
     }
     public function thesis()
     {
-        return $this->hasMany(Thesis::class, 'acqNumber');
+        return $this->hasOne(Thesis::class, 'acqNumber');
     }
     public function photo()
     {
@@ -64,6 +64,6 @@ class Material extends Model
     }
     public function multimedia()
     {
-        return $this->hasMany(Multimedia::class, 'acqNumber');
+        return $this->hasOne(Multimedia::class, 'acqNumber');
     }
 }

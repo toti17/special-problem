@@ -13,6 +13,6 @@ class Course extends Model
 
     public function thesis()
     {
-    	return $this->hasMany(Thesis::class);
+    	return $this->hasMany(Thesis::class, 'course_id');
     }
 }
