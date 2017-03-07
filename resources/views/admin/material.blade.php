@@ -51,6 +51,11 @@
 <div class='modal fade' id='material-modal' role='dialog' data-keyboard='false' data-backdrop='static'>
 	<div class='modal-dialog' role='document'>
 		<div class='modal-content'>
+			@if($errors->any())
+			   @foreach ($errors->all() as $error)
+			      <div>{{ $error }}</div>
+			  @endforeach
+			@endif
 			<form class="material-form" role="form" method="POST" action="{{ url('/add/material') }}">
 				{{ csrf_field() }}
 				<input type='hidden' value='available' name='material-status'/>

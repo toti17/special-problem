@@ -211,6 +211,7 @@ $(document).ready(function (){
 	// add material script
 
 	$('#add-material-button').click(function(){
+		$('.material-form').attr('action', 'http://localhost:8000/add/material');
 		$('.modal-title').text('Add Material');
 		$('#material-submit').text("Add");
 		$('.table-donors').addClass('hidden');
@@ -334,7 +335,7 @@ $(document).ready(function (){
 		}
 		else{
 			$('.published-div').addClass('hidden');
-			$(this).val('');
+			$(this).val('unpublished');
 		}
 	});
 
@@ -409,6 +410,8 @@ $(document).ready(function (){
 		tagCounter++;
 	});
 
+	var accessionCheck = null;
+
 	$('#material-submit').click(function(){
 		var YearPattern = new RegExp(/^(\d{4})$/);
 		var errorCounter = 0;
@@ -421,6 +424,7 @@ $(document).ready(function (){
 
 		var acqNumber = $('#acqNumber').val();
 		acqNumber = $.trim(acqNumber);
+
 		if(acqNumber == ""){
 			$('.acqNumber-help').removeClass('hidden');
 			$('.acqNumber-help strong').text('The acession number is required.');
@@ -431,9 +435,8 @@ $(document).ready(function (){
 			$('.acqNumber-help strong').text('The accession number should not exceed 50 characters.');
 			errorCounter++;
 		}
-		else{
-			$('.acqNumber-help').addClass('hidden');
-		}
+
+
 
 		var title = $('#title').val();
 		title = $.trim(title);
@@ -734,7 +737,6 @@ $(document).ready(function (){
 			}
 		});
 		$('#tags').val(tagArray);
-
 		if(pubStatus.length == 0){
 			$('.publish-status-help strong').text('The publish field is required.');
 			$('.publish-status-help').removeClass('hidden');
@@ -742,7 +744,7 @@ $(document).ready(function (){
 		}
 		else{
 			$('.publish-status-help').addClass('hidden');
-			if($('.publish-status').val() == 'published'){
+			if(pubStatus == 'Published'){
 				if($('#publisher').val() == ""){
 					$('.pub-help strong').text('The publisher field is required.');
 					$('.pub-help').removeClass('hidden');
@@ -779,7 +781,10 @@ $(document).ready(function (){
 				else{
 					$('.place-help').addClass('hidden');
 				}
-			}	
+			}
+			else if(pubStatus == 'Unpublished'){
+				$('#published-year').val('');
+			}
 		}
 				
 
@@ -791,6 +796,10 @@ $(document).ready(function (){
 		else{
 			$('.acquisition-mode-help').addClass('hidden');
 			if(acquisitionMode == 'Donated'){
+				$('#amount').val('');
+				$('#purchased-year').val('');
+				$('#address').val('');
+
 				if($('#donor-firstname').val() == ""){
 					$('.donor-first-name-help strong').text('The first name field is required.');
 					$('.donor-first-name-help').removeClass('hidden');
@@ -846,6 +855,10 @@ $(document).ready(function (){
 				}
 			}
 			else if(acquisitionMode == 'Purchased'){
+				$('#donor-firstname').val('');
+				$('#donor-middlename').val('');
+				$('#donor-lastname').val('');
+				$('#donated-year').val('');
 				amountPattern = new RegExp(/^[\d,]*(\.\d*)?$/,"g");
 				amountValue = amountPattern.test($('#amount').val());				
 				if($('#amount').val() ==""){
@@ -894,9 +907,41 @@ $(document).ready(function (){
 
 		console.log("Error counter: " + errorCounter);
 
-		if(errorCounter != 0){
-			return false;
+		if($('#material-submit').text() != 'Save changes'){
+			function checkAcq(){
+				return $.ajax({
+					type: 'GET',
+					url: 'material/check/' + acqNumber,
+					success: function(data){
+						accessionCheck = data.accessionNumber;
+						if(accessionCheck == null){
+							$('.acqNumber-help').addClass('hidden');
+						}
+						else{
+							$('.acqNumber-help').removeClass('hidden');
+							$('.acqNumber-help strong').text('The accession number ' + acqNumber + ' already exists.');					
+							errorCounter++;
+						}
+					}
+				});			
+			}
+			if(errorCounter == 0){
+				checkAcq().done(function(r){
+					if(r.accessionNumber != null){
+						return false;
+					}
+					else{
+						$('.material-form').submit();
+					}
+				}).
+				fail(function(x){
+					return false;
+				});	
+			}				
+			return false;				
 		}
+
+
 	});
 
 	var num = 1;
@@ -1020,6 +1065,7 @@ $(document).ready(function (){
 	// edit script
 
 	$('.material-close').click(function(){
+		$('#material-submit').text('Add');
 		$('.add-producer').addClass('hidden');
 		$('#material-reset').trigger('click');	
 		for(i=0;i<tableAuthorCounter;i++){
@@ -1083,7 +1129,18 @@ $(document).ready(function (){
 		$('.tag').addClass('hidden');
 		$('#edit-button').removeClass('hidden');
 		var material_id = $(this).find('input').val();
-		$.get('material/' + material_id, function (data) {
+
+		$.ajax({
+			async: true,			
+			headers: {
+			'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+			},
+			
+			type: "GET",
+			
+			url: 'material/' + material_id,
+			
+			success: function (data) {
 			category = data.category;
 			acqNumber = data.acqNumber;
 			course = data.course;
@@ -1092,6 +1149,7 @@ $(document).ready(function (){
 			console.log(data);
 			$('.material-acqNumber').text(title);
 			$('#category').val(category);
+			selectValue= $('#category').val(category);
 			$('#acqNumber').val(acqNumber);
 			$('#title').val(title);
 			authorsArray = data.authors;
@@ -1241,6 +1299,11 @@ $(document).ready(function (){
 			}		
 			});
 			$('select').prop('disabled', true);
+			},
+			
+			error: function (data) {
+			console.log('Error:', data);
+			}			
 		});
 	});
 
@@ -1269,6 +1332,11 @@ $(document).ready(function (){
 		$('input').each(function(){
 			$(this).prop('disabled', false);
 		});
+
+		$('#material-submit').text('Save changes');
+
+		$('.material-form').attr('action', 'http://localhost:8000/edit/material/' + acqNumber);
+
 		if(category == 'Compact Discs' || category == 'Cassette Tapes' || category == 'Digital Versatile Discs' || category == 'Video Home Systems'){
 			$('#add-producer-button').removeClass('hidden');
 			$('.producer-table').addClass('hidden');
@@ -1336,10 +1404,11 @@ $(document).ready(function (){
 			$('#amount').val(amount);
 			$('#purchased-year').val(purchased_year);
 			$('#address').val(address);		
-		}
+		}	
 	});
 
 	$('.cancel-edit').click(function(){
+		$('#material-submit').text('Add');
 		if(category == 'Compact Discs' || category == 'Cassette Tapes' || category == 'Digital Versatile Discs' || category == 'Video Home Systems'){
 			$('.author-photographer-director').text('Directors');
 			$('.add-producer').removeClass('hidden');
@@ -1436,7 +1505,7 @@ $(document).ready(function (){
 			
 			type: "DELETE",
 			
-			url: 'material/' + material_id,
+			url: 'material/delete/' + material_id,
 			
 			success: function (data) {
 			console.log(data);

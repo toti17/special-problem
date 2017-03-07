@@ -25,6 +25,13 @@ use \App\Producer;
 
 class AddController extends Controller
 {
+    public function checkAcq($acqNumber){
+        $material = new Material;
+        $acq = $material::find($acqNumber);
+        return response()->json([
+            'accessionNumber' => $acq,
+        ]);
+    }
     public function add(Request $request)
     {
         $validator = Validator::make($request->all(), [

@@ -77,10 +77,7 @@ class DeleteController extends Controller
             $publisher_name = new Publisher_Name;
             $publisher_name::destroy($publisher_name_id);
          }
-         if($publisher_address_count > 1){
-            $acqNumber->publisher->delete();
-         }
-         else if($publisher_address_count == 1){
+         if($publisher_address_count == 1){
             $total_address_count = DB::table('publisher')
                ->join('purchased_details', 'publisher.address_id', '=', 'purchased_details.address_id')
                ->select('purchased_details.address_id')->where('publisher.address_id', '=', $publisher_address_id)->get()->count();
@@ -88,10 +85,8 @@ class DeleteController extends Controller
                $acqNumber->publisher->delete();
                $address::destroy($publisher_address_id);
             }
-            else{
-               $acqNumber->publisher->delete();
-            }
          }
+         $acqNumber->publisher->delete();
       }
 
       foreach($acqNumber->tags as $tags){

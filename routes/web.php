@@ -11,13 +11,13 @@
 |
 */
 
-Route::get('/student/register', 'RegisterController@studentregister');
-
 Route::post('/student/register', 'RegisterController@register');
 
 Route::post('/add/studentnumber', 'AddStudentNumberController@add');
 
-Route::post('/add/material', 'MaterialController@add');
+Route::post('/add/material', 'AddController@add');
+
+Route::get('/student/register', 'RegisterController@studentregister');
 
 Route::get('/dashboard/home', 'RegisterController@dashboard');
 
@@ -27,9 +27,13 @@ Route::get('dashboard/material', 'ViewController@materialDashboard');
 
 Route::get('dashboard/material/{acqNumber}', 'ViewController@viewMaterial');
 
-Route::delete('dashboard/material/{acqNumber}', 'DeleteController@deleteMaterial');
+Route::get('dashboard/material/check/{acqNumber}', 'AddController@checkAcq');
 
 Route::get('/', 'ViewController@show');
+
+Route::post('/edit/material/{acqNumber}', 'EditController@edit');
+
+Route::delete('dashboard/material/delete/{acqNumber}', 'DeleteController@deleteMaterial');
 
 Auth::routes();
 
