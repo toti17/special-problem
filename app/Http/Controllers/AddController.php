@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use DB;
 use Validator;
 use Illuminate\Http\Request;
 use \App\Material;
@@ -25,11 +26,25 @@ use \App\Producer;
 
 class AddController extends Controller
 {
-    public function checkAcq($acqNumber){
-        $material = new Material;
-        $acq = $material::find($acqNumber);
+
+    public function checkAcq($number, $original, $change){
+        // editing
+        if($change == true){
+            if($number == $original){
+                $acq = null;
+            }
+            else{
+                $acq= Material::find($number);
+            }
+        }
+        // adding
+        else{
+            $acq= Material::find($number);
+        }
         return response()->json([
+            'original' => $original,
             'accessionNumber' => $acq,
+            'params' => $change,
         ]);
     }
     public function add(Request $request)
@@ -162,6 +177,7 @@ class AddController extends Controller
             $hour = $request->input('hours');
             $minute = $request->input('minutes');
             $second = $request->input('seconds');
+            $array1 = [$hour, $minute, $second];
             $time = $hour . ':' . $minute . ':' . $second;
             $time = strtotime($time);
             $multimedia->duration = date('H:i:s', $time);

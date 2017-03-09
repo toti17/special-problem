@@ -153,8 +153,8 @@ class DeleteController extends Controller
                $acqNumber->producer()->detach($producers->producer_id);
                $producer::destroy($producers->producer_id);
             }
-            $acqNumber->multimedia->delete();
          }
+         $acqNumber->multimedia->delete();
       }
 
       $acqNumber->delete();

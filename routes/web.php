@@ -27,7 +27,7 @@ Route::get('dashboard/material', 'ViewController@materialDashboard');
 
 Route::get('dashboard/material/{acqNumber}', 'ViewController@viewMaterial');
 
-Route::get('dashboard/material/check/{acqNumber}', 'AddController@checkAcq');
+Route::get('dashboard/material/check/{number}/{original}/{change}', 'AddController@checkAcq');
 
 Route::get('/', 'ViewController@show');
 

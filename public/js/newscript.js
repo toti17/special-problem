@@ -263,16 +263,16 @@ $(document).ready(function (){
 				num = 1;
 				prodNum = 1;
 				tagNum = 1;
-				$(this).val('');				
+				// $(this).val('');			
 			}
 		});
 
-		$('input[name="publish-status"]').prop('checked', false);
-		$('input[name="acquisition-mode"]').prop('checked', false);
-		$('.published-div').addClass('hidden');
-		$('.purchased-div').addClass('hidden');
-		$('.donated-div').addClass('hidden');
-		$('.help-block').addClass('hidden');
+		// $('input[name="publish-status"]').prop('checked', false);
+		// $('input[name="acquisition-mode"]').prop('checked', false);
+		// $('.published-div').addClass('hidden');
+		// $('.purchased-div').addClass('hidden');
+		// $('.donated-div').addClass('hidden');
+		// $('.help-block').addClass('hidden');
 
 		// removing authors
 		for(i=1;i<=authorCounter;i++){
@@ -586,6 +586,7 @@ $(document).ready(function (){
 
 			if(minute == ''){
 				minute = 0;
+				$('#minutes').val(minute);
 			}
 			else if(minuteValue == false){
 				$('.minute-help').removeClass('hidden');
@@ -603,6 +604,7 @@ $(document).ready(function (){
 
 			if(second == ''){
 				second = 0;
+				$('#seconds').val(second);
 			}
 			else if(secondValue == false){
 				$('.second-help').removeClass('hidden');
@@ -907,17 +909,27 @@ $(document).ready(function (){
 
 		console.log("Error counter: " + errorCounter);
 
-		if($('#material-submit').text() != 'Save changes'){
+			var change = true;
+			if($('#material-submit').text() != 'Save changes'){
+				change = false;
+			}
 			function checkAcq(){
 				return $.ajax({
 					type: 'GET',
-					url: 'material/check/' + acqNumber,
+					url: 'material/check/' + acqNumber + '/' + aqoh + '/' + change,
 					success: function(data){
 						accessionCheck = data.accessionNumber;
+						change = data.params;
 						if(accessionCheck == null){
 							$('.acqNumber-help').addClass('hidden');
+							console.log(accessionCheck);
+							console.log(data.original);
+							errorCounter++;
 						}
 						else{
+							console.log(accessionCheck);
+							console.log(data.original);
+							console.log(change);
 							$('.acqNumber-help').removeClass('hidden');
 							$('.acqNumber-help strong').text('The accession number ' + acqNumber + ' already exists.');					
 							errorCounter++;
@@ -927,6 +939,7 @@ $(document).ready(function (){
 			}
 			if(errorCounter == 0){
 				checkAcq().done(function(r){
+					console.log(r.accessionNumber);
 					if(r.accessionNumber != null){
 						return false;
 					}
@@ -937,9 +950,13 @@ $(document).ready(function (){
 				fail(function(x){
 					return false;
 				});	
-			}				
+			}
+			else{
+				console.log('haha');
+				return false;
+			}
 			return false;				
-		}
+
 
 
 	});
@@ -1117,6 +1134,7 @@ $(document).ready(function (){
 	var producersArray = [];
 	var length = 0;
 	var arrays = [];
+	var aqoh = 0;
 	$('.material-view-button').click(function(){
 		$('.modal-title').text('View Material');
 		$('.view-button-close').removeClass('hidden');
@@ -1143,6 +1161,7 @@ $(document).ready(function (){
 			success: function (data) {
 			category = data.category;
 			acqNumber = data.acqNumber;
+			aqoh = data.acqNumber;
 			course = data.course;
 			school = data.school;
 			title = data.title;
