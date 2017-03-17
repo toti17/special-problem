@@ -1,10 +1,5 @@
 @extends('layout')
 @section('content')
-@if(Auth::user()->status == "confirmed" and Auth::user()->type != "admin")
-
-	<button type="button" class="btn btn-success">BORROW</button>
-
-@endif
 
 @if(Auth::user()->type == "admin")
 <div class="container-fluid custom-container">
@@ -40,4 +35,5 @@
 	</div>
 </div>
 @endif
+
 @endsection

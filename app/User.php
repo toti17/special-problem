@@ -33,6 +33,10 @@ class User extends Authenticatable
     {
         return $this->hasOne(Student::class,'username');
     }
+    public function material()
+    {
+        return $this->belongsToMany(Material::class, 'borrowed', 'username', 'acqNumber');
+    }
     public function staff()
     {
         return $this->hasOne(Staff::class, 'username');

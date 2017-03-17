@@ -9,6 +9,12 @@ use \App\StudentNumber;
 class RegisterController extends Controller
 {
 
+    public function confirmAccount(User $username, $confirmStatus)
+    {
+        $username->status = $confirmStatus;
+        $username->save();
+    }
+
     public function studentregister()
     {
     	return view("auth.register");
@@ -61,7 +67,7 @@ class RegisterController extends Controller
                         'password' => bcrypt($request->input('password')),
                     ]);
                     if(Auth::attempt(['username' => $request->input('username'), 'password' => $request->input('password')])){
-                        return redirect('/')->with('status', 'Registration Successful!');
+                        return redirect('/dashboard/student')->with('status', 'Registration Successful!');
                     }                                         
                 }
                 else{
@@ -79,77 +85,8 @@ class RegisterController extends Controller
                         'type' => $request->input('type'),
                         'status' => $request->input('status'),
                         'password' => bcrypt($request->input('password')),
-                    ]);                
-            }            
+                    ]);
+            }       
         }
-        // if($type == "UP"){ 
-        //        if(Auth::check()){
-        //             if(Auth::user()->type == "admin"){
-        //                 User::create([
-        //                     'firstname' => $request->input('firstname'),
-        //                     'middlename' => $request->input('middlename'),
-        //                     'lastname' => $request->input('lastname'),
-        //                     'username' => $request->input('username'),
-        //                     'email' => $request->input('email'),
-        //                     'institution' => $request->input('institution'),
-        //                     'type' => $request->input('type'),
-        //                     'status' => $request->input('status'),
-        //                     'password' => bcrypt($request->input('password')),
-        //                 ]);
-        //                 // else{
-        //                 //     return redirect()->back()->with('error', "Student number doesn't exist.");
-        //                 // }                    
-        //                 return redirect('/dashboard/user')->with('status', 'Registration Successful!');
-        //             }
-        //        }
-        //        else{
-        //             if($studentNumber){
-        //                 User::create([
-        //                     'firstname' => $request->input('firstname'),
-        //                     'middlename' => $request->input('middlename'),
-        //                     'lastname' => $request->input('lastname'),
-        //                     'username' => $request->input('username'),
-        //                     'email' => $request->input('email'),
-        //                     'institution' => $request->input('institution'),
-        //                     'type' => $request->input('type'),
-        //                     'status' => $request->input('status'),
-        //                     'password' => bcrypt($request->input('password')),
-        //                 ]);
-        //                 if(Auth::attempt(['username' => $request->input('username'), 'password' => $request->input('password')])){
-        //                     return redirect('/')->with('status', 'Registration Successful!');
-        //                 }                                         
-        //             }
-        //             else{
-        //                 return redirect()->back()->with('error', "Student number doesn't exist.");
-        //             }
-        //        }
-        // }
-        // else{
-        //     User::create([
-        //         'firstname' => $request->input('firstname'),
-        //         'middlename' => $request->input('middlename'),
-        //         'lastname' => $request->input('lastname'),
-        //         'username' => $request->input('username'),
-        //         'email' => $request->input('email'),
-        //         'institution' => $request->input('institution'),
-        //         'type' => $request->input('type'),
-        //         'status' => $request->input('status'),
-        //         'password' => bcrypt($request->input('password')),
-        //     ]);
-        //    if(Auth::check()){
-        //        if(Auth::user()->type == "admin"){
-        //             return redirect('/dashboard/user')->with('status', 'Registration Successful!');
-        //        }
-        //        else{
-        //             if(Auth::attempt(['username' => $request->input('username'), 'password' => $request->input('password')])){
-        //                 return redirect('/dashboard');
-        //             }
-        //        }
-        //    }
-        // }
-    }
-    public function dashboard()
-    {
-        return view('dashboard');
     }
 }

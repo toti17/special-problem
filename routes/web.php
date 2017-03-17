@@ -19,17 +19,24 @@ Route::post('/add/material', 'AddController@add');
 
 Route::get('/student/register', 'RegisterController@studentregister');
 
-Route::get('/dashboard/home', 'RegisterController@dashboard');
+Route::get('/', 'ViewController@dashboard');
+
+Route::get('/home', 'ViewController@dashboard');
+
+
+Route::get('/dashboard/home', 'ViewController@dashboard');
 
 Route::get('dashboard/user', 'ViewController@userDashboard');
+
+Route::get('/dashboard/user/confirm/{username}/{confirmStatus}', 'RegisterController@confirmAccount');
 
 Route::get('dashboard/material', 'ViewController@materialDashboard');
 
 Route::get('dashboard/material/{acqNumber}', 'ViewController@viewMaterial');
 
-Route::get('dashboard/material/check/{number}/{original}/{change}', 'AddController@checkAcq');
+Route::get('dashboard/search', 'SearchController@autocomplete');
 
-Route::get('/', 'ViewController@show');
+Route::get('dashboard/material/check/{number}/{original}/{change}', 'AddController@checkAcq');
 
 Route::post('/edit/material/{acqNumber}', 'EditController@edit');
 

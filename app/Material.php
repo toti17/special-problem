@@ -11,17 +11,9 @@ class Material extends Model
     protected $fillable = ['acqNumber', 'title', 'status', 'material_type_id', 'publisher_id', 'donor_id'];
     public $incrementing = false;
 
-    public function staff()
-    {
-        return $this->belongsToMany(Staff::class, 'modified', 'acqNumber', 'username');
-    }
-    public function student()
-    {
-        return $this->belongsToMany(Student::class, 'borrowed', 'acqNumber', 'username');
-    }
     public function user()
     {
-        return $this->belongsToMany(Users::class, 'borrowed', 'acqNumber', 'users_id');
+        return $this->belongsToMany(User::class, 'borrowed', 'acqNumber', 'username');
     }
     public function author()
     {

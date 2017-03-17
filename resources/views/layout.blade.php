@@ -4,8 +4,9 @@
 		<meta charset="utf-8">
 		<meta name="csrf-token" content="{{ csrf_token() }}">
 		<link href="/css/bootstrap.min.css" rel="stylesheet"  type="text/css">
-		<link href="/css/style.css" rel="stylesheet"  type="text/css">
+		<link href="/css/style.css" rel="stylesheet"  type="text/css">	
 		<script src="/js/jquery-3.1.1.js"></script>
+		<script src="/js/jquery-ui.js"></script>			
 		<script src="/js/bootstrap.min.js"></script>
 		<script src="/js/newscript.js"></script>	
 		<noscript>
@@ -20,9 +21,9 @@
 	<body class ='pagecontainer'>
 	<header class="container-fluid header">
 	    <img class="up-logo" src="/images/University of the Philippines Visayas.png"/>
-	    <h6 class="header-inline header-color">
+	    <h7 class="header-inline header-color">
 	            CENTER FOR WEST VISAYAN STUDIES ARCHIVE & INVENTORY SYSTEM
-	    </h6>
+	    </h7>
 	</header>
 	<nav class="navbar navbar-inverse custom-navbar">
 	    <div class="container-fluid">
@@ -39,7 +40,7 @@
 	            	<li>
 					<!-- <a href="#">Home</a> -->
 	            	</li>	            	       	
-	            	@if(Auth::user()->type == "UP" || Auth::user()->type == "NON-UP")
+	            	@if(Auth::user()->type == "student")
 	                	<li>
 	                   	 <a>Vertical Files</a>
 	                    	<ul class="sub" id="sub-vertical">
@@ -117,17 +118,21 @@
 				<a href="{{ url('/student/register') }}">Sign up</a>
 	                </li>
 	                @endif
-			<li>
-	                  <a href="{{ url('/logout') }}"
-	                      onclick="event.preventDefault();
-	                               document.getElementById('logout-form').submit();">
-	                      Logout
-	                  </a>
+	                @if(Auth::check())	
+	                @if(Auth::user()->type == "student")
+				<li class='pull-right'>
+				              <a href="{{ url('/logout') }}"
+				                  onclick="event.preventDefault();
+				                           document.getElementById('logout-form').submit();">
+				                  Logout
+				              </a>
 
-	                  <form id="logout-form" action="{{ url('/logout') }}" method="POST" style="display: none;">
-	                      {{ csrf_field() }}
-	                  </form>
-			</li>		                                   
+				              <form id="logout-form" action="{{ url('/logout') }}" method="POST" style="display: none;">
+				                  {{ csrf_field() }}
+				              </form>
+				</li>
+				@endif
+				@endif                                  
 	<!--                 <li>
 	                    <a href="">Artifacts & Museum</a>
 	                    <ul class="sub" id="sub-inventory">

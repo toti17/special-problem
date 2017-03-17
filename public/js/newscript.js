@@ -1,4 +1,11 @@
 $(document).ready(function (){
+	// proceed to confirm accounts if html is a pagination link	
+    setTimeout(function() {
+	if($(location).attr('href').indexOf('dashboard/user?page') != -1){
+		$('#confirm-account-button').trigger('click');
+	}
+    },10);
+	//  end of changing html
 
 	// login script
 
@@ -21,6 +28,13 @@ $(document).ready(function (){
 			$('.user-label').text('Employee Number:');
 			$('#role').val('staff');
 		}
+	});
+
+	var wasNeverSubmitted = true; 
+	$('.login-button').click(function(){
+		$(this).text('Signing in');
+		$(this).prop('disabled', true);
+		$('.login-body').children('form').submit();
 	});
 
 	// end of login script
@@ -130,16 +144,54 @@ $(document).ready(function (){
 	$('#user-button').click(function(){
 		$('#user-form').removeClass('hidden');
 		$('.student-form').addClass('hidden');
+		$('.confirm-account-div').addClass('hidden');
 		$(".student-number-panel").addClass('hidden');
 	});
 
 	$('#student-button').click(function(){
 		$('.student-form').removeClass('hidden');
 		$('#user-form').addClass('hidden');
+		$('.confirm-account-div').addClass('hidden');
 		$('.user-panel').addClass('hidden');
 	});
 
 	// end of sidebar script
+
+	// confirm accounts script
+
+	$('#confirm-account-button').click(function(){
+		$('.student-form').addClass('hidden');
+		$('#user-form').addClass('hidden');
+		$('.confirm-account-div').removeClass('hidden');
+	});
+
+	$('.user-confirm-button').click(function(){
+		var confirmStatus = $.trim($(this).text());
+		var id = $(this).parent().children('input').val()
+		if(confirmStatus == 'confirmed'){
+			$(this).removeClass('btn-danger').addClass('btn-success');
+			$(this).parent().children('.user-confirm-button').removeClass('btn-danger').addClass('btn-default');
+		}
+		else if(confirmStatus == 'unconfirmed'){
+			$(this).parent().children('.user-confirm-button').removeClass('btn-success').addClass('btn-default');
+			$(this).removeClass('btn-success').addClass('btn-danger');
+		}
+
+		function confirm(confirmStatus){
+			$("body").css("cursor", "wait");
+			return $.ajax({
+				type: 'GET',
+				url: '/dashboard/user/confirm/' + id + '/' + confirmStatus,
+				success: function(data){
+					console.log(data);
+					$("body").css("cursor", "default");
+				}
+			});
+		}
+		confirm(confirmStatus);
+	});
+
+	// endof confirm accounts script
 
 	// add student number script
 
@@ -208,6 +260,13 @@ $(document).ready(function (){
 
 	// end of add student number script
 
+	if($('.material-items').children().length == 0){
+		$('#no-materials').toggle(true);
+	}
+	else{
+		$('#no-materials').toggle(false);
+	}
+
 	// add material script
 
 	$('#add-material-button').click(function(){
@@ -221,6 +280,7 @@ $(document).ready(function (){
 		$('.tag').removeClass('hidden');
 		$('.author-photographer-director').removeClass('hidden');
 		$('.co-author').removeClass('hidden');
+		$('#add-producer-button').removeClass('hidden');
 		$('#add-co-author-button').removeClass('hidden');
 		$('.publisher-field').removeClass('hidden');
 		$('.acquisition-field').removeClass('hidden');
@@ -234,8 +294,10 @@ $(document).ready(function (){
 		$('.donated-div').addClass('hidden');
 		$('.purchased-div').addClass('hidden');			
 		$('input').each(function(){
-			if($(this).attr('name') == '_token' || $(this).attr('name') == 'size-type' 
-			|| $(this).attr('name') == 'duration-type' || $(this).attr('name') == 'material-acqNumber'){}
+			if($(this).attr('name') == '_token' || $(this).attr('name') == 'size-type'
+			|| $(this).attr('name') == 'duration-type' || $(this).attr('name') == 'material-acqNumber'){
+				$(this).prop('disabled', false);
+			}
 			else{
 				$(this).prop('checked', false);
 				$(this).prop('disabled', false);
@@ -944,6 +1006,9 @@ $(document).ready(function (){
 						return false;
 					}
 					else{
+						$('#material-submit').text('Adding');
+						$('#material-reset').prop('disabled', true);
+						$('#material-submit').prop('disabled', true);
 						$('.material-form').submit();
 					}
 				}).
@@ -952,7 +1017,6 @@ $(document).ready(function (){
 				});	
 			}
 			else{
-				console.log('haha');
 				return false;
 			}
 			return false;				
@@ -1096,6 +1160,7 @@ $(document).ready(function (){
 		}
 		$('.tags-header').removeClass('hidden');
 		$('.cancel-edit').trigger('click');
+		$('.search').prop('disabled', false);
 	});
 
 	$('.view-button-close').click(function(){
@@ -1147,7 +1212,7 @@ $(document).ready(function (){
 		$('.tag').addClass('hidden');
 		$('#edit-button').removeClass('hidden');
 		var material_id = $(this).find('input').val();
-
+		$("body").css("cursor", "wait");
 		$.ajax({
 			async: true,			
 			headers: {
@@ -1157,8 +1222,8 @@ $(document).ready(function (){
 			type: "GET",
 			
 			url: 'material/' + material_id,
-			
 			success: function (data) {
+			$("body").css("cursor", "default");
 			category = data.category;
 			acqNumber = data.acqNumber;
 			aqoh = data.acqNumber;
@@ -1185,9 +1250,13 @@ $(document).ready(function (){
 			}
 
 			if(category == 'Compact Discs' || category == 'Cassette Tapes' || category == 'Digital Versatile Discs' || category == 'Video Home Systems'){
-				$('.add-producer').removeClass('hidden');
+				if(producersArray.length != 0){
+					$('.add-producer').removeClass('hidden');
+				}
+				else{
+					$('.add-producer').addClass('hidden');
+				}
 				$('.multimedia').removeClass('hidden');
-				$('.add-producer').removeClass('hidden');
 				$('#add-producer-button').addClass('hidden');
 				duration = data.duration;
 				durationArray = duration.split(':');
@@ -1235,12 +1304,14 @@ $(document).ready(function (){
 				tableTagsCounter++;
 			}
 			if(data.publisher_name == ''){
+				$('.borrow-button').addClass('hidden');
 				$('.publisher-field').addClass('hidden');
 				publisher_name = '';
 				publisher_year = '';
 				publisher_place = '';
 			}
 			else{
+				$('.borrow-button').removeClass('hidden');
 				publisher_name = data.publisher_name;
 				publisher_year = data.publisher_year;
 				publisher_place = data.publisher_place;
@@ -1514,26 +1585,69 @@ $(document).ready(function (){
 		$('#seconds').val(durationArray[2]);	
 	});
 	// end of edit script
-	$('.delete-button').click(function(){
-		material_id = $(this).val();
-		$.ajax({
 
-			headers: {
-			'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-			},
-			
-			type: "DELETE",
-			
-			url: 'material/delete/' + material_id,
-			
-			success: function (data) {
-			console.log(data);
-			$("#acq" + material_id).remove();
-			},
-			
-			error: function (data) {
-			console.log('Error:', data);
+	// delete script
+
+	$('.delete-button').click(function(){
+		$("body").css("cursor", "wait");
+		$('.delete-button').prop('disabled', true);
+		material_id = $(this).val();
+		function deleteMaterials(){
+			return $.ajax({
+
+				headers: {
+				'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+				},
+				
+				type: "DELETE",
+				
+				url: 'material/delete/' + material_id,
+				
+				success: function (data) {
+				console.log(data);
+				$("#acq" + material_id).remove();
+				},
+				
+				error: function (data) {
+				console.log('Error:', data);
+				}
+			});
+		}
+		deleteMaterials().done(function(r){
+			console.log(r);
+			$("body").css("cursor", "default");
+			$('.delete-button').prop('disabled', false);			
+			$('.success-close').trigger('click');
+			if($('.material-items').children().length == 0){
+				$('#no-materials').toggle(true);
 			}
-		});
+			else{
+				$('#no-materials').toggle(false);
+			}			
+		}).
+		fail(function(x){
+			console.log(x);
+		});		
 	});
+
+	// end of delete script
+
+	// $('.search').click(function(){
+	// 	function searchh(){
+	// 		return $.ajax({
+	// 			type: 'GET',
+	// 			url: 'search',
+	// 			success: function(data){
+
+	// 			}
+	// 		});			
+	// 	}
+	// 	searchh().done(function(r){
+	// 		console.log(r);
+	// 	});	
+	// });
+	$('.search').autocomplete({
+		source: 'search'
+	});
+
 });

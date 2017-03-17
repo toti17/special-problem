@@ -64,15 +64,14 @@ th{
 
 .header{
 	position: fixed;
-	top: 0;
-	right: 0;
-	left: 0;
+	width: 100%;
 	z-index: 1030;
 	background-color: white;
 }
 
 .header-inline{
 	display: inline;
+	font-size: 20px;
 }
 
 .header-color{
@@ -267,17 +266,6 @@ th{
 
 /*end of register*/
 
-
-/*search box*/
-
-.search-box{
-
-	margin-top: 150px;
-	margin-bottom: 50px;
-}
-
-/*end of search box*/
-
 /*dashboard*/
 
 .dashboard{
@@ -335,17 +323,15 @@ th{
 	background-position: 0 0;
 }
 
-#student-form, #user-form{
-	margin-top: 20px;
-}
-
-.student-form{
-	margin-top: 20px;
+#student-form, #user-form, .student-form, .confirm-account-div{
+	margin-top: 74px;
 }
 
 .student-number-panel{
-	/*visibility: hidden;*/
 	margin-bottom: 0px;
+	position: absolute;
+	top: 55px;
+	right: 333px;
 }
 
 .student-number-status{
@@ -381,6 +367,12 @@ th{
 	margin-bottom: 0px;
 }
 
+.user-panel{
+	position: absolute;
+	top: 54px;
+	right: 325px;
+}
+
 /*end of user panel*/
 
 /*add file*/
@@ -405,6 +397,25 @@ th{
 	left: -104px;
 }
 
+.success-status{
+	position: absolute;	
+	right: 0;
+/*	line-height: 3px;
+	height: 10px;*/
+}
+
+.success-close{
+	/*line-height: 0;*/
+}
+
+.material-table{
+	margin-top: 50px;
+}
+
+.search-div{
+	margin-top: 30px;
+}
+
 /*end of add file*/
 
 /*edit file*/
@@ -417,7 +428,7 @@ th{
 	margin-right: 5px;
 }
 
-.edit-button{
+.edit-button, .borrow-button{
 	margin-top: -44px;
 }
 
@@ -426,3 +437,83 @@ th{
 }
 
 /*end of edit file*/
+
+/*pagination*/
+
+.pages{
+	text-align: center;
+}
+
+/*end of pagination*/
+
+/*autocomplete*/
+
+.ui-helper-hidden-accessible { 
+	display:none; 
+}
+
+.ui-autocomplete {
+
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 1000;
+  float: left;
+  display: none;
+  min-width: 160px;
+  _width: 160px;
+  padding: 4px 0;
+  margin: 2px 0 0 0;
+  list-style: none;
+  background-color: #ffffff;
+  border-color: #ccc;
+  border-color: rgba(0, 0, 0, 0.2);
+  border-style: solid;
+  border-width: 1px;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+  -webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+  -moz-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+  -webkit-background-clip: padding-box;
+  -moz-background-clip: padding;
+  background-clip: padding-box;
+  *border-right-width: 2px;
+  *border-bottom-width: 2px;
+
+  .ui-menu-item > a.ui-corner-all {
+    display: block;
+    padding: 3px 15px;
+    clear: both;
+    font-weight: normal;
+    line-height: 18px;
+    color: #555555;
+    white-space: nowrap;
+
+    &.ui-state-hover, &.ui-state-active {
+      color: #ffffff;
+      text-decoration: none;
+      background-color: #0088cc;
+      border-radius: 0px;
+      -webkit-border-radius: 0px;
+      -moz-border-radius: 0px;
+      background-image: none;
+    }
+  }
+}
+
+/*end of autocomplete*/
+
+/*student page*/
+
+.borrowed-div{
+	margin-top: 10px;
+}
+
+.student-div{
+	margin-top: 10px;
+	margin-bottom: 20px;
+}
+
+/*end of student page*/

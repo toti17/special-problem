@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
-
+use DB;
 use App\Author;
 use App\Material;
 use App\Publisher;
@@ -25,16 +25,17 @@ class ViewController extends Controller
     public function userDashboard(){
         if(Auth::check()){
             if (Auth::user()->type == "admin"){
-                return view('admin.user');
+                $users = DB::table('users')->where('institution', '!=', 'University of the Philippines Visayas')->orderBy('username', 'asc')->paginate(5);
+                return view('admin.user', ['users' => $users]);
             }
         }
     }
 
-    public function materialDashboard(){
-        $materials = Material::all();
+    public function materialDashboard(Request $request){
         if(Auth::check()){
             if (Auth::user()->type == "admin"){
-                return view('admin.material', compact('materials'));
+                $materials = DB::table('material')->orderBy('title', 'asc')->paginate(5);
+                return view('admin.material', ['materials' => $materials]);
             }
         }
     }
@@ -154,17 +155,20 @@ class ViewController extends Controller
             'duration' => $duration
         ]);
     }
-    public function show(){
+
+    public function dashboard()
+    {
         if(Auth::check()){
             if (Auth::user()->type == "admin"){
-                return redirect('dashboard/home');
+                return view('dashboard');
             }
-            else{
-                return view('layout');
+            else if(Auth::user()->type == "student"){
+                $materials = DB::table('material')->orderBy('title', 'asc')->paginate(5);
+                return view('student.student', ['materials' => $materials]);
             }
-        }
-        else{
+        }else{
             return view('layout');
         }
     }
+
 }
