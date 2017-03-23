@@ -25,9 +25,7 @@ class ViewController extends Controller
     public function userDashboard(){
         if(Auth::check()){
             if (Auth::user()->type == "admin" || Auth::user()->type == "staff"){
-                // $users = DB::table('users')->where('institution', '!=', 'University of the Philippines Visayas')->orderBy('username', 'asc')->paginate(5);
-                // return view('admin.user', ['users' => $users]);
-                return view('admin.user');
+                return view('admin.user', ['user' => Auth::user()->type]);
             }
         }
     }

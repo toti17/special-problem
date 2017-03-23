@@ -1,13 +1,15 @@
 $(document).ready(function (){
 	// proceed to confirm accounts if html is a pagination link	
     setTimeout(function() {
-	if($(location).attr('href').indexOf('dashboard/user?page') != -1){
-		$('#confirm-account-button').trigger('click');
-	}
+    	if($(location).attr('href').indexOf('dashboard/user') != -1){
+		if($('.user-type').val() == 'staff'){
+			$('#confirm-account-button').trigger('click');
+		}
+    	}
 	else if($(location).attr('href').indexOf('dashboard/material?borrowed') != -1){
 		$('.confirm-materials-button').trigger('click');
 	}
-    },10);
+    }, 10);
 	//  end of changing html
 
 	$("[data-toggle=tooltip").tooltip();
@@ -147,6 +149,7 @@ $(document).ready(function (){
 	// sidebar script
 
 	$('#user-button').click(function(){
+		$('.staff-search-div').addClass('hidden');
 		$('#user-form').removeClass('hidden');
 		$('.student-form').addClass('hidden');
 		$('.confirm-account-div').addClass('hidden');
@@ -154,6 +157,7 @@ $(document).ready(function (){
 	});
 
 	$('#student-button').click(function(){
+		$('.staff-search-div').addClass('hidden');
 		$('.student-form').removeClass('hidden');
 		$('#user-form').addClass('hidden');
 		$('.confirm-account-div').addClass('hidden');
@@ -163,22 +167,20 @@ $(document).ready(function (){
 	// end of sidebar script
 
 	// confirm accounts script
-	usernameArray = [];
-	fullnameArray = [];
-	institutionArray = [];
-	$('#confirm-account-button').click(function(){
-		$('#no-confirmed-users').toggle(false);
-		$('.student-form').addClass('hidden');
-		$('#user-form').addClass('hidden');
-		$('.confirm-account-div').removeClass('hidden');
-		function retrieveUsers(){
-			return $.ajax({
-				type: 'get',
-				url: '/dashboard/users',
-				success: function(data){
-				}
-			});
-		}
+	var usernameArray = [];
+	var fullnameArray = [];
+	var institutionArray = [];
+
+	function retrieveUsers(){
+		return $.ajax({
+			type: 'get',
+			url: '/dashboard/users',
+			success: function(data){
+			}
+		});
+	}
+
+	function displayUsers(){
 		retrieveUsers().done(function(data){
 			results = data;
 	            var totalPages = data.length;
@@ -195,9 +197,9 @@ $(document).ready(function (){
 			else{
 				totalPages = Math.ceil(data.length/minPage);
 			}				
-			$('#user-pagination').twbsPagination(defaultOpts);		            
-	            $('#user-pagination').twbsPagination('destroy');
-	            $('#user-pagination').twbsPagination($.extend({}, defaultOpts, {
+			$('#pagination-demo').twbsPagination(defaultOpts);		            
+	            $('#pagination-demo').twbsPagination('destroy');
+	            $('#pagination-demo').twbsPagination($.extend({}, defaultOpts, {
 	                	startPage: 1,
 	                	totalPages: totalPages,
 				onPageClick: function(event, page){
@@ -243,6 +245,15 @@ $(document).ready(function (){
 	                	}
 	            }));
 		});
+	}
+
+	$('#confirm-account-button').click(function(){
+		$('.staff-search-div').removeClass('hidden');
+		$('#no-confirmed-users').toggle(false);
+		$('.student-form').addClass('hidden');
+		$('#user-form').addClass('hidden');
+		$('.confirm-account-div').removeClass('hidden');
+		displayUsers();
 	});
 
 	$('body').on('click', '.user-confirm-button', function(){
@@ -409,17 +420,9 @@ $(document).ready(function (){
 			else{
 				num = 1;
 				prodNum = 1;
-				tagNum = 1;
-				// $(this).val('');			
+				tagNum = 1;			
 			}
 		});
-
-		// $('input[name="publish-status"]').prop('checked', false);
-		// $('input[name="acquisition-mode"]').prop('checked', false);
-		// $('.published-div').addClass('hidden');
-		// $('.purchased-div').addClass('hidden');
-		// $('.donated-div').addClass('hidden');
-		// $('.help-block').addClass('hidden');
 
 		// removing authors
 		for(i=1;i<=authorCounter;i++){
@@ -1952,19 +1955,7 @@ $(document).ready(function (){
 	$('.type-dropdown').on('click', 'li a', function(){
 		$('.search-type').html($(this).text() + ' <span class="caret"></span>');
 		$('.search-type').val($(this).text());
-		searchType = $('.search-type').val();
-		if(searchType == 'Accession Number'){
-			searchType = 'acqNumber';
-		}
-		else if(searchType == 'Title'){
-			searchType = 'title';
-		}
-		else if(searchType == 'Author'){
-			searchType = 'author';
-		}
-		else if(searchType == 'Publisher'){
-			searchType == 'publisher';
-		}	
+		searchType = $.trim($('.search-type').val());
 	});
 
 	var delay = (function(){
@@ -1986,7 +1977,7 @@ $(document).ready(function (){
 					type: 'get',
 					url: 'search/' + $('.search-type').val() + '/' + $('.search').val(),
 					success: function(data){
-
+						console.log(data);
 					},
 					error: function(XMLHttpRequest, textStatus, errorThrown){
 
@@ -1995,13 +1986,17 @@ $(document).ready(function (){
 			}
 
 			results($(this)).done(function(data){
+				$('.acq-th').addClass('hidden');
 				$('.search-pagination').removeClass('hidden');
 				if(searchType == 'Accession Number'){
-					$('.title-th').toggle(false);
+					$('.acq-th').removeClass('hidden');
+					$('.pages').addClass('hidden');
+					$('.material-items').children().toggle(false);
 				}
-				$('.acq-th').removeClass('hidden');
-				$('.pages').addClass('hidden');			
-				$('.material-items').children().toggle(false);
+				else if(searchType == 'Username'){
+					$('.confirmed-users').children().toggle(false);
+				}	
+
 				results = data;
 		            var totalPages = data.length;
 		            var minPage = 5;
@@ -2024,10 +2019,6 @@ $(document).ready(function (){
 		                	startPage: 1,
 		                	totalPages: totalPages,
 					onPageClick: function(event, page){
-						for(i=0;i<data.length;i++){
-							acqNumberArray.push(data[i].acqNumber);
-							titleArray.push(data[i].title);
-						}
 
 						total = page * minPage;
 						index = Math.abs(total-minPage);
@@ -2038,55 +2029,108 @@ $(document).ready(function (){
 						else{
 							max = index + minPage;
 						}
-						for(i=0;i<acqNumberArray.length;i++){
-							$('.' + acqNumberArray[i]).remove();
+						if(searchType == 'Accession Number'){
+							for(i=0;i<data.length;i++){
+								acqNumberArray.push(data[i].acqNumber);
+								titleArray.push(data[i].title);
+							}							
+							for(i=0;i<acqNumberArray.length;i++){
+								$('.' + acqNumberArray[i]).remove();
+							}
+							for(i=index;i<max;i++){
+								var newMaterial = $(document.createElement('tr')).attr('class', data[i].acqNumber);
+								newMaterial.after().html(
+									"<td class='material-view-button text-left' data-toggle='modal' data-target='#material-modal'>" + data[i].acqNumber + 
+									"<input type='hidden' value='" + data[i].acqNumber +"'/>" +
+									"</td>" +
+									"<td class='material-view-button text-left' data-toggle='modal' data-target='#material-modal'>" + data[i].title + 
+									"</td>" +
+									"<td class='text-right action-buttons'>" + 
+									"<button type='button' class='btn btn-xs btn-danger delete-button' value='" + data[i].acqNumber + "'>" +
+									"<span class='glyphicon glyphicon-remove'></span>" +
+									"</button>" +
+									"</td>"
+								);
+								$('.material-items').append(newMaterial);
+							}
 						}
-						for(i=index;i<max;i++){
-							var newMaterial = $(document.createElement('tr')).attr('class', data[i].acqNumber);
-							newMaterial.after().html(
-								"<td class='material-view-button text-left' data-toggle='modal' data-target='#material-modal'>" + data[i].acqNumber + 
-								"<input type='hidden' value='" + data[i].acqNumber +"'/>" +
-								"</td>" +
-								"<td class='text-right action-buttons'>" + 
-								"<button type='button' class='btn btn-xs btn-danger delete-button' value='" + data[i].acqNumber + "'>" +
-								"<span class='glyphicon glyphicon-remove'></span>" +
-								"</button>" +
-								"</td>"
-							);
-							$('.material-items').append(newMaterial);
-						}											
+						else if(searchType =='Username'){
+							for(i=0;i<data.length;i++){
+								usernameArray.push(data[i].username);
+							}							
+							for(i=0;i<usernameArray.length;i++){
+								$('.' + usernameArray[i]).remove();
+							}											
+							for(i=index;i<max;i++){
+								if(data[i].status == 'unconfirmed'){
+									unconfirmedBtn = 'btn btn-danger';
+									confirmedBtn = 'btn btn-default';
+								}
+								else{
+									unconfirmedBtn = 'btn btn-default';
+									confirmedBtn = 'btn btn-success';
+								}										
+								var newUser = $(document.createElement('tr')).attr('class', data[i].username);
+								newUser.after().html(
+									"<td class='text-left'>" + data[i].username + "</td>" +
+									"<td class='text-left'>" + data[i].firstname + ' ' + data[i].middlename + ' ' + data[i].lastname + "</td>" +
+									"<td class='text-left'>" + data[i].institution + "</td>" +
+									"<td class='confirm-buttons'>" +
+									"<input type='hidden' value ='" + data[i].username + "'/>" +
+									"<button type='button' class='user-confirm-button " + unconfirmedBtn +  "'>unconfirmed</button>" +
+									" <button type='button' class='user-confirm-button " + confirmedBtn + "'>confirmed</button>" +
+									"</td>"
+								);
+								$('.confirmed-users').append(newUser);
+							}							
+						}
 		                	}
 		            }
 		      ));
 
 			if(data.length == 0){
-				$('.search-pagination').addClass('hidden');				
-				$('.material-items').children().toggle(false);
-				for(i=0;i<acqNumberArray.length;i++){
-					$('.' + acqNumberArray[i]).remove();
-				}
 				newMaterial = $(document.createElement('tr')).attr('class', 'noResults');
 				newMaterial.after().html(
 					"<td class='text-left'>No results found.</td>"
-				);
-				$('.material-items').append(newMaterial);					
+				);				
+				if(searchType == 'Accession Number'){
+					$('.material-items').append(newMaterial);
+					$('.material-items').children().toggle(false);
+					for(i=0;i<acqNumberArray.length;i++){
+						$('.' + acqNumberArray[i]).remove();
+					}					
+				}
+				else if(searchType == 'Username'){
+					$('.confirmed-users').append(newMaterial);
+				}
+
+				$('.search-pagination').addClass('hidden');
+									
 			}
 			}).fail(function(){
 				if(x.val().length == 0){
 					$('.search-pagination').addClass('hidden');
-					$('.title-th').toggle(true);
-					$('.acq-th').addClass('hidden');
-					$('.pages').removeClass('hidden');
-					console.log(acqNumberArray);
-					for(i=0;i<acqNumberArray.length;i++){
-						$('.' + acqNumberArray[i]).remove();
+					if(searchType == 'Accession Number'){
+						$('.acq-th').addClass('hidden');
+						$('.pages').removeClass('hidden');
+							$('.title-th').toggle(true);
+						for(i=0;i<acqNumberArray.length;i++){
+							$('.' + acqNumberArray[i]).remove();
+						}
+						$('.material-items').children().toggle(true);
+					}
+					else if(searchType == 'Username'){
+						$('.confirmed-users').children().toggle(true);
+						$('.search-pagination').removeClass('hidden');
+						displayUsers();
+						console.log(usernameArray);
+						for(i=0;i<usernameArray.length;i++){
+							$('.' + usernameArray[i]).remove();													
+						}
 					}
 					$('.noResults').remove();
-					$('.material-items').children().toggle(true);
 				}
 			})
-
-		},500);
+		}, 10);
 	});
-
 });

@@ -55,7 +55,7 @@ Route::get('material/{acqNumber}', 'ViewController@viewMaterial');
 
 Route::get('dashboard/material/{acqNumber}', 'ViewController@viewMaterial');
 
-Route::get('dashboard/search/{type}/{term}', 'SearchController@autocomplete');
+Route::get('dashboard/search/{type}/{term}', 'SearchController@search');
 
 Route::post('/edit/material/{acqNumber}', 'EditController@edit');
 

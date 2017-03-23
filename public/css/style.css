@@ -327,6 +327,14 @@ th{
 	margin-top: 74px;
 }
 
+.confirm-account-div{
+	margin-top: 20px;
+}
+
+.staff-confirm-account-div{
+	margin-top: 74px;
+}
+
 .student-number-panel{
 	margin-bottom: 0px;
 	position: absolute;
@@ -373,6 +381,11 @@ th{
 	right: 325px;
 }
 
+.user-search-div{
+	position: absolute;
+	top: 25px;
+}
+
 /*end of user panel*/
 
 /*add file*/
@@ -412,7 +425,7 @@ th{
 	margin-top: 50px;
 }
 
-.search-div{
+.search-div, .staff-search-div{
 	margin-top: 30px;
 }
 

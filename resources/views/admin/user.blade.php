@@ -5,10 +5,9 @@
     @if(Auth::user()->type == "admin")
     <button id="student-button" type="button" class="btn btn-default">Add Student Number</button>
     <button id="user-button" type="button" class="btn btn-default">Add User</button>
-    <button id='confirm-account-button' type='button' class='btn btn-default'>Confirm Accounts</button>
     @endif
+     <button id='confirm-account-button' type='button' class="btn btn-default @if(Auth::user()->type =='staff') hidden @endif ">Confirm Accounts</button>
 </div>
-
 
 @if(session('studentnumberStatus'))
 <div class="col-md-6 col-md-offset-3  alert alert-success student-number-panel">
@@ -24,6 +23,22 @@
     <button type="button" class="close" aria-label="Close" data-dismiss='alert'>
         <span aria-hidden="true">&times;</span>
     </button>
+</div>
+
+<div class='col-md-7 col-md-offset-2 @if(Auth::user()->type == "admin") staff-search-div hidden @else user-search-div @endif'>
+    <div class='input-group'>
+        <div class='input-group-btn'>
+            <div class='dropdown'>
+                <button class='btn btn-default dropdown-toggle search-type' type='button' data-toggle='dropdown' value='Username'>Username <span class='caret'></span></button>
+                <ul class='dropdown-menu type-dropdown'>
+                    <li><a href="#">Username</a></li>
+                    <li><a href="#">Fullname</a></li>
+                    <li><a href="#">Institution</a></li>                           
+                </ul>
+            </div>
+        </div>          
+        <input type='text' class = 'form-control search'/>
+    </div>
 </div>
 
 <div class="col-md-12 student-form @if(!(session('studentnumberStatus'))) hidden @endif ">
@@ -52,13 +67,14 @@
 </div>
 
 
-<div class='col-md-12 confirm-account-div @if(Auth::user()->type == "admin") hidden @endif'>
+<div class='col-md-12 confirm-account-div @if(Auth::user()->type == "admin") hidden @else staff-confirm-account-div @endif' >
+    <input class='user-type' type='hidden' value="{{$user}}" />
     <table class="table table-condensed table-hover">
         <thead>
             <tr>
-                <th>Username</th>
-                <th>Full Name</th>
-                <th>Institution</th>
+                <th class='username-th'>Username</th>
+                <th class='fullname-th'>Full Name</th>
+                <th class='institution-th'>Institution</th>
                 <th>Status</th>
                 <tr id='no-confirmed-users'>
                     <td>No users...</td>
@@ -66,29 +82,10 @@
             </tr>
         </thead>
         <tbody class='confirmed-users'>
-
-<!--             <tr>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td class='confirm-buttons'>
-                    <input type='hidden' />
-                    <button type='button' class="user-confirm-button btn  btn-danger ">
-                        unconfirmed
-                    </button>
-                    <button type='button' class="user-confirm-button btn ">
-                        confirmed
-                    </button>
-                </td>
-            </tr> -->
-
         </tbody> 
     </table>
-<!--     <div class='pages'>
-
-    </div>     -->
-    <div class='user-pagination-div'>
-        <ul id="user-pagination" class="pagination-sm"></ul>
+    <div class='search-pagination user-pagination-div'>
+        <ul id="pagination-demo" class="pagination-sm"></ul>
     </div>
 </div>
 

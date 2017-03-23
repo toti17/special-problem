@@ -70,7 +70,7 @@
 		<thead>
 			<tr>
 				<th class='text-left acq-th hidden'>Accession Number</th>				
-				<th class='text-left title-th'>Title</th>				
+				<th class='text-left title-th'>Title</th>	
 				<th class='text-right'>Action</th>
 			</tr>
 			<tr id='no-materials' >
