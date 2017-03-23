@@ -2,9 +2,11 @@
 @section('user')
 
 <div class="row">
+    @if(Auth::user()->type == "admin")
     <button id="student-button" type="button" class="btn btn-default">Add Student Number</button>
     <button id="user-button" type="button" class="btn btn-default">Add User</button>
     <button id='confirm-account-button' type='button' class='btn btn-default'>Confirm Accounts</button>
+    @endif
 </div>
 
 
@@ -18,9 +20,7 @@
 @endif
 
 <div class="col-md-6 col-md-offset-3  alert alert-danger student-number-panel error-text hidden">
-    
     <span id="error-text"></span>
-
     <button type="button" class="close" aria-label="Close" data-dismiss='alert'>
         <span aria-hidden="true">&times;</span>
     </button>
@@ -52,7 +52,7 @@
 </div>
 
 
-<div class='col-md-12 confirm-account-div hidden'>
+<div class='col-md-12 confirm-account-div @if(Auth::user()->type == "admin") hidden @endif'>
     <table class="table table-condensed table-hover">
         <thead>
             <tr>
@@ -60,30 +60,36 @@
                 <th>Full Name</th>
                 <th>Institution</th>
                 <th>Status</th>
+                <tr id='no-confirmed-users'>
+                    <td>No users...</td>
+                </tr>                       
             </tr>
         </thead>
-        <tbody>
-            @foreach($users as $user)
-            <tr>
-                <td>{{ $user->username }}</td>
-                <td>{{ $user->firstname }} {{ $user->middlename }} {{ $user->lastname }}</td>
-                <td>{{ $user->institution }}</td>
+        <tbody class='confirmed-users'>
+
+<!--             <tr>
+                <td></td>
+                <td></td>
+                <td></td>
                 <td class='confirm-buttons'>
-                    <input type='hidden' value="{{ $user->username }}"/>
-                    <button type='button' class="user-confirm-button btn @if($user->status == 'unconfirmed') btn-danger @else btn-default @endif">
+                    <input type='hidden' />
+                    <button type='button' class="user-confirm-button btn  btn-danger ">
                         unconfirmed
                     </button>
-                    <button type='button' class="user-confirm-button btn @if($user->status == 'confirmed') btn-success @else btn-default @endif">
+                    <button type='button' class="user-confirm-button btn ">
                         confirmed
                     </button>
                 </td>
-            </tr>
-            @endforeach
+            </tr> -->
+
         </tbody> 
     </table>
-    <div class='pages'>
-        {{ $users->links() }}
-    </div>    
+<!--     <div class='pages'>
+
+    </div>     -->
+    <div class='user-pagination-div'>
+        <ul id="user-pagination" class="pagination-sm"></ul>
+    </div>
 </div>
 
 @if(session('status'))
@@ -95,6 +101,7 @@
 </div>
 @endif
 
+@if(Auth::user()->type == "admin")
 <form id="user-form" class="form-horizontal col-md-12 @if(session('studentnumberStatus'))  hidden @endif " role="form" method="POST" action="{{ url('/student/register') }}">
     {{ csrf_field() }}
     <div class="form-group{{ $errors->has('firstname') ? ' has-error' : '' }}">
@@ -239,6 +246,6 @@
         </div>
     </div>        
 </form> 
-
+@endif
 
 @endsection

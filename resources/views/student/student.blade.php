@@ -1,11 +1,12 @@
 @extends('layout')
 @section('content')
+
 <div class="container-fluid custom-container">
-	<div class='col-md-12 borrowed-div'>
-		<button type='button' class='btn btn-default'>Borrowed Materials</button>
+	<div class="col-md-12 @if(Auth::user()->status == 'unconfirmed') borrowed-div @else confirm-div @endif " data-toggle="tooltip" data-placement="top">
+		<button @if(Auth::user()->status == 'unconfirmed') disabled @endif type='button' class='btn btn-default borrowed-button' data-toggle='modal' data-target='#borrow-modal'>Borrowed Materials</button>
 	</div>
 	<div class="col-md-6 col-md-offset-3 main">
-		<div class='input-group student-div'>
+		<div class='input-group student-div' @if(Auth::user()->status == 'unconfirmed') style='margin-top: 60px' @endif >
 			<input type='text' class = 'form-control search'/>
 			<div class='input-group-btn'>
 				<button type='button' class='btn btn-secondary'>

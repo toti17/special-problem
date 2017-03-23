@@ -35,7 +35,7 @@ class User extends Authenticatable
     }
     public function material()
     {
-        return $this->belongsToMany(Material::class, 'borrowed', 'username', 'acqNumber');
+        return $this->belongsToMany(Material::class, 'borrowed', 'username', 'acqNumber')->withPivot('status');
     }
     public function staff()
     {

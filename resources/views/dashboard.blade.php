@@ -1,11 +1,12 @@
 @extends('layout')
 @section('content')
 
-@if(Auth::user()->type == "admin")
+
 <div class="container-fluid custom-container">
 	<div class="row">
 		<div class="col-md-2 sidebar">
 			<ul class="nav nav-sidebar">
+				@if(Auth::user()->type == "admin" || Auth::user()->type == "staff")
 				<li {{ (Request::is('dashboard/home') ? 'class=active' : '') }} >
 					<a href="{{ url('/dashboard/home')}}">Home</a>
 				</li>
@@ -25,7 +26,8 @@
 		                  <form id="logout-form" action="{{ url('/logout') }}" method="POST" style="display: none;">
 		                      {{ csrf_field() }}
 		                  </form>
-				</li>						
+				</li>
+				@endif		
 			</ul>
 		</div>
 	</div>
@@ -34,6 +36,6 @@
 		@yield('material')
 	</div>
 </div>
-@endif
+
 
 @endsection

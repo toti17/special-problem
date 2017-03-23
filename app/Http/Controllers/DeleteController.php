@@ -37,6 +37,12 @@ class DeleteController extends Controller
       $director = new Director;
       $producer = new Producer;
       $category = $acqNumber->material_type->type;
+
+      $borrowed_count = DB::table('borrowed')->select('acqNumber')->where('acqNumber', $acqNumber->acqNumber)->get()->count();
+      if($borrowed_count>0){
+         $acqNumber->borrow()->detach();
+      }
+
       if($acqNumber->donor_id != ''){
          $donor_name_id = $acqNumber->donor->donor_name_id;
          $donor_name_count = $donor::where('donor_name_id', '=', $donor_name_id)->get()->count();

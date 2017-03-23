@@ -11,7 +11,7 @@ class Material extends Model
     protected $fillable = ['acqNumber', 'title', 'status', 'material_type_id', 'publisher_id', 'donor_id'];
     public $incrementing = false;
 
-    public function user()
+    public function borrow()
     {
         return $this->belongsToMany(User::class, 'borrowed', 'acqNumber', 'username');
     }

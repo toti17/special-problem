@@ -6,9 +6,10 @@
 		<link href="/css/bootstrap.min.css" rel="stylesheet"  type="text/css">
 		<link href="/css/style.css" rel="stylesheet"  type="text/css">	
 		<script src="/js/jquery-3.1.1.js"></script>
-		<script src="/js/jquery-ui.js"></script>			
+		<script src="/js/jquery-ui.js"></script>
+		<script src="/js/jquery.twbsPagination.min.js"></script>
+		<script src="/js/newscript.js"></script>			
 		<script src="/js/bootstrap.min.js"></script>
-		<script src="/js/newscript.js"></script>	
 		<noscript>
 		    <style type="text/css">
 		        .pagecontainer {display:none;}
@@ -36,10 +37,10 @@
 	        </div>
 	        <nav class="collapse navbar-collapse" id="cwvs-navbar">
 	            <ul class="nav navbar-nav">
-	            	@if(Auth::check())
-	            	<li>
+	            	<!-- @if(Auth::check()) -->
+	            	<!-- <li> -->
 					<!-- <a href="#">Home</a> -->
-	            	</li>	            	       	
+<!-- 	            	</li>	            	       	
 	            	@if(Auth::user()->type == "student")
 	                	<li>
 	                   	 <a>Vertical Files</a>
@@ -106,9 +107,9 @@
 	                                <a href="/collection/Photographs">Photographs</a>                                     
 	                            </li>                                                                              
 	                    </ul>                                      
-	                </li>
-	                @endif
-	                @endif
+	                </li> -->
+<!-- 	                @endif
+	                @endif -->
 	                @if(Auth::check())	              	
 	                @else
 	                <li class="pull-right">
@@ -147,16 +148,6 @@
 	        </nav>
 	    </div>
 	</nav>
-		@if(Auth::check())
-	    		@if(Auth::user()->status == "unconfirmed")
-				<div class="alert alert-warning" role="alert">
-					Please confirm your account by presenting your credentials to the staff in charge.
-					<button type="button" class="close" data-dismiss="alert" aria-label="Close">
-						<span aria-hidden="true">&times;</span>
-					</button>
-				</div>
-			@endif  
-	    	@endif
 	    	@yield('content')
 	</body>
 </html>

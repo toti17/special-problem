@@ -24,18 +24,30 @@ class ViewController extends Controller
 {
     public function userDashboard(){
         if(Auth::check()){
-            if (Auth::user()->type == "admin"){
-                $users = DB::table('users')->where('institution', '!=', 'University of the Philippines Visayas')->orderBy('username', 'asc')->paginate(5);
-                return view('admin.user', ['users' => $users]);
+            if (Auth::user()->type == "admin" || Auth::user()->type == "staff"){
+                // $users = DB::table('users')->where('institution', '!=', 'University of the Philippines Visayas')->orderBy('username', 'asc')->paginate(5);
+                // return view('admin.user', ['users' => $users]);
+                return view('admin.user');
             }
         }
     }
 
+    public function retrieveUsers(){
+        $users = DB::table('users')->where('institution', '!=', 'University of the Philippines Visayas')->orderBy('username', 'asc')->get();
+        return $users;
+    }
+
     public function materialDashboard(Request $request){
         if(Auth::check()){
-            if (Auth::user()->type == "admin"){
-                $materials = DB::table('material')->orderBy('title', 'asc')->paginate(5);
-                return view('admin.material', ['materials' => $materials]);
+            if (Auth::user()->type == "admin" || Auth::user()->type == "staff"){
+                $materials = DB::table('material')->orderBy('title', 'asc')->paginate(5, ['*'], 'material');
+                $borrowed_materials = DB::table('borrowed')->orderBy('borrowed_datetime','asc')->paginate(5, ['*'], 'borrowed');
+                $title = DB::table('material')->select('title')->join('borrowed', 'material.acqNumber', 'borrowed.acqNumber')->get();
+                return view('admin.material', [
+                    'materials' => $materials,
+                    'borrowed_materials' => $borrowed_materials,
+                    'title' => $title,
+                ]);
             }
         }
     }
@@ -159,14 +171,15 @@ class ViewController extends Controller
     public function dashboard()
     {
         if(Auth::check()){
-            if (Auth::user()->type == "admin"){
+            if (Auth::user()->type == "admin" || Auth::user()->type == "staff"){
                 return view('dashboard');
             }
             else if(Auth::user()->type == "student"){
                 $materials = DB::table('material')->orderBy('title', 'asc')->paginate(5);
                 return view('student.student', ['materials' => $materials]);
             }
-        }else{
+        }
+        else{
             return view('layout');
         }
     }

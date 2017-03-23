@@ -18,10 +18,12 @@
 				<div class='modal-body'>
 					<div>
 					<h4>Details</h4>
-					@if(Auth::user()->type == "admin")
+					@if(Auth::user()->type == "admin" || Auth::user()->type == "staff")
 					<button type='button' class='btn btn-default pull-right hidden edit-button' id='edit-button'>Edit</button>
 					@elseif(Auth::user()->type == 'student')
-					<button type='button' class='btn btn-default pull-right hidden borrow-button' id='borrow-button'>Borrow</button>
+					<div class='tool-tip' data-toggle="tooltip" data-placement="top">
+						<button type='button' class='btn btn-default pull-right hidden borrow-button' id='borrow-button'>Borrow</button>
+					</div>
 					@endif
 					<button type='button' class='btn btn-default pull-right cancel-edit hidden edit-button'>Cancel Edit</button>
 					</div>

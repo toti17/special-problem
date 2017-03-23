@@ -15,9 +15,10 @@ class CreateBorrowedTable extends Migration
     {
         Schema::create('borrowed', function (Blueprint $table) {
             $table->increments('borrowed_id');
-            $table->integer('users_id');
+            $table->integer('username');
             $table->string('acqNumber');
-            $table->timestamps();        
+            $table->enum('status', ['checked out', 'pending', 'borrowed']);
+            $table->dateTime('borrowed_datetime'); 
         });
     }
 
