@@ -39,6 +39,7 @@ class BorrowController extends Controller
     public function staffDelete(Material $acqNumber, $username){
         $username = User::find($username);
         $username->material()->detach($acqNumber->acqNumber);
+        DB::table('borrowed')->where('acqNumber', $acqNumber->acqNumber)->update(['status' => 'pending']);
     }
     public function confirmMaterials(Material $acqNumber, $username){
         $users = DB::table('borrowed')->select('username')->where('acqNumber', $acqNumber->acqNumber)->get();

@@ -13,6 +13,6 @@ class Donor_Name extends Model
 
     public function donor()
     {
-    	return $this->hasMany(Donor::class);
+    	return $this->hasMany(Donor::class, 'donor_name_id');
     }
 }

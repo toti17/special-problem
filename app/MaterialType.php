@@ -10,6 +10,6 @@ class MaterialType extends Model
     public $incrementing = false;
     
     public function material(){
-    	return $this->hasOne(Material::class);
+    	return $this->hasOne(Material::class, 'material_type_id');
     }
 }

@@ -67,7 +67,7 @@ class RegisterController extends Controller
                         'password' => bcrypt($request->input('password')),
                     ]);
                     if(Auth::attempt(['username' => $request->input('username'), 'password' => $request->input('password')])){
-                        return redirect('/dashboard/student')->with('status', 'Registration Successful!');
+                        return redirect('/dashboard/home')->with('status', 'Registration Successful!');
                     }                                         
                 }
                 else{
@@ -86,7 +86,10 @@ class RegisterController extends Controller
                         'status' => $request->input('status'),
                         'password' => bcrypt($request->input('password')),
                     ]);
-            }       
+                    if(Auth::attempt(['username' => $request->input('username'), 'password' => $request->input('password')])){
+                        return redirect('/dashboard/home')->with('status', 'Registration Successful!');
+                    }                    
+            }
         }
     }
 }

@@ -40,7 +40,7 @@ class Material extends Model
         return $this->belongsTo(Donor::class);
     }
     public function material_type(){
-        return $this->belongsTo(MaterialType::class);
+        return $this->belongsTo(MaterialType::class, 'material_type_id');
     }
     public function purchased_details()
     {

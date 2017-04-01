@@ -16,6 +16,6 @@ class Donor extends Model
     }
     public function donor_name()
     {
-    	return $this->belongsTo(Donor_Name::class);
+    	return $this->belongsTo(Donor_Name::class, 'donor_name_id');
     }
 }

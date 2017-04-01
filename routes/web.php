@@ -57,6 +57,24 @@ Route::get('dashboard/material/{acqNumber}', 'ViewController@viewMaterial');
 
 Route::get('dashboard/search/{type}/{term}', 'SearchController@search');
 
+Route::get('/dashboard/retrieveMaterials/{id}/{type}', 'SearchController@retrieveMaterials');
+
+Route::get('/dashboard/retrieveTitle', 'SearchController@retrieveTitle');
+
+Route::get('/dashboard/retrieveAuthor', 'SearchController@retrieveAuthor');
+
+Route::get('/dashboard/retrieveTag', 'SearchController@retrieveTag');
+
+Route::get('/dashboard/retrievePhotographer', 'SearchController@retrievePhotographer');
+
+Route::get('/dashboard/retrieveDirector', 'SearchController@retrieveDirector');
+
+Route::get('/dashboard/retrieveProducer', 'SearchController@retrieveProducer');
+
+Route::get('/dashboard/retrieveDonor', 'SearchController@retrieveDonor');
+
+Route::get('/dashboard/retrievePublisher', 'SearchController@retrievePublisher');
+
 Route::post('/edit/material/{acqNumber}', 'EditController@edit');
 
 Route::delete('dashboard/material/delete/{acqNumber}', 'DeleteController@deleteMaterial');

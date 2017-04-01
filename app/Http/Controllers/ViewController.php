@@ -174,7 +174,12 @@ class ViewController extends Controller
             }
             else if(Auth::user()->type == "student"){
                 $materials = DB::table('material')->orderBy('title', 'asc')->paginate(5);
-                return view('student.student', ['materials' => $materials]);
+                $borrowed = DB::table('borrowed')->where('username', Auth::user()->username)
+                ->where(function ($query) {
+                    $query->where('status', 'borrowed')
+                               ->orWhere('status', 'checked out');
+                })->get()->count();
+                return view('student.student', ['materials' => $materials, 'borrowed' => $borrowed]);
             }
         }
         else{
