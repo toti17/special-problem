@@ -17,14 +17,19 @@
     </button>
 </div>
 
+<input type='hidden' value="{{Auth::user()->type}}" id='user-type'>
+
 <div class='col-md-7 col-md-offset-2 search-div'>
 	<div class='input-group'>
 		<div class='input-group-btn'>
 			<div class='dropdown'>
-				<button class='btn btn-default dropdown-toggle search-type' type='button' data-toggle='dropdown' value='Title'>Title<span class='caret'></span></button>
+				<button class='btn btn-default dropdown-toggle search-type' type='button' data-toggle='dropdown' value='Title'>Title
+					<span class='caret'></span>
+				</button>
 				<ul class='dropdown-menu type-dropdown'>
 					<li><a href="#">Title</a></li>					
 					<li><a href="#">Accession Number</a></li>
+					<li role="separator" class="divider"></li>
 					<li><a href="#">Tag</a></li>
 					<li><a href="#">Author</a></li>
 					<li><a href="#">Photographer</a></li>
@@ -43,10 +48,23 @@
 		<input type='text' class = 'form-control search'/>
 	</div>
 	<span class='author-info hidden'><i>Click the author's name to view the list of materials he/she has written.</i></span>
+	<div class='text-center results-div'><p>Sort Results By</p>
+		<div class='btn-group' data-toggle='buttons'>
+			<label class="btn btn-default active" id="sort-materials">
+			 	<input type="radio" name="sort-options" autocomplete="off" checked> All Materials
+  			</label>
+			<label class="btn btn-default" id="sort-most-viewed">
+				<input type="radio" name="sort-options" autocomplete="off"> Most Viewed
+			</label>
+			<label class="btn btn-default" id="sort-most-borrowed">
+				<input type="radio" name="sort-options" autocomplete="off"> Most Borrowed
+			</label>  			
+		</div>
+	</div>
 </div>
 
 <div class='col-md-10 col-md-offset-1 confirm-material-table hidden'>
-<table class='table table-hover table-striped'>
+<table class='table table-hover table-striped wait'>
 	<thead>
 		<th>Username</th>
 		<th>Accession Number</th>
@@ -57,33 +75,21 @@
 		</tr>		
 	</thead>
 	<tbody class='borrowed-materials-tbody'>
-		@foreach($borrowed_materials as $mat)
-		<tr>
-			<td>{{ $mat->username }}</td>
-			<td>{{ $mat->acqNumber }}</td>
-			<td>{{ $mat->borrowed_datetime }} </td>
-			<td>
-				<button type='button' class='btn btn-xs btn-danger remove-borrowed-button' value="{{$mat->acqNumber}}">Remove</button>
-				<button type='button' class='btn btn-xs btn-default unconfirm-borrowed-button' value="{{$mat->acqNumber}}" @if($mat->status  == 'borrowed') disabled @endif >Unconfirm</button>
-				<button type='button' class='btn btn-xs btn-default confirm-borrowed-button' value="{{$mat->acqNumber}}" @if($mat->status  == 'borrowed' || $mat->status  == 'checked out') disabled @endif >Confirm</button>
-			</td>
-		</tr>
-		@endforeach
 	</tbody>
 </table>
-	<div class='pages'>
-		{{ $borrowed_materials->links() }}
-	</div>
+	<div class='search-pagination'>
+		<ul id="borrowed-pagination" class="pagination-sm"></ul>
+	</div>	
 </div>
 
-<div class='col-md-6 col-md-offset-3 material-table'>
-	<table class="table table-condensed table-hover wait">
+<div class='col-md-9 col-md-offset-1 material-table'>
+	<table class="table table-condensed table-hover wait materials-table tablesorter">
 		<thead>
 			<tr>
-				<th class='text-left acq-th hidden'>Accession Number</th>				
-				<th class='text-left title-th'>Title</th>
-				<th class='text-left type-th hidden'>Type</th>	
-				<th class='text-left author-th hidden'>Author</th>
+				<th class='text-left acq-th hidden'>Accession Number&nbsp;&nbsp;<i class="fa fa-sort" aria-hidden="true"></i></th>				
+				<th class='text-left title-th'>Title&nbsp;&nbsp;<i class="fa fa-sort" aria-hidden="true"></i></th>
+				<th class='text-left type-th hidden'>Type&nbsp;&nbsp;<i class="fa fa-sort" aria-hidden="true"></i></th>	
+<!-- 				<th class='text-left author-th hidden'>Author</th> -->
 				<th class='text-right action-th'>Action</th>
 			</tr>
 			<tr id='no-materials'>
@@ -97,6 +103,17 @@
 	<div class='search-pagination'>
 		<ul id="pagination-demo" class="pagination-sm"></ul>
 	</div>	
+
+	<table class="table table-condensed table-hover wait tablesorter authors-table hidden">
+		<thead>
+			<tr>
+				<th class='text-left author-th'>Author&nbsp;&nbsp;<i class="fa fa-sort" aria-hidden="true"></i></th>
+			</tr>
+		</thead>
+		<tbody class='text-center author-items'>
+
+		</tbody>
+	</table>
 </div>
 
 @if($errors->any())

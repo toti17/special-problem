@@ -1286,6 +1286,16 @@ $(document).ready(function (){
 	var arrays = [];
 	var aqoh = 0;
 
+	function addViewCount(acqNumber){
+		return $.ajax({
+			headers:{
+				'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+			},
+			type: 'post',
+			url: '/dashboard/addViewCount/' + acqNumber
+		});
+	}
+
 	$('body').on('click', '.material-view-button', function(){
 		$('.modal-title').text('View Material');
 		$('.view-button-close').removeClass('hidden');
@@ -1310,6 +1320,8 @@ $(document).ready(function (){
 			url: 'material/' + material_id,
 			success: function (data) {
 
+			addViewCount(data.acqNumber);
+
 			function checkBorrowed(){
 				return $.ajax({
 					type: 'GET',
@@ -1318,27 +1330,29 @@ $(document).ready(function (){
 					}
 				});				
 			}
-			checkBorrowed().done(function(r){
-				if(r.acq_count == 1){
-					$('.tool-tip').tooltip('hide')
-					          .attr('data-original-title', 'You have already borrowed this material.')
-					          .tooltip('fixTitle');
-				}
-				if(r.user_borrowed_count >= 3){
-					$('.tool-tip').tooltip('hide')
-					          .attr('data-original-title', 'You can only borrow up to three materials.')
-					          .tooltip('fixTitle');			
-				}
-				if(r.user_borrowed_count < 3 && r.acq_count == 0){
-					$('.borrow-button').prop('disabled', false);
-					$('.tool-tip').tooltip('hide')
-					          .attr('data-original-title', '')
-					          .tooltip('fixTitle');				
-				}
-				else{
-					$('.borrow-button').prop('disabled', true);				
-				}
-			});
+			if($('#user-type').val() == 'student'){
+				checkBorrowed().done(function(r){
+					if(r.acq_count == 1){
+						$('.tool-tip').tooltip('hide')
+						          .attr('data-original-title', 'You have already borrowed this material.')
+						          .tooltip('fixTitle');
+					}
+					if(r.user_borrowed_count >= 3){
+						$('.tool-tip').tooltip('hide')
+						          .attr('data-original-title', 'You can only borrow up to three materials.')
+						          .tooltip('fixTitle');			
+					}
+					if(r.user_borrowed_count < 3 && r.acq_count == 0){
+						$('.borrow-button').prop('disabled', false);
+						$('.tool-tip').tooltip('hide')
+						          .attr('data-original-title', '')
+						          .tooltip('fixTitle');				
+					}
+					else{
+						$('.borrow-button').prop('disabled', true);				
+					}
+				});				
+			}
 			$("body").css("cursor", "default");
 			category = data.category;
 			acqNumber = data.acqNumber;
@@ -1745,7 +1759,11 @@ $(document).ready(function (){
 	// staff search material script
 
 	$('.search-material-button').click(function(){
-		$('.search-type').html('Accession Number '  + "<span class='caret'></span>");
+		$('.search').val('');
+		$('.search-type').html('Title' + "<span class='caret'></span>");
+		$('.search-type').val('Title');
+		searchType = 'Title';
+		showMaterial(searchType);		
 		$('.type-dropdown').removeClass('hidden');
 		$('.borrowed-dropdown').addClass('hidden');	
 		$('.material-table').removeClass('hidden');
@@ -1843,18 +1861,112 @@ $(document).ready(function (){
 		});
 	});
 
+	function retrieveBorrowedUsers(){
+		return $.ajax({
+			type: 'get',
+			url: '/dashboard/retrieveBorrowedUsers'
+		});
+	}
+
+	function createBorrowedUsersTable(index, max, data){
+		for(i=0;i<data.length;i++){
+			usernameArray.push(data[i].username);
+		}					
+		for(i=0;i<usernameArray.length;i++){
+			$('.' + usernameArray[i]).remove();
+		}
+		for(i=index;i<max;i++){
+			if(data[i].status == 'borrowed'){
+				disabled = 'disabled';
+			}
+			else{
+				disabled = '';
+			}
+			if(data[i].status == 'borrowed' || data[i].status == 'checked out'){
+				confirmDisabled = 'disabled';
+			}
+			else{
+				confirmDisabled = '';
+			}
+			unconfirmButton = "<button class='btn btn-xs btn-default unconfirm-borrowed-button' value='" + data[i].acqNumber  + "'"  + disabled +  
+			">Unconfirm</button>";
+			confirmButton = "<button type='button' class='btn btn-xs btn-default confirm-borrowed-button' value='" + data[i].acqNumber + "'" + confirmDisabled + 
+			">Confirm</button";
+			var newMaterial = $(document.createElement('tr')).attr('class', data[i].username);
+			newMaterial.after().html(
+				"<td class='text-left'>" + data[i].username + "</td>" +
+				"<td class='text-left'>" + data[i].acqNumber + "</td>" +
+				"<td class='text-left'>" + data[i].borrowed_datetime + "</td>" +
+				"<td>" +
+				"<button type='button' class='btn btn-xs btn-danger remove-borrowed-button' value='" + data[i].acqNumber + "'>Remove</button> " + 
+					unconfirmButton + " "+
+					confirmButton +
+				"</td>"
+			);
+			$('.borrowed-materials-tbody').append(newMaterial);
+		}		
+	}
+
+	function displayBorrowedUsers(){
+		retrieveBorrowedUsers().done(function(data){
+			results = data;
+	            var totalPages = data.length;
+	            var minPage = 5;
+	            var total = 0;
+	            var max = 0;
+	        	var index = 0;
+			var defaultOpts = {
+				totalPages: 1
+			};				
+			if(data.length <= minPage){
+				totalPages = 1;
+			}
+			else{
+				totalPages = Math.ceil(data.length/minPage);
+			}				
+			$('#borrowed-pagination').twbsPagination(defaultOpts);		            
+	            $('#borrowed-pagination').twbsPagination('destroy');
+	            $('#borrowed-pagination').twbsPagination($.extend({}, defaultOpts, {
+	                	startPage: 1,
+	                	totalPages: totalPages,
+				onPageClick: function(event, page){
+					for(i=0;i<data.length;i++){
+						usernameArray.push(data[i].acqNumber);
+					}
+					total = page * minPage;
+					index = Math.abs(total-minPage);
+					max = data.length - index;
+					if(max <= 5){
+						max = data.length;
+					}
+					else{
+						max = index + minPage;
+					}
+					for(i=0;i<data.length;i++){
+						usernameArray.push(data[i].username);
+					}					
+					for(i=0;i<usernameArray.length;i++){
+						$('.' + usernameArray[i]).remove();
+					}
+					createBorrowedUsersTable(index, max, data);									
+	                	}
+	            }));
+		}).fail(function(){
+			$('#no-borrowed-materials').toggle(true);
+		});
+	}
 	$('.confirm-materials-button').click(function(){
+		displayBorrowedUsers();
+		$('.search').val('');
+		$('#no-borrowed-materials').toggle(false);
 		$('.search-type').html('Username ' + "<span class='caret'></span>");
+		searchType = 'borrowedUsername';
+		showMaterial(searchType);	
+		$('.search-type').val('borrowedUsername');
 		$('.type-dropdown').addClass('hidden');
 		$('.borrowed-dropdown').removeClass('hidden');
 		$('.material-table').addClass('hidden');
 		$('.confirm-material-table').removeClass('hidden');
-		if($('.borrowed-materials-tbody').children().length == 0){
-			$('#no-borrowed-materials').toggle(true);
-		}
-		else{
-			$('#no-borrowed-materials').toggle(false);		
-		}		
 	});
 
 	$('body').on('click', '.student-remove-borrowed-button', function(){
@@ -1880,7 +1992,17 @@ $(document).ready(function (){
 		});
 	});
 
-	$('.confirm-borrowed-button').click(function(){
+	function addBorrowCount(acqNumber){
+		$.ajax({
+			headers: {
+			'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+			},
+			type: 'post',
+			url: '/dashboard/addBorrowCount/' + acqNumber
+		})
+	}
+
+	$('body').on('click', '.confirm-borrowed-button', function(){
 		x = $(this);
 		function confirmMaterials(value){
 			id = value.val();
@@ -1893,6 +2015,7 @@ $(document).ready(function (){
 			});
 		}
 		confirmMaterials($(this)).done(function(){
+			addBorrowCount(x.val());
 			x.parent().parent().parent().children().each(function(){
 				if($(this).children('td:nth-child(2)').text() == x.val()){
 					$(this).children('td:nth-child(4)').children('button:nth-child(2)').prop('disabled', true);
@@ -1903,7 +2026,17 @@ $(document).ready(function (){
 		});
 	});
 
-	$('.unconfirm-borrowed-button').click(function(){
+	function deleteBorrowCount(acqNumber){
+		$.ajax({
+			headers: {
+			'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+			},
+			type: 'post',
+			url: '/dashboard/deleteBorrowCount/' + acqNumber
+		})
+	}
+
+	$('body').on('click', '.unconfirm-borrowed-button', function(){
 		x = $(this);
 		function unconfirmMaterials(value){
 			id = value.val();
@@ -1916,6 +2049,7 @@ $(document).ready(function (){
 			});
 		}
 		unconfirmMaterials($(this)).done(function(){
+			deleteBorrowCount(x.val());
 			x.parent().parent().parent().children().each(function(){
 				if($(this).children('td:nth-child(2)').text() == x.val()){
 					$(this).children('td:nth-child(4)').children('button:nth-child(2)').prop('disabled', false);
@@ -1930,10 +2064,38 @@ $(document).ready(function (){
 	});
 	// end of borrow materials script
 
-	function retrieveTitle(){
+	var sortType = 'materials';
+	$('#sort-materials').click(function(){
+		if($(this).attr('disabled')){
+			return false;
+		}
+		$('.search').val('');
+		sortType = 'materials';		
+		showMaterial(searchType);
+	});
+
+	$('#sort-most-viewed').click(function(){
+		if($(this).attr('disabled')){
+			return false;
+		}
+		$('.search').val('');
+		sortType = 'view';		
+		showMaterial(searchType);
+	});
+
+	$('#sort-most-borrowed').click(function(){
+		if($(this).attr('disabled')){
+			return false;
+		}		
+		$('.search').val('');
+		sortType = 'borrow';
+		showMaterial(searchType);
+	});
+
+	function retrieveTitle(sortType){
 		return $.ajax({
 			type: 'get',
-			url: '/dashboard/retrieveTitle'
+			url: '/dashboard/retrieveTitle/' + sortType
 		});
 	}
 
@@ -1986,7 +2148,12 @@ $(document).ready(function (){
 		});
 	}
 
+	$('.material-table').find('table').tablesorter();
+
+	var resultsData = '';
 	function showMaterial(searchType){
+		$('.search').prop('disabled', false);
+		$('.search-type').prop('disabled', false);		
 		$('body').css({"cursor": "wait"});		
 		$('.acq-th').addClass('hidden');
 		$('.type-th').addClass('hidden');
@@ -1995,43 +2162,99 @@ $(document).ready(function (){
 		$('#no-materials').addClass('hidden');
 		$('.search-pagination').removeClass('hidden');		
 		if(searchType == 'Title' || searchType == 'Accession Number'){
+			$('.action-th').removeClass('hidden');
 			$('.acq-th').removeClass('hidden');
 			$('.type-th').removeClass('hidden');			
-			x = retrieveTitle();
+			x = retrieveTitle(sortType);
 		}
 		else if(searchType == 'Tag'){
-
+			$('.author-th').removeClass('hidden');
+			$('.materials-table').addClass('hidden');
+			$('.authors-table').removeClass('hidden');			
 			x = retrieveTag();
 		}
 		else if(searchType == 'Author'){
+			$('.author-th').removeClass('hidden');			
+			$('.materials-table').addClass('hidden');
+			$('.authors-table').removeClass('hidden');
 			x = retrieveAuthor();
 		}
 		else if(searchType == 'Photographer'){
+			$('.author-th').removeClass('hidden');			
+			$('.materials-table').addClass('hidden');
+			$('.authors-table').removeClass('hidden');			
 			x = retrievePhotographer();
 		}
 		else if(searchType == 'Director'){
+			$('.author-th').removeClass('hidden');			
+			$('.materials-table').addClass('hidden');
+			$('.authors-table').removeClass('hidden');			
 			x = retrieveDirector();			
 		}
 		else if(searchType == 'Producer'){
+			$('.author-th').removeClass('hidden');			
+			$('.materials-table').addClass('hidden');
+			$('.authors-table').removeClass('hidden');			
 			x = retrieveProducer();
 		}
 		else if (searchType == 'Donor'){
+			$('.author-th').removeClass('hidden');			
+			$('.materials-table').addClass('hidden');
+			$('.authors-table').removeClass('hidden');			
 			x = retrieveDonor();
 		}
 		else if(searchType == 'Publisher'){
+			$('.author-th').removeClass('hidden');			
+			$('.materials-table').addClass('hidden');
+			$('.authors-table').removeClass('hidden');			
 			x = retrievePublisher();
 		}
-		else if(searchType == 'Username' || searchType == 'Fullname'){
+		else if(searchType == 'Username' || searchType == 'Fullname' || searchType == 'Institution'){
 			$('body').css({"cursor": "default"});
 		}
-		if(searchType != 'Username' && searchType != 'Fullname'){
+		else if(searchType == 'borrowedUsername' || searchType == 'borrowedAccession' || searchType == 'dateTime'){
+			x = retrieveBorrowedUsers();
+		}
+		if(searchType != 'Username' && searchType != 'Fullname' && searchType != 'Institution'){
 			x.done(function(data){
+				console.log(data);
+				resultsData = data;
 				$('body').css({"cursor": "default"});
 				var dataLength = data.length;
 				var dataMat = data;
 				if(searchType == 'Title' || searchType == 'Accession Number'){
 					dataMat = data.accession;
 					dataLength = data.accession.length;
+					if(data.accession.length == 0){
+						$('.acq-th').addClass('hidden');
+						$('.title-th').addClass('hidden');
+						$('.type-th').addClass('hidden');
+						$('.action-th').addClass('hidden');							
+						newMaterial = $(document.createElement('tr')).attr('class', 'noResults');
+						newMaterial.after().html(
+							"<td class='text-left'>No results found.</td>"
+						);
+						$('.search').prop('disabled', true);
+						$('.search-type').prop('disabled', true);
+						$('.material-items').append(newMaterial);						
+					}
+				}
+				else if(searchType == 'Author' || searchType == 'Photographer' || searchType == 'Tag'
+					|| searchType == 'Director' || searchType == 'Producer' || searchType == 'Publisher' || searchType == 'Donor'){
+					if(data.length == 0){
+						$('.author-th').addClass('hidden');
+						$('.acq-th').addClass('hidden');
+						$('.title-th').addClass('hidden');
+						$('.type-th').addClass('hidden');
+						$('.action-th').addClass('hidden');							
+						newMaterial = $(document.createElement('tr')).attr('class', 'noResults');
+						newMaterial.after().html(
+							"<td class='text-left'>No results found.</td>"
+						);
+						$('.search').prop('disabled', true);
+						$('.search-type').prop('disabled', true);
+						$('.material-items').append(newMaterial);						
+					}
 				}
 				var results = data;
 		            var totalPages = dataLength;
@@ -2053,7 +2276,9 @@ $(document).ready(function (){
 		            	$('#pagination-demo').twbsPagination($.extend({}, defaultOpts, {
 		                	startPage: 1,
 		                	totalPages: totalPages,
-		                	onPageClick: function(event, page){                		
+		                	onPageClick: function(event, page){
+						$('.material-table').find('table').trigger('update');
+						$('.authors-table').trigger('update');		                		
 						materialLength = Object.keys(dataMat).length;
 						total = page * minPage;
 						index = Math.abs(total-minPage);
@@ -2105,6 +2330,11 @@ $(document).ready(function (){
 									acqNumberArray.push(data[i].publisher_name_id);
 							}		
 						}
+						else if(searchType == 'borrowedUsername' || searchType == 'borrowedAccession' || searchType == 'dateTime'){
+							for(i=0;i<materialLength;i++){
+									acqNumberArray.push(data[i].username);
+							}								
+						}
 						for(i=0;i<acqNumberArray.length;i++){
 							$('.' + acqNumberArray[i]).remove();
 						}								                		
@@ -2134,11 +2364,12 @@ $(document).ready(function (){
 									"<td class='material-view-button text-left' data-toggle='modal' data-target='#material-modal'>" + data.type[i] +
 									"<input type='hidden' value='" + data.accession[i].acqNumber +"'/>" +									
 									"</td>" +	
-									actionButton								
+									actionButton				
 								);
 								$('.material-items').append(newTitle);	  
 							}
 							else if(searchType == 'Author' || searchType == 'Photographer' || searchType == 'Director' || searchType == 'Producer' || searchType == 'Donor'){
+
 								if(searchType == 'Author'){
 									id = data[i].author_id;
 								}
@@ -2160,18 +2391,16 @@ $(document).ready(function (){
 									"<input type='hidden' value='" + id +"'/>" +
 									"</td>"
 								);
-								$('.material-items').append(newAuthor);
+								$('.author-items').append(newAuthor);
 							}
 							else if(searchType == 'Publisher'){
-								for(i=index;i<max;i++){
-									var newMaterial = $(document.createElement('tr')).attr('class', data[i].publisher_name_id);
-									newMaterial.after().html(
-										"<td class='authors-written text-left'>" + data[i].publisher_name +
-										"<input type='hidden' value='" + data[i].publisher_name_id +"'/>" +
-										"</td>"
-									);
-									$('.material-items').append(newMaterial);
-								}							
+								var newMaterial = $(document.createElement('tr')).attr('class', data[i].publisher_name_id);
+								newMaterial.after().html(
+									"<td class='authors-written text-left'>" + data[i].publisher_name +
+									"<input type='hidden' value='" + data[i].publisher_name_id +"'/>" +
+									"</td>"
+								);
+								$('.author-items').append(newMaterial);							
 							}
 							else if(searchType == 'Tag'){
 								var newTag = $(document.createElement('tr')).attr('class', data[i].tags_id);
@@ -2180,11 +2409,41 @@ $(document).ready(function (){
 									"<input type='hidden' value='" + data[i].tags_id +"'/>" +
 									"</td>"
 								);
-								$('.material-items').append(newTag);							
+								$('.author-items').append(newTag);							
+							}
+							else if(searchType == 'borrowedUsername' || searchType == 'borrowedAccession' || searchType == 'dateTime'){
+								if(data[i].status == 'borrowed'){
+									disabled = 'disabled';
+								}
+								else{
+									disabled = '';
+								}
+								if(data[i].status == 'borrowed' || data[i].status == 'checked out'){
+									confirmDisabled = 'disabled';
+								}
+								else{
+									confirmDisabled = '';
+								}
+								unconfirmButton = "<button class='btn btn-xs btn-default unconfirm-borrowed-button' value='" + data[i].acqNumber  + "'"  + disabled +  
+								">Unconfirm</button>";
+								confirmButton = "<button type='button' class='btn btn-xs btn-default confirm-borrowed-button' value='" + data[i].acqNumber + "'" + confirmDisabled + 
+								">Confirm</button";
+								var newMaterial = $(document.createElement('tr')).attr('class', data[i].username);
+								newMaterial.after().html(
+									"<td class='text-left'>" + data[i].username + "</td>" +
+									"<td class='text-left'>" + data[i].acqNumber + "</td>" +
+									"<td class='text-left'>" + data[i].borrowed_datetime + "</td>" +
+									"<td>" +
+									"<button type='button' class='btn btn-xs btn-danger remove-borrowed-button' value='" + data[i].acqNumber + "'>Remove</button> " + 
+										unconfirmButton + " "+
+										confirmButton +
+									"</td>"
+								);
+								$('.borrowed-materials-tbody').append(newMaterial);								
 							}
 			                	}
 			            }
-				}));		
+				}));
 			}).fail(function(){
 				$('#no-materials').removeClass('hidden');
 			});
@@ -2195,6 +2454,67 @@ $(document).ready(function (){
 	if(searchType == 'Title'){
 		showMaterial(searchType);
 	}
+
+
+	$('.sort-dropdown').on('click', 'li a', function(){
+		$('.sort-type').html($(this).text() + " <span class='caret'></span>");
+		$('.sort-type').val($(this).text());
+		sortSearch = $.trim($(this).text());
+		x.done(function(data){
+			$('.wait').removeClass('material-wait');
+			$('.noResults').remove();
+			$('.acq-th').addClass('hidden');
+			$('.search-pagination').removeClass('hidden');
+			$('.acq-th').removeClass('hidden');
+			$('.material-items').children().toggle(false);
+			$('.confirmed-users').children().toggle(false);
+			var results = data;
+			dataLength = data.length;
+	            var totalPages = data.length;
+	            var minPage = 5;
+	            var total = 0;
+	            var max = 0;
+	        	var index = 0;
+			var defaultOpts = {
+				totalPages: 1
+			};				
+			if(dataLength <= minPage){
+				totalPages = 1;
+			}
+			else{
+				totalPages = Math.ceil(dataLength/minPage);
+			}
+			pagination = '#pagination-demo';			
+			$(pagination).twbsPagination(defaultOpts);		            
+	            $(pagination).twbsPagination('destroy');
+	            $(pagination).twbsPagination($.extend({}, defaultOpts, {
+	                	startPage: 1,
+	                	totalPages: totalPages,
+				onPageClick: function(event, page){
+					$('.material-table').find('table').trigger('update');
+					dataMat = data;
+					materialLength = Object.keys(dataMat).length;
+					total = page * minPage;
+					index = Math.abs(total-minPage);
+					max = materialLength - index;
+					if(max <= 5){
+						max = Object.keys(dataMat).length;
+					}
+					else{
+						max = index + minPage;
+					}
+	                	}
+	            }));
+		});		
+	});
+
+	if($('.search-type').val() == 'Title' || $('.search-type').val() == 'Accession Number'){
+		$('.sort-type').prop('disabled', false);
+	}
+	else{
+		$('.sort-type').prop('disabled', true);
+	}
+
 	$('.type-dropdown').on('click', 'li a', function(){
 		$('.search-type').html($(this).text() + ' <span class="caret"></span>');
 		$('.search-type').val($(this).text());
@@ -2202,74 +2522,99 @@ $(document).ready(function (){
 		if($('.search').val().length != 0){
 			$('.search').trigger('keyup');
 		}
-		else{
+		else{		
 			showMaterial(searchType);
 		}
 		if(searchType == 'Title' || searchType == 'Accession Number'){
+			$('.sort-type').prop('disabled', false);
+			$('.authors-table').addClass('hidden');
+			$('.materials-table').removeClass('hidden');			
 			$('.author-info').addClass('hidden');
 			if($('.search').val().length != 0){
 				$('.search').trigger('keyup');
 			}
-			$('.title-th').text('Title');			
-			$('.author-th').text('Title');
+			$('.title-th').html('Title' + "&nbsp;&nbsp;<i class='fa fa-sort' aria-hidden='true'></i>");
 		}
 		else if(searchType == 'Author'){
-			$('.title-th').text('Author');
+			$('.sort-type').prop('disabled', true);
+			$('.materials-table').addClass('hidden');
+			$('.authors-table').removeClass('hidden');
+			$('.author-th').html('Author' + "&nbsp;&nbsp;<i class='fa fa-sort' aria-hidden='true'></i>");
 			$('.author-info').removeClass('hidden');
 			$('.author-info i').text("Click the author's name to view the list of materials he/she has written.");
-			$('.author-th').text('Author');
-			$('.author-th').text('Author');
 		}
 		else if(searchType == 'Donor'){
+			$('.sort-type').prop('disabled', true);
+			$('.materials-table').addClass('hidden');
+			$('.authors-table').removeClass('hidden');			
 			$('.author-info').removeClass('hidden');
 			$('.author-info i').text("Click the donor's name to view the list of materials he/she has written.");			
-			$('.title-th').text('Donor');
-			$('.author-th').text('Donor');
+			$('.author-th').html('Donor' + "&nbsp;&nbsp;<i class='fa fa-sort' aria-hidden='true'></i>");
 		}
 		else if(searchType == 'Photographer'){
+			$('.sort-type').prop('disabled', true);
+			$('.materials-table').addClass('hidden');
+			$('.authors-table').removeClass('hidden');			
 			$('.author-info').removeClass('hidden');
 			$('.author-info i').text("Click the photographer's name to view the list of materials he/she has written.");			
-			$('.title-th').text('Photographer');
-			$('.author-th').text('Photographer');
+			$('.author-th').html('Photographer' + "&nbsp;&nbsp;<i class='fa fa-sort' aria-hidden='true'></i>");
 		}
 		else if(searchType == 'Director'){
+			$('.sort-type').prop('disabled', true);
+			$('.materials-table').addClass('hidden');
+			$('.authors-table').removeClass('hidden');			
 			$('.author-info').removeClass('hidden');
 			$('.author-info i').text("Click the director's name to view the list of materials he/she has written.");			
-			$('.title-th').text('Director');
-			$('.author-th').text('Director');
+			$('.author-th').html('Director' + "&nbsp;&nbsp;<i class='fa fa-sort' aria-hidden='true'></i>");
 		}
 		else if(searchType == 'Producer'){
+			$('.sort-type').prop('disabled', true);
+			$('.materials-table').addClass('hidden');
+			$('.authors-table').removeClass('hidden');			
 			$('.author-info i').text("Click the producer's name to view the list of materials he/she has written.");			
 			$('.author-info').removeClass('hidden');
-			$('.title-th').text('Producer');
-			$('.author-th').text('Producer');
+			$('.author-th').html('Producer' + "&nbsp;&nbsp;<i class='fa fa-sort' aria-hidden='true'></i>");
 		}
 		else if(searchType == 'Publisher'){
+			$('.sort-type').prop('disabled', true);
+			$('.materials-table').addClass('hidden');
+			$('.authors-table').removeClass('hidden');			
 			$('.author-info i').text("Click the publisher's name to view the list of materials they have written.");			
 			$('.author-info').removeClass('hidden');			
-			$('.title-th').text('Publisher');
-			$('.author-th').text('Publisher');
+			$('.author-th').html('Publisher' + "&nbsp;&nbsp;<i class='fa fa-sort' aria-hidden='true'></i>");
 		}
 		else if(searchType == 'Tag'){
+			$('.sort-type').prop('disabled', true);
+			$('.materials-table').addClass('hidden');
+			$('.authors-table').removeClass('hidden');
 			$('.author-info').removeClass('hidden');
 			$('.author-info i').text("Click the tag's name to view the list of materials that have been tagged.");
-			$('.title-th').text('Tag');
-			$('.author-th').text('Tag');
+			$('.author-th').html('Tag' + "&nbsp;&nbsp;<i class='fa fa-sort' aria-hidden='true'></i>");
 		}
 	});
-	$('.borrowed-dropdown').on('click', 'li a', function(){
-		$('.search-type').html($(this).text() + ' <span class="caret"></span>');
-		$('.search-type').val($(this).text());
-		searchType = $.trim($('.search-type').val());
-	});
 
-	var delay = (function(){
-		var timer = 0;
-		return function(callback, ms){
-			clearTimeout (timer);
-			timer = setTimeout(callback, ms);
-		};
-	})();
+	$('.borrowed-dropdown').on('click', 'li a', function(){
+		if($('.search').val().length != 0){
+			$('.search').trigger('keyup');
+		}
+		else{
+			showMaterial(searchType);
+		}		
+		$('.search-type').html($(this).text() + ' <span class="caret"></span>');
+		searchType = $.trim($(this).text());
+		if(searchType == 'Username'){
+			$('.search-type').val('borrowedUsername');
+			searchType = 'borrowedUsername';
+		}
+		else if(searchType == 'Accession Number'){
+			$('.search-type').val('borrowedAccession');
+			searchType = 'borrowedAccession';			
+		}
+		else if(searchType == 'Date and Time'){
+			$('.search-type').val('dateTime');
+			searchType = 'dateTime';			
+		}
+	});
 
 	function createTable(index, max, data){
 		for(i=index;i<max;i++){
@@ -2308,7 +2653,7 @@ $(document).ready(function (){
 				"<input type='hidden' value='" + data.id[i] +"'/>" +
 				"</td>"
 			);
-			$('.material-items').append(newMaterial);
+			$('.author-items').append(newMaterial);
 		}		
 	}
 
@@ -2320,7 +2665,7 @@ $(document).ready(function (){
 				"<input type='hidden' value='" + data[i].publisher_name_id +"'/>" +
 				"</td>"
 			);
-			$('.material-items').append(newMaterial);
+			$('.author-items').append(newMaterial);
 		}			
 	}
 
@@ -2332,16 +2677,34 @@ $(document).ready(function (){
 				"<input type='hidden' value='" + data.id[i] +"'/>" +
 				"</td>"
 			);
-			$('.material-items').append(newMaterial);
+			$('.author-items').append(newMaterial);
 		}			
 	}
 	
+	var delay = (function(){
+		var timer = 0;
+		return function(callback, ms){
+			clearTimeout (timer);
+			timer = setTimeout(callback, ms);
+		};
+	})();
+
 	var acqNumberArray = [];
 	var titleArray  =[];
 	var results = [];
+
+	$('.search').keypress(function(){
+		$('#sort-materials').attr('disabled', true);
+		$('#sort-most-viewed').attr('disabled', true);
+		$('#sort-most-borrowed').attr('disabled', true);
+	});
+
 	$('.search').keyup(function(event){
-	    	var x = $(this);
-		delay(function(){
+		$('#sort-materials').attr('disabled', true);
+		$('#sort-most-viewed').attr('disabled', true);
+		$('#sort-most-borrowed').attr('disabled', true);		
+	    	var x = $(this);   	
+		delay(function(){			
 			$('.wait').addClass('material-wait');
 			function results(x){
 				return $.ajax({
@@ -2354,13 +2717,15 @@ $(document).ready(function (){
 					},
 				});
 			}
-			results($(this)).done(function(data){
+			results($(this)).done(function(data){		
+				$('#sort-materials').attr('disabled', false);
+				$('#sort-most-viewed').attr('disabled', false);
+				$('#sort-most-borrowed').attr('disabled', false);		
 				$('.wait').removeClass('material-wait');
 				$('.noResults').remove();
 				$('.acq-th').addClass('hidden');
 				$('.search-pagination').removeClass('hidden');
 				$('.acq-th').removeClass('hidden');
-				$('.pages').addClass('hidden');
 				$('.material-items').children().toggle(false);
 				$('.confirmed-users').children().toggle(false);
 				if(searchType == 'Accession Number' || searchType == 'Title'){
@@ -2369,14 +2734,13 @@ $(document).ready(function (){
 				else if(searchType == 'Author' || searchType == 'Photographer' ||searchType == 'Director' || searchType == 'Producer' || searchType == 'Donor'){
 					dataLength = data.firstname.length;
 				}
-				else if(searchType == 'Publisher'){
+				else if(searchType == 'Publisher' || searchType == 'borrowedUsername' || searchType == 'borrowedAccession' || searchType == 'dateTime'){
 					dataLength = data.length;
 				}
 				else if(searchType == 'Tag'){
 					dataLength = data.tag.length;
-
 				}
-				else if(searchType == 'Username' || searchType == 'Fullname'){
+				else if(searchType == 'Username' || searchType == 'Fullname' || searchType == 'Institution'){
 					dataLength = Object.keys(data).length;
 				}
 				var results = data;
@@ -2394,19 +2758,29 @@ $(document).ready(function (){
 				else{
 					totalPages = Math.ceil(dataLength/minPage);
 				}
-				$('#pagination-demo').twbsPagination(defaultOpts);		            
-		            $('#pagination-demo').twbsPagination('destroy');
-		            $('#pagination-demo').twbsPagination($.extend({}, defaultOpts, {
+				if(searchType == 'borrowedUsername' || searchType == 'borrowedAccession' || searchType == 'dateTime'){
+					pagination = '#borrowed-pagination';
+				}
+				else{
+					pagination = '#pagination-demo';
+				}				
+				$(pagination).twbsPagination(defaultOpts);		            
+		            $(pagination).twbsPagination('destroy');
+		            $(pagination).twbsPagination($.extend({}, defaultOpts, {
 		                	startPage: 1,
 		                	totalPages: totalPages,
 					onPageClick: function(event, page){
+						$('.material-table').find('table').trigger('update');
+						$('.authors-table').trigger('update');						
 						if(searchType == 'Accession Number' || searchType == 'Title'){
 							dataMat = data.material;
 						}
 						else if(searchType == 'Author' || searchType == 'Director' || searchType == 'Producer' || searchType == 'Photographer' || searchType == 'Donor'){
 							dataMat = data.firstname;
 						}
-						else if(searchType == 'Username' || searchType == 'Publisher' || searchType == 'Fullname'){
+						else if(searchType == 'Username' || searchType == 'Publisher' 
+						|| searchType == 'Fullname' || searchType == 'Institution' 
+						|| searchType == 'borrowedUsername' || searchType == 'borrowedAccession' || searchType == 'dateTime'){
 							dataMat = data;
 						}
 						else if(searchType == 'Tag'){
@@ -2422,7 +2796,6 @@ $(document).ready(function (){
 						else{
 							max = index + minPage;
 						}			
-
 						if(searchType == 'Accession Number' || searchType == 'Title'){
 							dataMat = data.material;
 							$('.author-th').addClass('hidden');
@@ -2440,12 +2813,20 @@ $(document).ready(function (){
 							createTable(index, max, data);							
 						}
 						else if(searchType == 'Author' || searchType == 'Director' || searchType == 'Producer' || searchType == 'Photographer' || searchType == 'Donor'){
-							dataMat = data.firstname;
 							$('.author-th').removeClass('hidden');
 							$('.acq-th').addClass('hidden');
 							$('.title-th').addClass('hidden');
 							$('.type-th').addClass('hidden');
-							$('.action-th').addClass('hidden');
+							$('.action-th').addClass('hidden');									
+							if(data.firstname.length == 0){								
+								newMaterial = $(document.createElement('tr')).attr('class', 'noResults');
+								newMaterial.after().html(
+									"<td class='text-left'>No results found.</td>"
+								);
+								$('.material-items').append(newMaterial);						
+							}
+							dataMat = data.firstname;
+
 							for(i=0;i<materialLength;i++){
 								acqNumberArray.push(data.id[i]);
 							}							
@@ -2460,6 +2841,13 @@ $(document).ready(function (){
 							$('.title-th').addClass('hidden');
 							$('.type-th').addClass('hidden');
 							$('.action-th').addClass('hidden');
+							if(data.length == 0){								
+								newMaterial = $(document.createElement('tr')).attr('class', 'noResults');
+								newMaterial.after().html(
+									"<td class='text-left'>No results found.</td>"
+								);
+								$('.material-items').append(newMaterial);						
+							}							
 							for(i=0;i<materialLength;i++){
 								acqNumberArray.push(data[i].publisher_name_id);
 							}				
@@ -2474,7 +2862,6 @@ $(document).ready(function (){
 							$('.title-th').addClass('hidden');
 							$('.type-th').addClass('hidden');
 							$('.action-th').addClass('hidden');
-							console.log(data);
 							for(i=0;i<materialLength;i++){
 								acqNumberArray.push(data.id[i]);
 							}				
@@ -2483,7 +2870,7 @@ $(document).ready(function (){
 							}
 							createTagTable(index, max, data);		
 						}										
-						else if(searchType =='Username' || searchType == 'Fullname'){
+						else if(searchType =='Username' || searchType == 'Fullname' || searchType == 'Institution'){
 							for(i=0;i<Object.keys(data).length;i++){
 								usernameArray.push(data[i].username);
 							}							
@@ -2512,20 +2899,39 @@ $(document).ready(function (){
 								);
 								$('.confirmed-users').append(newUser);
 							}							
-						}						
+						}
+						else if(searchType == 'borrowedUsername' || searchType == 'borrowedAccession' || searchType == 'dateTime'){
+							createBorrowedUsersTable(index, max, data);				
+						}
 		                	}
 		            }
 		      ));
 			if(dataLength == 0){
+				$('.author-th').addClass('hidden');
+				$('.title-th').addClass('hidden');
+				$('.type-th').addClass('hidden');
+				$('.action-th').addClass('hidden');	
+				$('.acq-th').addClass('hidden');		
 				newMaterial = $(document.createElement('tr')).attr('class', 'noResults');
 				newMaterial.after().html(
 					"<td class='text-left'>No results found.</td>"
 				);				
-				if(searchType != 'Username'){
+				if(searchType == 'Title' || searchType == 'Accession Number'){
 					for(i=0;i<acqNumberArray.length;i++){
 						$('.' + acqNumberArray[i]).remove();
-					}					
+					}
 					$('.material-items').append(newMaterial);					
+				}
+				else if(searchType == 'borrowedUsername' || searchType == 'borrowedAccession' || searchType == 'dateTime'){
+					$('.borrowed-materials-tbody').append(newMaterial);
+				}
+				else if(searchType == 'Author' || searchType == 'Photographer' || searchType == 'Donor' 
+					|| searchType == 'Producer' || searchType == 'Director' || searchType == 'Publisher' || searchType == 'Tag'){
+					newMaterial = $(document.createElement('tr')).attr('class', 'noResults');
+					newMaterial.after().html(
+						"<td class='text-left'>No results found.</td>"
+					);						
+					$('.author-items').append(newMaterial);
 				}
 				else{
 					$('.confirmed-users').append(newMaterial);
@@ -2533,21 +2939,22 @@ $(document).ready(function (){
 				$('.search-pagination').addClass('hidden');					
 			}
 			}).fail(function(){
+				$('#sort-materials').attr('disabled', false);
+				$('#sort-most-viewed').attr('disabled', false);
+				$('#sort-most-borrowed').attr('disabled', false);					
 				if(x.val().length == 0){
 					$('.wait').removeClass('material-wait');
 					$('.search').css({"background-color": "white"});
 					$('.search-pagination').removeClass('hidden');
 					$('.acq-th').addClass('hidden');
-					$('.author-th').addClass('hidden');
 					$('.type-th').addClass('hidden');
 					$('.title-th').removeClass('hidden');
 					$('.action-th').removeClass('hidden');
-					$('.pages').removeClass('hidden');
 					$('.title-th').toggle(true);
 					for(i=0;i<acqNumberArray.length;i++){
 						$('.' + acqNumberArray[i]).remove();
 					}
-					if(searchType == 'Username' || searchType == 'Fullname'){
+					if(searchType == 'Username' || searchType == 'Fullname' || searchType == 'Institution'){
 						$('.confirmed-users').children().toggle(true);
 						$('.search-pagination').removeClass('hidden');
 						displayUsers();
@@ -2558,20 +2965,23 @@ $(document).ready(function (){
 					else{
 						showMaterial(searchType);
 					}
-					$('.noResults').remove();
+					$('.noResults').remove();			
 				}
 			})
 		}, 500);
 	});
 
 	$('body').on('click', '.authors-written', function(){
+		$('.materials-table').removeClass('hidden');
+		$('.authors-table').addClass('hidden');		
 		$('.search').val($(this).text());
+		$('.title-th').html('Title'+ "&nbsp;&nbsp;<i class='fa fa-sort' aria-hidden='true'></i>");
 		$('.search').css({"background-color": "#f5f5f5"});
 		searchType = $('.search-type').val();
 		function getMaterials(id){
 			return $.ajax({
 				type: 'GET',
-				url: '/dashboard/retrieveMaterials/' + id + '/' + searchType ,
+				url: '/dashboard/retrieveMaterials/' + id + '/' + searchType + '/' + sortType ,
 				success: function(data){
 				},
 			});
@@ -2651,6 +3061,25 @@ $(document).ready(function (){
 					}
 	                	}
 	            }))
-		});
+			if(data.material.length == 0){
+				$('.acq-th').addClass('hidden');
+				$('.title-th').addClass('hidden');
+				$('.type-th').addClass('hidden');
+				$('.action-th').addClass('hidden');
+				$('.search').prop('disabled', false);
+				$('.search').css({"background-color": "white"});
+				newMaterial = $(document.createElement('tr')).attr('class', 'noResults');
+				newMaterial.after().html(
+					"<td class='text-left'>No results found.</td>"
+				);
+				$('.material-items').append(newMaterial);						
+			}
+		}).fail(function(){
+			newMaterial = $(document.createElement('tr')).attr('class', 'noResults');
+			newMaterial.after().html(
+				"<td class='text-left'>No results found.</td>"
+			);
+			$('.material-items').append(newMaterial);				
+		})
 	});
 });

@@ -62,7 +62,7 @@ th{
 
 /*header*/
 
-.header{
+.main-header{
 	position: fixed;
 	width: 100%;
 	z-index: 1030;
@@ -422,7 +422,7 @@ th{
 }
 
 .material-table, .confirm-material-table{
-	margin-top: 50px;
+	margin-top: 20px;
 }
 
 .search-div, .staff-search-div{
@@ -456,7 +456,7 @@ th{
 .pages, .search-pagination, .user-pagination-div{
 	text-align: center;
 	position: absolute;
-	top: 220px;
+	top: 225px;
 	width: 100%;	
 }
 
@@ -520,11 +520,16 @@ th{
 }
 
 .author-info{
+	top: 40px;
 	position: absolute;
 }
 
 .material-wait{
 	opacity: 0.5;
+}
+
+.results-div{
+	margin-top: 10px;
 }
 
 /*end of search*/

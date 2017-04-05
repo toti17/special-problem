@@ -11,7 +11,10 @@
 |
 */
 
+Route::group(['middleware' => ['login.check']], function () {
+    //
 Route::post('/student/register', 'RegisterController@register');
+
 
 Route::get('/student/register', 'RegisterController@studentregister');
 
@@ -36,9 +39,6 @@ Route::get('/dashboard/borrowedmaterials', 'BorrowController@borrowedmaterials')
 Route::get('/dashboard/material/staffDelete/{acqNumber}/{username}', 'BorrowController@staffDelete');
 
 Route::get('dashboard/borrow/{acqNumber}', 'BorrowController@borrow');
-
-Route::get('/', 'ViewController@dashboard');
-
 Route::get('/home', 'ViewController@dashboard');
 
 Route::get('/dashboard/home', 'ViewController@dashboard');
@@ -57,9 +57,9 @@ Route::get('dashboard/material/{acqNumber}', 'ViewController@viewMaterial');
 
 Route::get('dashboard/search/{type}/{term}', 'SearchController@search');
 
-Route::get('/dashboard/retrieveMaterials/{id}/{type}', 'SearchController@retrieveMaterials');
+Route::get('/dashboard/retrieveMaterials/{id}/{type}/{sortType}', 'SearchController@retrieveMaterials');
 
-Route::get('/dashboard/retrieveTitle', 'SearchController@retrieveTitle');
+Route::get('/dashboard/retrieveTitle/{sortType}', 'SearchController@retrieveTitle');
 
 Route::get('/dashboard/retrieveAuthor', 'SearchController@retrieveAuthor');
 
@@ -75,8 +75,24 @@ Route::get('/dashboard/retrieveDonor', 'SearchController@retrieveDonor');
 
 Route::get('/dashboard/retrievePublisher', 'SearchController@retrievePublisher');
 
+Route::get('/dashboard/retrieveBorrowedUsers', 'SearchController@retrieveBorrowedUsers');
+
+Route::post('/dashboard/addViewCount/{acqNumber}', 'SearchController@addViewCount');
+
+Route::post('/dashboard/addBorrowCount/{acqNumber}', 'SearchController@addBorrowCount');
+
+Route::post('/dashboard/deleteBorrowCount/{acqNumber}', 'SearchController@deleteBorrowCount');
+
 Route::post('/edit/material/{acqNumber}', 'EditController@edit');
 
 Route::delete('dashboard/material/delete/{acqNumber}', 'DeleteController@deleteMaterial');
+
+});
+
+
+
+Route::get('/', 'ViewController@dashboard');
+
+
 
 Auth::routes();

@@ -4,10 +4,12 @@
 		<meta charset="utf-8">
 		<meta name="csrf-token" content="{{ csrf_token() }}">
 		<link href="/css/bootstrap.min.css" rel="stylesheet"  type="text/css">
-		<link href="/css/style.css" rel="stylesheet"  type="text/css">	
+		<link href="/css/style.css" rel="stylesheet"  type="text/css">
+		<link href="/css/font-awesome/css/font-awesome.css" rel="stylesheet">
 		<script src="/js/jquery-3.1.1.js"></script>
 		<script src="/js/jquery-ui.js"></script>
 		<script src="/js/jquery.twbsPagination.min.js"></script>
+		<script src="/js/jquery.tablesorter.js"></script>
 		<script src="/js/newscript.js"></script>			
 		<script src="/js/bootstrap.min.js"></script>
 		<noscript>
@@ -20,7 +22,7 @@
 		</noscript>		
 	</head>
 	<body class ='pagecontainer'>
-	<header class="container-fluid header">
+	<header class="container-fluid main-header">
 	    <img class="up-logo" src="/images/University of the Philippines Visayas.png"/>
 	    <h7 class="header-inline header-color">
 	            CENTER FOR WEST VISAYAN STUDIES ARCHIVE & INVENTORY SYSTEM
@@ -37,79 +39,6 @@
 	        </div>
 	        <nav class="collapse navbar-collapse" id="cwvs-navbar">
 	            <ul class="nav navbar-nav">
-	            	<!-- @if(Auth::check()) -->
-	            	<!-- <li> -->
-					<!-- <a href="#">Home</a> -->
-<!-- 	            	</li>	            	       	
-	            	@if(Auth::user()->type == "student")
-	                	<li>
-	                   	 <a>Vertical Files</a>
-	                    	<ul class="sub" id="sub-vertical">
-		                        <li>
-		                            <a href="/collection/Photocopied_Articles">Photocopied Articles</a>
-		                        </li>
-		                        <li>
-		                            <a href="/collection/Conference_Papers">Conference Papers</a>
-		                        </li>
-		                         <li>
-		                            <a href="/collection/Research_Reports">Research Reports</a>
-		                        </li>
-		                    </ul>
-	                	</li>                  
-	                	<li>
-	                  	<a>Books</a>
-	                        <ul class="sub" id="sub-book">
-                              	<li>
-                                    	<a href="/collection/Private_Collections">Private Collections</a>
-                                	</li>
-                                	<li>
-                                    	<a href="/collection/Rare_Collections">Rare Collections</a>
-                                	</li>
-	                        </ul>                    
-	                </li>
-	                <li>
-	                    <a href="/collection/Thesis">Thesis</a>
-	                </li>
-	                <li>
-	                    <a>Periodicals</a>
-	                        <ul class="sub" id="sub-book">
-	                                <li>
-	                                    <a href="/collection/Serials">Serials</a>
-	                                </li>
-	                                <li>
-	                                    <a href="/collection/Newspapers">Newspapers</a>
-	                                </li>
-	                                <li>
-	                                    <a href="/collection/Journals">Journals</a>
-	                                </li>
-	                                <li>
-	                                    <a href="/collection/Magazines">Magazines</a>
-	                                </li>                                                                
-	                        </ul>                    
-	                </li>
-	                <li>
-	                    <a>Multimedia</a>
-	                    <ul class="sub" id="sub-multimedia">                                           
-	                            <li>
-	                                <a href="/collection/CD">CD</a>
-	                            </li>
-	                            <li>
-	                            <li>
-	                                <a href="/collection/DVD">DVD</a>
-	                            </li>
-	                            <li>
-	                                <a href="/collection/VHS">VHS</a>
-	                            </li>                                  
-	                            <li>                              
-	                                <a href="/collection/Cassette_Tapes">Cassette tapes</a>
-	                            </li>
-	                            <li>
-	                                <a href="/collection/Photographs">Photographs</a>                                     
-	                            </li>                                                                              
-	                    </ul>                                      
-	                </li> -->
-<!-- 	                @endif
-	                @endif -->
 	                @if(Auth::check())	              	
 	                @else
 	                <li class="pull-right">
@@ -134,7 +63,7 @@
 				</li>
 				@endif
 				@endif                                  
-	<!--                 <li>
+<!-- 	                <li>
 	                    <a href="">Artifacts & Museum</a>
 	                    <ul class="sub" id="sub-inventory">
 	                        <li><a href="">Artifacts</a></li>
@@ -143,7 +72,7 @@
 	                        <li><a href="">Farming Tools</a></li>
 	                        <li><a href="">Fishing Tools</a></li>                                                
 	                    </ul>                                                  
-	                </li>     -->               
+	                </li>      -->              
 	            </ul>
 	        </nav>
 	    </div>

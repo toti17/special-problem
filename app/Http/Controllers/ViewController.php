@@ -36,17 +36,31 @@ class ViewController extends Controller
     }
 
     public function materialDashboard(Request $request){
+            if (Auth::user()->type == "admin" || Auth::user()->type == "staff"){
+                return view('admin.material');
+            }
+        else{
+            return redirect('/')->with('message', 'Sorry, your session seems to have expired. Please login again.');
+        }
+    }
+
+    public function dashboard(){
         if(Auth::check()){
             if (Auth::user()->type == "admin" || Auth::user()->type == "staff"){
-                $materials = DB::table('material')->orderBy('title', 'asc')->paginate(5, ['*'], 'material');
-                $borrowed_materials = DB::table('borrowed')->orderBy('borrowed_datetime','asc')->paginate(5, ['*'], 'borrowed');
-                $title = DB::table('material')->select('title')->join('borrowed', 'material.acqNumber', 'borrowed.acqNumber')->get();
-                return view('admin.material', [
-                    'materials' => $materials,
-                    'borrowed_materials' => $borrowed_materials,
-                    'title' => $title,
-                ]);
+                return view('dashboard');
             }
+            else if(Auth::user()->type == "student"){
+                $materials = DB::table('material')->orderBy('title', 'asc')->paginate(5);
+                $borrowed = DB::table('borrowed')->where('username', Auth::user()->username)
+                ->where(function ($query) {
+                    $query->where('status', 'borrowed')
+                               ->orWhere('status', 'checked out');
+                })->get()->count();
+                return view('student.student', ['materials' => $materials, 'borrowed' => $borrowed]);
+            }
+        }
+        else{
+            return view('layout');
         }
     }
 
@@ -165,26 +179,4 @@ class ViewController extends Controller
             'duration' => $duration
         ]);
     }
-
-    public function dashboard()
-    {
-        if(Auth::check()){
-            if (Auth::user()->type == "admin" || Auth::user()->type == "staff"){
-                return view('dashboard');
-            }
-            else if(Auth::user()->type == "student"){
-                $materials = DB::table('material')->orderBy('title', 'asc')->paginate(5);
-                $borrowed = DB::table('borrowed')->where('username', Auth::user()->username)
-                ->where(function ($query) {
-                    $query->where('status', 'borrowed')
-                               ->orWhere('status', 'checked out');
-                })->get()->count();
-                return view('student.student', ['materials' => $materials, 'borrowed' => $borrowed]);
-            }
-        }
-        else{
-            return view('layout');
-        }
-    }
-
 }

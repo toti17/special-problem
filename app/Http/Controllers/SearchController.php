@@ -16,6 +16,7 @@ use App\Publisher_Name;
 use App\Director;
 use App\Producer;
 use App\Tags;
+use App\User;
 
 class SearchController extends Controller
 {
@@ -128,7 +129,8 @@ class SearchController extends Controller
 		else if($type == 'Username'){
 			$user = DB::table('users')->where([
 				['username', 'LIKE', '%' . $term . '%'],
-				['type', 'student']
+				['type', 'student'],
+				['institution', '!=', 'University of the Philippines Visayas']
 			])->get();
 			return $user;
 		}
@@ -137,16 +139,54 @@ class SearchController extends Controller
 			$fullname_array = [];
 			for($i=0;$i<sizeof($fullname);$i++){
 				$fullname_array = DB::table('users')->where('firstname', 'LIKE', '%' . $fullname[$i] . '%')
+				->where('institution', '!=', 'University of the Philippines Visayas')
 				->orWhere('middlename', 'LIKE', '%' . $fullname[$i] .'%')
 				->orWhere('lastname', 'LIKE', '%' . $fullname[$i] .'%')->get();
 			}
 			return $fullname_array;
 		}
+		else if($type == 'Institution'){
+			$institution = User::where('institution', 'LIKE', '%' . $term . '%')
+			->where('institution', '!=', ')University of the Philippines Visayas')
+			->get();
+			return $institution;
+		}
+		else if($type == 'borrowedUsername'){
+			$borrowed_materials = DB::table('borrowed')
+			->where('username', 'LIKE', '%' . $term . '%')
+			->orderBy('borrowed_datetime','asc')->get();
+			return $borrowed_materials;
+		}
+		else if($type == 'borrowedAccession'){
+			$borrowed_materials = DB::table('borrowed')
+			->where('acqNumber', 'LIKE', '%' . $term . '%')
+			->orderBy('borrowed_datetime','asc')->get();
+			return $borrowed_materials;
+		}
+		else if($type == 'dateTime'){
+			$borrowed_materials = DB::table('borrowed')
+			->where('borrowed_datetime', 'LIKE', '%' . $term . '%')
+			->orderBy('borrowed_datetime','asc')->get();
+			return $borrowed_materials;			
+		}
 	}
 
-	public function retrieveTitle(){
+	public function retrieveBorrowedUsers(){
+		$borrowed_materials = DB::table('borrowed')->orderBy('borrowed_datetime','asc')->get();
+		return $borrowed_materials;
+	}
+
+	public function retrieveTitle($sortType){
 		$type_array = [];
-		$accession = Material::all();
+		if($sortType == 'materials'){
+			$accession = Material::all();
+		}
+		else if($sortType == 'view'){
+			$accession = Material::where('view_count', '>', 0)->orderBy('view_count', 'desc')->get();
+		}
+		else if($sortType == 'borrow'){
+			$accession = Material::where('borrowed_count', '>', 0)->orderBy('borrowed_count', 'desc')->get();
+		}
 		foreach($accession as $acq){
 			$type = MaterialType::find($acq->material_type_id);
 			$type = $type->type;
@@ -193,18 +233,65 @@ class SearchController extends Controller
 		return $publisher;
 	}
 
-	public function retrieveMaterials($id, $type){
+	public function addViewCount(Material $acqNumber){
+		if($acqNumber->view_count == null){
+			$acqNumber->view_count = 0;
+			$acqNumber->save();
+		}
+		$acqNumber->increment('view_count');
+		return $acqNumber;
+	}
+
+	public function addBorrowCount(Material $acqNumber){
+		if($acqNumber->borrowed_count == null){
+			$acqNumber->borrowed_count = 0;
+			$acqNumber->save();
+		}		
+		$acqNumber->increment('borrowed_count');
+	}
+
+	public function deleteBorrowCount(Material $acqNumber){
+		if($acqNumber->borrowed_count > 0){
+			$acqNumber->decrement('borrowed_count');
+		}
+	}
+
+	public function retrieveMaterials($id, $type, $sortType){
 		if($type == 'Author'){
 			$author = Author::find($id);
-			$materials = $author->material;
+			if($sortType == 'materials'){
+				$materials = $author->material;
+			}
+			else if($sortType == 'view'){
+				$materials = $author->material->where('view_count', '>', 0);	
+			}
+			else if($sortType == 'borrow'){
+				$materials = $author->material->where('borrowed_count', '>', 0);
+			}
 		}
 		else if($type == 'Tag'){
 			$tag = Tags::find($id);
-			$materials = $tag->material;
+			if($sortType == 'materials'){
+				$materials = $tag->material;
+			}
+			else if($sortType == 'view'){
+				$materials = $tag->material->where('view_count', '>', 0);
+			}
+			else if($sortType == 'borrowed'){
+				$materials = $tag->material->where('borrowed_count', '>', 0);	
+			}			
 		}
 		else if($type == 'Photographer'){
 			$photographer = Photographer::find($id);
-			$materials = $photographer->photo;
+			if($sortType == 'materials'){
+				$materials = $photographer->photo;
+			}
+			else if($sortType == 'view'){
+				$materials = $photographer->photo->where('view_count', '>', 0);
+			}
+			else if($sortType == 'borrowed'){
+				$materials = $photographer->photo->where('borrowed_count', '>', 0);	
+			}				
 			$material_array = [];
 			foreach($materials as $mat){
 				$ma = Material::find($mat->acqNumber);

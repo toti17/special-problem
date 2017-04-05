@@ -13,6 +13,7 @@
 			@endif
 		</button>
 	</div>
+	<input type='hidden' value="{{Auth::user()->type}}" id='user-type'>
 	<div class="col-md-6 col-md-offset-3 main">
 		<div class='input-group student-div' @if(Auth::user()->status == 'unconfirmed') style='margin-top: 60px' @endif >
 			<div class='input-group'>

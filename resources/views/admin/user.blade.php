@@ -33,7 +33,7 @@
                 <ul class='dropdown-menu type-dropdown'>
                     <li><a href="#">Username</a></li>
                     <li><a href="#">Fullname</a></li>
-                    <li><a href="#">Institution</a></li>                           
+                    <li><a href="#">Institution</a></li>          
                 </ul>
             </div>
         </div>          
@@ -69,7 +69,7 @@
 
 <div class='col-md-12 confirm-account-div @if(Auth::user()->type == "admin") hidden @else staff-confirm-account-div @endif' >
     <input class='user-type' type='hidden' value="{{$user}}" />
-    <table class="table table-condensed table-hover">
+    <table class="table table-condensed table-hover wait">
         <thead>
             <tr>
                 <th class='username-th'>Username</th>
