@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateModifiedTable extends Migration
+class CreateMeasurementsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,12 @@ class CreateModifiedTable extends Migration
      */
     public function up()
     {
-        Schema::create('modified', function (Blueprint $table) {
-            $table->increments('modified_id');
-            $table->integer('username');
+        Schema::create('measurements', function (Blueprint $table) {
+            $table->increments('measurement_id');
+            $table->float('length');
+            $table->float('width');
+            $table->enum('unit', ['mm', 'cm', 'm']);
             $table->string('acqNumber');
-            $table->timestamps();
         });
     }
 
@@ -28,6 +29,6 @@ class CreateModifiedTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('modified');
+        Schema::dropIfExists('measurements');
     }
 }

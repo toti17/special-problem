@@ -453,10 +453,10 @@ th{
 
 /*pagination*/
 
-.pages, .search-pagination, .user-pagination-div{
+.search-pagination{
 	text-align: center;
 	position: absolute;
-	top: 225px;
+	top: 200px;
 	width: 100%;	
 }
 
@@ -466,6 +466,18 @@ th{
 
 .user-pagination-div{
 	top: 300px;
+}
+
+.user-pagination-div{
+	top: 260px;
+}
+
+.borrowed-pagination{
+	top: 230px;
+}
+
+.student-search-pagination{
+	top: 380px;
 }
 
 /*end of pagination*/
@@ -529,7 +541,22 @@ th{
 }
 
 .results-div{
-	margin-top: 10px;
+	margin-top: 30px;
 }
 
 /*end of search*/
+
+/*inventory page*/
+
+.inventory-div{
+	margin-top: 10px;
+}
+
+#image-preview{
+  position: relative;
+  overflow: hidden;
+  background-color: #ffffff;
+  color: #ecf0f1;
+}
+
+/*end of inventory page*/

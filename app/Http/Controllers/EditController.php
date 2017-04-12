@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use DB;
 use Validator;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use \App\Material;
 use \App\MaterialType;
@@ -23,6 +24,7 @@ use \App\Photographer;
 use \App\Multimedia;
 use \App\Director;
 use \App\Producer;
+use \App\User;
 
 class EditController extends Controller
 {
@@ -377,6 +379,10 @@ class EditController extends Controller
         $acqNumber->material_type_id = $type->getKey();
         $acqNumber->title = $request->title;
         $acqNumber->save();
+
+        $user = User::find(Auth::user()->username);
+        $user->modify()->attach($request->acqNumber);
+
         return back()->with('status', $request->title . ' edited successfully!');          
     }
 }

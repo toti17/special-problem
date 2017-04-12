@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateModifiedTable extends Migration
+class CreateInventoryDonorsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,10 @@ class CreateModifiedTable extends Migration
      */
     public function up()
     {
-        Schema::create('modified', function (Blueprint $table) {
-            $table->increments('modified_id');
-            $table->integer('username');
-            $table->string('acqNumber');
-            $table->timestamps();
+        Schema::create('inventory_donors', function (Blueprint $table) {
+            $table->increments('donor_id');
+            $table->integer('donor_name_id');
+            $table->date('donor_date');
         });
     }
 
@@ -28,6 +27,6 @@ class CreateModifiedTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('modified');
+        Schema::dropIfExists('inventory_donors');
     }
 }

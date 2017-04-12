@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use DB;
 use Validator;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use \App\Material;
 use \App\MaterialType;
 use \App\Author;
@@ -23,6 +24,21 @@ use \App\Photographer;
 use \App\Multimedia;
 use \App\Director;
 use \App\Producer;
+use \App\User;
+
+use \App\Inventory;
+use \App\Inventory_Type;
+use \App\Owner;
+use \App\Measurement;
+use \App\English_Name;
+use \App\Venacular_Name;
+use \App\Invent_Material;
+use \App\Color;
+use \App\Decoration;
+use \App\Mark;
+use \App\InventoryDonor;
+use \App\InventoryPurchasedDetails;
+use \App\InventoryPictures;
 
 class AddController extends Controller
 {
@@ -47,8 +63,134 @@ class AddController extends Controller
             'params' => $change,
         ]);
     }
-    public function add(Request $request)
-    {
+
+    public function addInventory(Request $request){
+        $category = $request->category;
+        $acqNumber = $request->acqNumber;
+        $object = $request->object;
+        $english_names = explode(',', $request->engNames);
+        $venacular_names = explode(',', $request->venNames);
+        $owner_first_name = $request->input('owner-firstname');
+        $owner_middle_name = $request->input('owner-middlename');
+        $owner_last_name = $request->input('owner-lastname');
+        $owner_locality = $request->local;
+        $unit = $request->unit;
+        $length = $request->length;
+        $width = $request->width;
+        $condition = $request->condition;
+        $materials = explode(',', $request->materials);
+        $colors = explode(',', $request->colors);
+        $decorations = explode(',', $request->decorations);
+        $marks = explode(',', $request->marks);
+        $acquisition = $request->input('acquisition-mode');
+        $donor_firstname = $request->input('donor-firstname');
+        $donor_middlename = $request->input('donor-middlename');
+        $donor_lastname = $request->input('donor-lastname');
+        $donor_date = $request->input('donated-date');
+        $amount = $request->amount;
+        $address = $request->address;
+        $purchased_date = $request->input('purchased-date');
+        $picture = $request->pic;
+
+        if($picture){
+            $ext = $picture->extension();
+            $extension = $acqNumber . '.' . $ext;
+            $picture->storeAs('inventory/', $extension, 'local');
+            $inventory_picture = new InventoryPictures;
+            $inventory_picture->acqNumber = $acqNumber;
+            $inventory_picture->save();
+        }
+
+        $inventory = new Inventory;
+        $inventory->acqNumber = $acqNumber;
+        $inventory->object = $object;
+
+        for($i=0;$i<sizeof($english_names);$i++){
+            $english_name = English_Name::firstorNew(['english_name' => $english_names[$i]]);
+            $english_name->save();
+            $inventory->english_name()->attach($english_name->english_name_id);
+        }
+
+        for($i=0;$i<sizeof($venacular_names);$i++){
+            $venacular_name = Venacular_Name::firstorNew(['venacular_name' => $venacular_names[$i]]);
+            $venacular_name->save();
+            $inventory->venacular_name()->attach($venacular_name->venacular_name_id);
+        }
+
+        $inventory->conditions = $condition;
+
+        $inventory_type = new Inventory_Type;
+        $type = $inventory_type::where('type', $category)->first();
+        $inventory->inventory_type_id = $type->getKey();
+
+        $owner = new Owner;
+        $owner = Owner::firstorNew(['firstname' => $owner_first_name, 'middlename' => $owner_middle_name, 'lastname' => $owner_last_name]);
+        $local_address = Address::firstorNew(['address_name' => $owner_locality]);
+        $local_address->save();
+        $owner->address_id = $local_address->getKey();
+        $owner->save();
+        $inventory->owner_id = $owner->getKey();
+
+        if($acquisition == 'donated'){
+            $donor_name = Donor_Name::firstorNew([
+                'firstname' => $donor_firstname, 
+                'middlename' => $donor_middlename, 
+                'lastname' => $donor_lastname
+            ]);
+            $donor_name->save();
+            $donor = new InventoryDonor;
+            $donor->donor_name_id = $donor_name->donor_name_id;
+            $donor->donor_date = $donor_date;
+            $donor->save();
+            $inventory->donor_id = $donor->getKey();
+            $inventory->save();            
+        }
+        else if($acquisition == 'purchased'){
+            $purchase_detail = new InventoryPurchasedDetails;
+            $purchase_detail->amount = $amount;
+            $purchased_address = Address::firstorNew(['address_name' => $address]);
+            $purchased_address->save();
+            $purchase_detail->address_id = $purchased_address->address_id;
+            $purchase_detail->purchased_date =$purchased_date;
+            $inventory->save();
+            $purchase_detail->acqNumber = $inventory->getKey();
+            $purchase_detail->save();         
+        }
+
+        $measurement = new Measurement;
+        $measurement->length = $length;
+        $measurement->width = $width;
+        $measurement->unit = $unit;
+        $measurement->acqNumber = $inventory->getKey();
+        $measurement->save();
+
+        for($i=0;$i<sizeof($materials);$i++){
+            $material = Invent_Material::firstorNew(['material_name' => $materials[$i]]);
+            $material->save();
+            $material->inventory()->attach($inventory->getKey());
+        }
+
+        for($i=0;$i<sizeof($colors);$i++){
+            $color = Color::firstorNew(['color_name' => $colors[$i]]);
+            $color->save();
+            $color->inventory()->attach($inventory->getKey());
+        }
+
+        for($i=0;$i<sizeof($decorations);$i++){
+            $decoration = Decoration::firstorNew(['decoration_name' => $decorations[$i]]);
+            $decoration->save();
+            $decoration->inventory()->attach($inventory->getKey());
+        }
+
+        for($i=0;$i<sizeof($marks);$i++){
+            $mark = Mark::firstorNew(['mark_name' => $marks[$i]]);
+            $mark->save();
+            $mark->inventory()->attach($inventory->getKey());
+        }
+        return back()->with('status', $object . ' added successfully!');
+    }
+
+    public function addMaterial(Request $request){
         $validator = Validator::make($request->all(), [
            	'acqNumber' => 'unique:material|max:50',
             'title' => 'required|max:50',
@@ -198,6 +340,10 @@ class AddController extends Controller
             }            
         }
         $title = trim($request->input('title'));
+
+        $user = User::find(Auth::user()->username);
+        $user->modify()->attach($request->acqNumber);
+
         return back()->with('status', $title . ' added successfully!');
     }
 }

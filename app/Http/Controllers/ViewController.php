@@ -20,28 +20,38 @@ use App\Periodicals;
 use App\Thesis;
 use App\User;
 
+use \App\Inventory;
+use \App\Inventory_Type;
+use \App\Owner;
+use \App\Measurement;
+use \App\English_Name;
+use \App\Venacular_Name;
+use \App\Invent_Material;
+use \App\Color;
+use \App\Decoration;
+use \App\Mark;
+use \App\InventoryDonor;
+use \App\InventoryPurchasedDetails;
+use \App\InventoryPictures;
+
 class ViewController extends Controller
 {
     public function userDashboard(){
-        if(Auth::check()){
-            if (Auth::user()->type == "admin" || Auth::user()->type == "staff"){
-                return view('admin.user', ['user' => Auth::user()->type]);
-            }
+        if (Auth::user()->type == "admin" || Auth::user()->type == "staff"){
+            return view('admin.user', ['user' => Auth::user()->type]);
         }
     }
 
-    public function retrieveUsers(){
-        $users = DB::table('users')->where('institution', '!=', 'University of the Philippines Visayas')->orderBy('username', 'asc')->get();
-        return $users;
-    }
-
-    public function materialDashboard(Request $request){
+    public function materialDashboard(){
             if (Auth::user()->type == "admin" || Auth::user()->type == "staff"){
                 return view('admin.material');
             }
-        else{
-            return redirect('/')->with('message', 'Sorry, your session seems to have expired. Please login again.');
-        }
+    }
+
+    public function inventoryDashboard(){
+            if (Auth::user()->type == "admin" || Auth::user()->type == "staff"){
+                return view('admin.inventory');
+            }        
     }
 
     public function dashboard(){
@@ -50,18 +60,31 @@ class ViewController extends Controller
                 return view('dashboard');
             }
             else if(Auth::user()->type == "student"){
-                $materials = DB::table('material')->orderBy('title', 'asc')->paginate(5);
                 $borrowed = DB::table('borrowed')->where('username', Auth::user()->username)
                 ->where(function ($query) {
                     $query->where('status', 'borrowed')
                                ->orWhere('status', 'checked out');
                 })->get()->count();
-                return view('student.student', ['materials' => $materials, 'borrowed' => $borrowed]);
+                return view('student.student', ['borrowed' => $borrowed]);
             }
         }
         else{
             return view('layout');
         }
+    }
+
+    public function retrieveUsers(){
+        $users = DB::table('users')->where('institution', '!=', 'University of the Philippines Visayas')->orderBy('username', 'asc')->get();
+        return $users;
+    }
+
+    public function showInventory(){
+        
+        $inventory = Object::class
+
+        return response()->json([
+
+        ]);
     }
 
     public function viewMaterial(Material $acqNumber){

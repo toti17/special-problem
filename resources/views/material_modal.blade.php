@@ -251,7 +251,7 @@
 
 					<div class='form-group publish-radio'>
 						<div class='input-group'>
-							    <label class="a radio-inline">
+							    <label class="radio-inline">
 									<input type="radio" class='publish-status published' name="publish-status"/>Published
 							    </label>
 							    <label class="radio-inline">

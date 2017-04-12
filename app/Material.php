@@ -15,6 +15,10 @@ class Material extends Model
     {
         return $this->belongsToMany(User::class, 'borrowed', 'acqNumber', 'username');
     }
+    public function modify()
+    {
+        return $this->belongsToMany(User::class, 'modified', 'acqNumber', 'username')->withTimestamps();
+    }
     public function author()
     {
     	return $this->belongsToMany(Author::class, 'written', 'acqNumber', 'author_id');
@@ -39,7 +43,8 @@ class Material extends Model
     {
         return $this->belongsTo(Donor::class);
     }
-    public function material_type(){
+    public function material_type()
+    {
         return $this->belongsTo(MaterialType::class, 'material_type_id');
     }
     public function purchased_details()

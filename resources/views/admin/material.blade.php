@@ -77,7 +77,7 @@
 	<tbody class='borrowed-materials-tbody'>
 	</tbody>
 </table>
-	<div class='search-pagination'>
+	<div class='search-pagination borrowed-pagination'>
 		<ul id="borrowed-pagination" class="pagination-sm"></ul>
 	</div>	
 </div>
@@ -89,7 +89,6 @@
 				<th class='text-left acq-th hidden'>Accession Number&nbsp;&nbsp;<i class="fa fa-sort" aria-hidden="true"></i></th>				
 				<th class='text-left title-th'>Title&nbsp;&nbsp;<i class="fa fa-sort" aria-hidden="true"></i></th>
 				<th class='text-left type-th hidden'>Type&nbsp;&nbsp;<i class="fa fa-sort" aria-hidden="true"></i></th>	
-<!-- 				<th class='text-left author-th hidden'>Author</th> -->
 				<th class='text-right action-th'>Action</th>
 			</tr>
 			<tr id='no-materials'>

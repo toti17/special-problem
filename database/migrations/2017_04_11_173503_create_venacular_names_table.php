@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateModifiedTable extends Migration
+class CreateVenacularNamesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,9 @@ class CreateModifiedTable extends Migration
      */
     public function up()
     {
-        Schema::create('modified', function (Blueprint $table) {
-            $table->increments('modified_id');
-            $table->integer('username');
-            $table->string('acqNumber');
-            $table->timestamps();
+        Schema::create('venacular_names', function (Blueprint $table) {
+            $table->increments('venacular_name_id');
+            $table->string('venacular_name');
         });
     }
 
@@ -28,6 +26,6 @@ class CreateModifiedTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('modified');
+        Schema::dropIfExists('venacular_names');
     }
 }

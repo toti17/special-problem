@@ -393,13 +393,12 @@ $(document).ready(function (){
 		$('.donated-div').addClass('hidden');
 		$('.purchased-div').addClass('hidden');			
 		$('input').each(function(){
+			$(this).prop('disabled', false);	
 			if($(this).attr('name') == '_token' || $(this).attr('name') == 'size-type'
-			|| $(this).attr('name') == 'duration-type' || $(this).attr('name') == 'material-acqNumber'){
-				$(this).prop('disabled', false);
+			|| $(this).attr('name') == 'duration-type' || $(this).attr('name') == 'material-acqNumber' || $(this).attr('name') == 'pic'){
 			}
 			else{
 				$(this).prop('checked', false);
-				$(this).prop('disabled', false);
 				$(this).val('');
 				$('select').prop('selectedIndex', 0);
 			}
@@ -886,6 +885,7 @@ $(document).ready(function (){
 			if($(this).children().children('input').val().length >= 50){
 				$(this).children('span').removeClass('hidden');
 				$(this).children('span').children('strong').text('The tag field should not exceed 50 characters.');
+				errorCounter++;
 			}
 			else{
 				$(this).children('span').addClass('hidden');
@@ -1643,11 +1643,11 @@ $(document).ready(function (){
 		$('#description').prop('disabled', true);
 		$('.size-type').prop('disabled', true);
 		$('input').each(function(){
-			if($(this).attr('name') == '_token' || $(this).attr('name') == 'material-acqNumber'){
+			if($(this).attr('name') == '_token' || $(this).attr('name') == 'material-acqNumber' || $(this).attr('name') == 'pic'){
 			}
 			else{
 				$(this).prop('disabled', true);
-			}	
+			}
 		});
 		for(i=1;i<=authorCounter;i++){
 			$('.delete-author').trigger('click');
@@ -1760,7 +1760,7 @@ $(document).ready(function (){
 
 	$('.search-material-button').click(function(){
 		$('.search').val('');
-		$('.search-type').html('Title' + "<span class='caret'></span>");
+		$('.search-type').html('Title ' + "<span class='caret'></span>");
 		$('.search-type').val('Title');
 		searchType = 'Title';
 		showMaterial(searchType);		
@@ -2063,6 +2063,8 @@ $(document).ready(function (){
 		$('.borrowed-materials-tbody').children().remove();
 	});
 	// end of borrow materials script
+
+	// search and sort script
 
 	var sortType = 'materials';
 	$('#sort-materials').click(function(){
@@ -3082,4 +3084,7 @@ $(document).ready(function (){
 			$('.material-items').append(newMaterial);				
 		})
 	});
+
+	// end of search and sort script
+
 });

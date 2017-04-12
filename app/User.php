@@ -29,20 +29,12 @@ class User extends Authenticatable
 
     protected $primaryKey = "username";
 
-    public function student()
-    {
-        return $this->hasOne(Student::class,'username');
-    }
     public function material()
     {
         return $this->belongsToMany(Material::class, 'borrowed', 'username', 'acqNumber')->withPivot('status');
     }
-    public function staff()
+    public function modify()
     {
-        return $this->hasOne(Staff::class, 'username');
-    }
-    public function school()
-    {
-        return $this->hasOne(School::class, 'school_id');
+        return $this->belongsToMany(Material::class, 'modified', 'username', 'acqNumber')->withTimestamps();
     }
 }

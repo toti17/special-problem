@@ -41,14 +41,27 @@
 				<input type='text' class = 'form-control search'/>
 			</div>
 			<span class='author-info hidden'><i>Click the author's name to view the list of materials he/she has written.</i></span>
+			<div class='text-center results-div'><p>Sort Results By</p>
+				<div class='btn-group' data-toggle='buttons'>
+					<label class="btn btn-default active" id="sort-materials">
+					 	<input type="radio" name="sort-options" autocomplete="off" checked> All Materials
+		  			</label>
+					<label class="btn btn-default" id="sort-most-viewed">
+						<input type="radio" name="sort-options" autocomplete="off"> Most Viewed
+					</label>
+					<label class="btn btn-default" id="sort-most-borrowed">
+						<input type="radio" name="sort-options" autocomplete="off"> Most Borrowed
+					</label>  			
+				</div>
+			</div>			
 		</div>
-		<table class="table table-condensed table-hover">
+		<table class="table table-condensed table-hover wait materials-table tablesorter">
 			<thead>
 				<tr>
-					<th class='text-left acq-th hidden'>Accession Number</th>				
-					<th class='text-left title-th'>Title</th>
-					<th class='text-left type-th hidden'>Type</th>	
-					<th class='text-left author-th hidden'>Author</th>
+					<th class='text-left acq-th hidden'>Accession Number&nbsp;&nbsp;<i class="fa fa-sort" aria-hidden="true"></i></th>				
+					<th class='text-left title-th'>Title&nbsp;&nbsp;<i class="fa fa-sort" aria-hidden="true"></i></th>
+					<th class='text-left type-th hidden'>Type&nbsp;&nbsp;<i class="fa fa-sort" aria-hidden="true"></i></th>	
+	<!-- 				<th class='text-left author-th hidden'>Author</th> -->
 					<th class='text-right action-th'>Action</th>
 				</tr>
 				<tr id='no-materials'>
@@ -59,9 +72,20 @@
 
 			</tbody>
 		</table>
-		<div class='search-pagination user-search-pagination'>
+		<div class='search-pagination student-search-pagination'>
 			<ul id="pagination-demo" class="pagination-sm"></ul>
-		</div>		
+		</div>	
+
+		<table class="table table-condensed table-hover wait tablesorter authors-table hidden">
+			<thead>
+				<tr>
+					<th class='text-left author-th'>Author&nbsp;&nbsp;<i class="fa fa-sort" aria-hidden="true"></i></th>
+				</tr>
+			</thead>
+			<tbody class='text-center author-items'>
+
+			</tbody>
+		</table>
 	</div>	
 
 	@include('borrowed_materials_modal')

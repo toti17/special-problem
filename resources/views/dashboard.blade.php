@@ -16,6 +16,9 @@
 				<li {{ (Request::is('dashboard/material') ? 'class=active' : '') }} >
 					<a href="{{ url('/dashboard/material')}}">Material</a>
 				</li>
+				<li {{ (Request::is('dashboard/inventory') ? 'class=active' : '') }} >
+					<a href="{{ url('/dashboard/inventory')}}">Inventory</a>
+				</li>				
 				<li>
 		                  <a href="{{ url('/logout') }}"
 		                      onclick="event.preventDefault();

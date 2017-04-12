@@ -4,14 +4,18 @@
 		<meta charset="utf-8">
 		<meta name="csrf-token" content="{{ csrf_token() }}">
 		<link href="/css/bootstrap.min.css" rel="stylesheet"  type="text/css">
+		<link href="/css/jquery-ui.css" rel="stylesheet"  type="text/css">
 		<link href="/css/style.css" rel="stylesheet"  type="text/css">
 		<link href="/css/font-awesome/css/font-awesome.css" rel="stylesheet">
 		<script src="/js/jquery-3.1.1.js"></script>
+		<script src="/js/bootstrap.min.js"></script>
 		<script src="/js/jquery-ui.js"></script>
+		<script src="/js/imagePreview.js"></script>
+		<script src="/js/moment.js"></script>
 		<script src="/js/jquery.twbsPagination.min.js"></script>
 		<script src="/js/jquery.tablesorter.js"></script>
-		<script src="/js/newscript.js"></script>			
-		<script src="/js/bootstrap.min.js"></script>
+		<script src="/js/newscript.js"></script>	
+		<script src='/js/inventory.js'></script>
 		<noscript>
 		    <style type="text/css">
 		        .pagecontainer {display:none;}

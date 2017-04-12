@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use DB;
 use App\Material;
 use App\Address;
@@ -19,6 +20,7 @@ use App\Tags;
 use App\Photographer;
 use App\Producer;
 use App\Director;
+use \App\User;
 
 class DeleteController extends Controller
 {
@@ -163,8 +165,9 @@ class DeleteController extends Controller
          $acqNumber->multimedia->delete();
       }
 
-      $acqNumber->delete();
+      $user = User::find(Auth::user()->username);
+      $user->modify()->attach($acqNumber->acqNumber);
 
-      // return response()->json($task);
+      $acqNumber->delete();
    }
 }

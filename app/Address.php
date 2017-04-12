@@ -19,4 +19,12 @@ class Address extends Model
     {
     	return $this->hasMany(Purchased_Detail::class);
     }
+    public function inventory_purchased_details()
+    {
+        return $this->hasMany(InventoryPurchasedDetails::class);
+    }
+    public function owner()
+    {
+        return $this->hasMany(Owner::class);
+    }
 }

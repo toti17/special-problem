@@ -15,4 +15,8 @@ class Donor_Name extends Model
     {
     	return $this->hasMany(Donor::class, 'donor_name_id');
     }
+    public function inventory_donor()
+    {
+    	return $this->hasMany(InventoryDonor::class, 'donor_name_id');
+    }
 }

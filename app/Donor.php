@@ -12,10 +12,10 @@ class Donor extends Model
 
     public function material()
     {
-    	return $this->hasMany(Material::class);
+        return $this->hasMany(Material::class);
     }
     public function donor_name()
     {
-    	return $this->belongsTo(Donor_Name::class, 'donor_name_id');
+        return $this->belongsTo(Donor_Name::class, 'donor_name_id');
     }
 }

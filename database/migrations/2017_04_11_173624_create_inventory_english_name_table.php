@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateModifiedTable extends Migration
+class CreateInventoryEnglishNameTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,10 @@ class CreateModifiedTable extends Migration
      */
     public function up()
     {
-        Schema::create('modified', function (Blueprint $table) {
-            $table->increments('modified_id');
-            $table->integer('username');
+        Schema::create('inventory_english_name', function (Blueprint $table) {
+            $table->increments('inventory_english_name_id');
             $table->string('acqNumber');
-            $table->timestamps();
+            $table->integer('english_name_id');
         });
     }
 
@@ -28,6 +27,6 @@ class CreateModifiedTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('modified');
+       Schema::dropIfExists('inventory_english_name');
     }
 }
