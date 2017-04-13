@@ -319,6 +319,7 @@
 						</tbody>
 					</table>
 					<div class='form-group donated-div hidden'>
+						<h4>Donor Details</h4>
 						<div class='input-group'>
 							<span class='input-group-addon label-title'>First Name</span>
 							<input type='text' id='donor-firstname' class='form-control' placeholder='Francis' name='donor-firstname' value="{{ old('donor-firstname') }}" />						
@@ -350,6 +351,7 @@
 					</div>
 
 					<div class='form-group purchased-div hidden'>
+						<h4>Purchased Details</h4>
 						<div class='input-group'>
 							<span class='input-group-addon label-title'>Amount</span>
 							<input type='text' id='amount' class='form-control' placeholder='1000' name='amount' value="{{ old('amount') }}" />	

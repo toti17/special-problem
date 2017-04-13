@@ -26,37 +26,49 @@ use \App\Director;
 use \App\Producer;
 use \App\User;
 
+use \App\Inventory;
+use \App\Inventory_Type;
+use \App\Owner;
+use \App\Measurement;
+use \App\English_Name;
+use \App\Venacular_Name;
+use \App\Invent_Material;
+use \App\Color;
+use \App\Decoration;
+use \App\Mark;
+use \App\InventoryDonor;
+use \App\InventoryPurchasedDetails;
+use \App\InventoryPictures;
+
 class EditController extends Controller
 {
+   public function getAddressCount($address_id){
+      $purchase_detail = new Purchase_Detail;
+      $inventory_purchase_detail = new InventoryPurchasedDetails;
+      $owner = new Owner;
+      $publisher = new Publisher;
+      $purchased_address_count = $purchase_detail::where('address_id', $address_id)->get()->count();
+      $inventory_purchased_address_count = $inventory_purchase_detail::where('address_id', $address_id)->get()->count();
+      $owner_address_count = $owner::where('address_id', $address_id)->get()->count();
+      $publisher_address_count = $publisher::where('address_id', $address_id)->get()->count();
+      $total_address_count = $purchased_address_count + $inventory_purchased_address_count + $owner_address_count + $publisher_address_count;
+      if($total_address_count == 1){
+         $this->deleteAddress($address_id);
+      }
+   }
+
+   public function deleteAddress($address_id){
+      $address = new Address;
+      $address::destroy($address_id);
+   }
+
     public function edit(Request $request, Material $acqNumber){
-        $validator = Validator::make($request->all(), [
-            'title' => 'required|max:50',
-            'publisher' => 'max:50',
-            'published-year' =>'size:4|regex:/\d/',
-            'place' => 'max:50',
-            'donor-firstname' => 'max:50',
-            'donor-middlename' => 'max:50',
-            'donor-lastname' => 'max:50',
-            'donated-year' => 'size:4|regex:/\d/',
-            'amount' => 'max:50|regex:/^[\d,]*(\.\d*)?$/',
-            'purchased-year' => 'size:4|regex:/\d/',
-            'address' => 'max:50',
-            'school' => 'max:50',
-            'course' => 'max:50',
-            'size' => 'max:10',
-            'year' => 'size:4|regex:/\d/',
-            'description' => 'max:100',
-        ]);
-
-        if($validator->fails()){
-            return back()->withInput()->withErrors($validator);
-        }
-
         $publisher = new Publisher;
         $new_address = new Address;
         $new_publisher_name = new Publisher_Name;
         $donor = new Donor;
         $donor_name = new Donor_Name;
+        $inventory_donor = new InventoryDonor;
         $purchased_detail = new Purchase_Detail;
         $author = new Author;
         $tag = new Tags;
@@ -260,15 +272,7 @@ class EditController extends Controller
 
                 $address = Address::firstorNew(['address_name' => trim($request->place)]);
                 if($address->address_id == ''){
-                    $publisher_address_count = $publisher::where('address_id', $acqNumber->publisher->address_id)->get()->count();
-                    if($publisher_address_count == 1){
-                        $total_address_count = DB::table('publisher')
-                           ->join('purchased_details', 'publisher.address_id', '=', 'purchased_details.address_id')
-                           ->select('purchased_details.address_id')->where('publisher.address_id', '=', $acqNumber->publisher->address_id)->get()->count();
-                        if($total_address_count == 0){
-                            $new_address::destroy($acqNumber->publisher->address_id);
-                        }
-                    }                 
+                    $this->getAddressCount($acqNumber->publisher->address_id);                
                 }
                 $address->save();
                 $acqNumber->publisher->address_id = $address->getKey();
@@ -294,17 +298,7 @@ class EditController extends Controller
                 if($publisher_name_count == 1){
                     $new_publisher_name::destroy($acqNumber->publisher->publisher_name_id);
                 }
-                $address_count = DB::table('publisher')
-                    ->select('address_id')->where('address_id', $acqNumber->publisher->address_id)->get()->count();
-                $publisher_address_count = $publisher::where('address_id', $acqNumber->publisher->address_id)->get()->count();
-                if($publisher_address_count == 1){
-                    $total_address_count = DB::table('publisher')
-                       ->join('purchased_details', 'publisher.address_id', '=', 'purchased_details.address_id')
-                       ->select('purchased_details.address_id')->where('publisher.address_id', '=', $acqNumber->publisher->address_id)->get()->count();
-                    if($total_address_count == 0){
-                        $new_address::destroy($acqNumber->publisher->address_id);
-                    }
-                }
+                $this->getAddressCount($acqNumber->publisher->address_id);
                 $publisher::destroy($acqNumber->publisher_id);
                 $acqNumber->publisher_id = null;
             }
@@ -312,16 +306,7 @@ class EditController extends Controller
 
         if($request->input('acquisition-mode') == 'donated'){
             if($acqNumber->purchased_details != ''){
-                $purchase_address_count = DB::table('purchased_details')
-                    ->select('address_id')->where('address_id', $acqNumber->purchased_details->address_id)->get()->count();
-                if($purchase_address_count == 1){
-                    $total_address_count = DB::table('purchased_details')
-                       ->join('publisher', 'purchased_details.address_id', '=', 'publisher.address_id')
-                       ->select('publisher.address_id')->where('purchased_details.address_id', $acqNumber->purchased_details->address_id)->get()->count();
-                    if($total_address_count == 0){
-                        $new_address::destroy($acqNumber->purchased_details->address_id);
-                    }
-                }
+                $this->getAddressCount($acqNumber->purchased_details->address_id);
                 $acqNumber->purchased_details->delete();
             }
             $donor_name = Donor_Name::firstorNew([
@@ -343,9 +328,10 @@ class EditController extends Controller
         }
         else if($request->input('acquisition-mode') == 'purchased'){
             if($acqNumber->donor_id != ''){
-                $donor_name_count = DB::table('donor')
-                    ->select('donor_name_id')->where('donor_name_id', $acqNumber->donor->donor_name_id)->get()->count();
-                if($donor_name_count == 1){
+                $donor_name_count = $donor::where('donor_name_id', '=', $acqNumber->donor->$donor_name_id)->get()->count();
+                $inventory_donor_name_count = $inventory_donor::where('donor_name_id', '=', $acqNumber->donor->$donor_name_id)->get()->count();
+                $total_donor_name_count = $donor_name_count + $inventory_donor_name_count;
+                if($total_donor_name_count == 1){
                     $donor_name::destroy($acqNumber->donor->donor_name_id);
                 }
                 $acqNumber->donor->delete();

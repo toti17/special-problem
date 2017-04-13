@@ -2,7 +2,7 @@
 @section('material')
 
 <div class='col-md-6'>
-	<button id="add-iventory-button" type="button" class="btn btn-default" data-toggle='modal' data-target='#inventory-modal'>Add Inventory</button>
+	<button id="add-inventory-button" type="button" class="btn btn-default" data-toggle='modal' data-target='#inventory-modal'>Add Inventory</button>
 </div>
 
 <div class="col-md-6 alert  alert-success success-status @if(session('status'))  @else hidden @endif">
@@ -10,7 +10,13 @@
 
    {{ session('status') }}
 @endif   
-    <button type="button" class="close success-close" aria-label="Close" data-dismiss='alert'>
+    <button type="button" class="close add-success" aria-label="Close" data-dismiss='alert'>
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+
+<div class="col-md-6 alert  alert-danger delete-status hidden"> 
+    <button type="button" class="close delete-success" aria-label="Close" data-dismiss='alert'>
         <span aria-hidden="true">&times;</span>
     </button>
 </div>
@@ -41,17 +47,16 @@
 	<table class="table table-condensed table-hover wait inventories-table tablesorter">
 		<thead>
 			<tr>
-				<th class='text-left object-th'>Object&nbsp;&nbsp;<i class="fa fa-sort" aria-hidden="true"></i></th>				
-				<th class='text-left engName-th'>English Name&nbsp;&nbsp;<i class="fa fa-sort" aria-hidden="true"></i></th>
+				<th class='text-left object-th'>Object&nbsp;&nbsp;<i class="fa fa-sort" aria-hidden="true"></i></th>
 				<th class='text-left venName-th'>Name of Owner&nbsp;&nbsp;<i class="fa fa-sort" aria-hidden="true"></i></th>
-				<th class='text-left venName-th'>Locality&nbsp;&nbsp;<i class="fa fa-sort" aria-hidden="true"></i></th>	
+				<th class='text-left venName-th'>Type&nbsp;&nbsp;<i class="fa fa-sort" aria-hidden="true"></i></th>	
 				<th class='text-right action-th'>Action</th>
 			</tr>
-			<tr id='no-materials'>
-				<td>Please add materials...</td>
+			<tr id='no-inventories' class='hidden'>
+				<td>Please add inventories...</td>
 			</tr>
 		</thead>
-		<tbody class='text-center material-items'>
+		<tbody class='text-center inventory-items'>
 
 		</tbody>
 	</table>

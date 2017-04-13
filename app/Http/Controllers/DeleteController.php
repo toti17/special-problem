@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use DB;
 use App\Material;
 use App\Address;
@@ -22,8 +23,144 @@ use App\Producer;
 use App\Director;
 use \App\User;
 
+use \App\Inventory;
+use \App\Inventory_Type;
+use \App\Owner;
+use \App\Measurement;
+use \App\English_Name;
+use \App\Venacular_Name;
+use \App\Invent_Material;
+use \App\Color;
+use \App\Decoration;
+use \App\Mark;
+use \App\InventoryDonor;
+use \App\InventoryPurchasedDetails;
+use \App\InventoryPictures;
+
 class DeleteController extends Controller
 {
+
+   public function getAddressCount($address_id){
+      $purchase_detail = new Purchase_Detail;
+      $inventory_purchase_detail = new InventoryPurchasedDetails;
+      $owner = new Owner;
+      $publisher = new Publisher;
+      $purchased_address_count = $purchase_detail::where('address_id', $address_id)->get()->count();
+      $inventory_purchased_address_count = $inventory_purchase_detail::where('address_id', $address_id)->get()->count();
+      $owner_address_count = $owner::where('address_id', $address_id)->get()->count();
+      $publisher_address_count = $publisher::where('address_id', $address_id)->get()->count();
+      $total_address_count = $purchased_address_count + $inventory_purchased_address_count + $owner_address_count + $publisher_address_count;
+      if($total_address_count == 1){
+         $this->deleteAddress($address_id);
+      }
+   }
+
+   public function deleteAddress($address_id){
+      $address = new Address;
+      $address::destroy($address_id);
+   }
+
+   public function deleteInventory(Inventory $acqNumber){
+      $english_name = new English_Name;
+      $venacular_name = new Venacular_Name;
+      $material = new Invent_Material;
+      $color = new Color;
+      $decoration = new Decoration;
+      $mark = new Mark;
+      $donor = new Donor;
+      $inventory_donor = new InventoryDonor;
+      $donor_name = new Donor_Name;
+      $purchase_detail = new Purchase_Detail;
+      $owner = new Owner;
+      $inventory_purchase_detail = new InventoryPurchasedDetails;
+      $publisher = new Publisher;
+      $address = new Address;
+      $acqNumber->measurement->delete();
+      if($acqNumber->picture != ''){
+         $pic_name = $acqNumber->picture->name;
+         $extension = $acqNumber->picture->extension;
+         Storage::delete('/public/' . $pic_name . '.' . $extension);
+         $acqNumber->picture->delete();
+      }
+      $owner_id = $acqNumber->owner->owner_id;
+      $address_id = $acqNumber->owner->address->address_id;
+      $this->getAddressCount($address_id);
+      $owner_count = DB::table('inventories')->where('owner_id', $owner_id)->get()->count();
+      if($owner_count != 1){
+         $acqNumber->owner->delete();
+      }
+      foreach($acqNumber->english_name as $eng){
+         if($eng->inventory->count() > 1){
+            $acqNumber->english_name()->detach($eng->english_name_id);
+         }
+         else{
+            $acqNumber->english_name()->detach($eng->english_name_id);
+            $english_name::destroy($eng->english_name_id);
+         }
+      }
+      foreach($acqNumber->venacular_name as $ven){
+         if($ven->inventory->count() > 1){
+            $acqNumber->venacular_name()->detach($ven->venacular_name_id);
+         }
+         else{
+            $acqNumber->venacular_name()->detach($ven->venacular_name_id);
+            $venacular_name::destroy($ven->venacular_name_id);
+         }
+      }
+      foreach($acqNumber->materials as $mat){
+         if($mat->inventory->count() > 1){
+            $acqNumber->materials()->detach($mat->material_id);
+         }
+         else{
+            $acqNumber->materials()->detach($mat->material_id);
+            $material::destroy($mat->material_id);
+         }
+      }
+      foreach($acqNumber->color as $col){
+         if($col->inventory->count() > 1){
+            $acqNumber->color()->detach($col->color_id);
+         }
+         else{
+            $acqNumber->color()->detach($col->color_id);
+            $color::destroy($col->color_id);
+         }
+      }
+      foreach($acqNumber->decoration as $decor){
+         if($decor->inventory->count() > 1){
+            $acqNumber->decoration()->detach($decor->decoration_id);
+         }
+         else{
+            $acqNumber->decoration()->detach($decor->decoration_id);
+            $decoration::destroy($decor->decoration_id);
+         }
+      }
+      foreach($acqNumber->mark as $mar){
+         if($mar->inventory->count() > 1){
+            $acqNumber->mark()->detach($mar->mark_id);
+         }
+         else{
+            $acqNumber->mark()->detach($mar->mark_id);
+            $mark::destroy($mar->mark_id);
+         }
+      }
+      if($acqNumber->donor_id != ''){
+         $donor_name_id = $acqNumber->donor->donor_name_id;
+         $donor_name_count = $donor::where('donor_name_id', '=', $donor_name_id)->get()->count();
+         $inventory_donor_name_count = $inventory_donor::where('donor_name_id', '=', $donor_name_id)->get()->count();
+         $total_donor_name_count = $donor_name_count + $inventory_donor_name_count;
+         if($total_donor_name_count == 1){
+            $donor_name::destroy($donor_name_id);
+         }
+         $acqNumber->donor->delete();
+      }
+      else{
+         $purchased_address_id = $acqNumber->purchased_detail->address_id;
+         $this->getAddressCount($purchased_address_id);
+         $acqNumber->purchased_detail->delete();
+      }
+      $acqNumber->delete();
+   }
+
    public function deleteMaterial(Material $acqNumber){
       $purchase_detail = new Purchase_Detail;
       $publisher = new Publisher;
@@ -32,6 +169,7 @@ class DeleteController extends Controller
       $tag = new Tags;
       $donor = new Donor;
       $donor_name = new Donor_Name;
+      $inventory_donor = new InventoryDonor;
       $thesis =new Thesis;
       $course = new Course;
       $school = new School;
@@ -48,52 +186,29 @@ class DeleteController extends Controller
       if($acqNumber->donor_id != ''){
          $donor_name_id = $acqNumber->donor->donor_name_id;
          $donor_name_count = $donor::where('donor_name_id', '=', $donor_name_id)->get()->count();
-         if($donor_name_count == 1){
+         $inventory_donor_name_count = $inventory_donor::where('donor_name_id', '=', $donor_name_id)->get()->count();
+         $total_donor_name_count = $donor_name_count + $inventory_donor_name_count;         
+         if($total_donor_name_count == 1){
             $donor_name::destroy($donor_name_id);
              $acqNumber->donor->delete();
          }
-         else{
-            $acqNumber->donor->delete();
-         }
+         $acqNumber->donor->delete();
       }
       else{
          $purchased_address_id = $acqNumber->purchased_details->address_id;
-         $purchased_address_count = $purchase_detail::where('address_id', $purchased_address_id)->get()->count();
-         if($purchased_address_count > 1){
-            $acqNumber->purchased_details->delete();
-         }
-         else if($purchased_address_count == 1){
-            $total_address_count = DB::table('purchased_details')
-               ->join('publisher', 'purchased_details.address_id', '=', 'publisher.address_id')
-               ->select('publisher.address_id')->where('purchased_details.address_id', '=', $purchased_address_id)->get()->count();
-            if($total_address_count == 0){
-               $acqNumber->purchased_details->delete();
-               $address::destroy($purchased_address_id);
-            }
-            else{
-               $acqNumber->purchased_details->delete();
-            }
-         }
+         $this->getAddressCount($purchased_address_id);
+         $acqNumber->purchased_details->delete();
       }
 
       if($acqNumber->publisher_id != ''){
-         $publisher_address_id = $acqNumber->publisher->address_id;
          $publisher_name_id = $acqNumber->publisher->publisher_name_id;
          $publisher_name_count = $publisher::where('publisher_name_id', $publisher_name_id)->get()->count();
-         $publisher_address_count = $publisher::where('address_id', $publisher_address_id)->get()->count();
          if($publisher_name_count == 1){
             $publisher_name = new Publisher_Name;
             $publisher_name::destroy($publisher_name_id);
          }
-         if($publisher_address_count == 1){
-            $total_address_count = DB::table('publisher')
-               ->join('purchased_details', 'publisher.address_id', '=', 'purchased_details.address_id')
-               ->select('purchased_details.address_id')->where('publisher.address_id', '=', $publisher_address_id)->get()->count();
-            if($total_address_count == 0){
-               $acqNumber->publisher->delete();
-               $address::destroy($publisher_address_id);
-            }
-         }
+         $publisher_address_id = $acqNumber->publisher->address_id;
+         $this->getAddressCount($publisher_address_id);
          $acqNumber->publisher->delete();
       }
 

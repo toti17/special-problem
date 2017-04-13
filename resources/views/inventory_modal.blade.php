@@ -10,61 +10,87 @@
 				{{ csrf_field() }}
 				<input type='hidden' value='available' name='material-status'/>
 				<div class='modal-header'>
-					<button type='button' class='close material-close' data-dismiss='modal' aria-label='Close'>
+					<button type='button' class='close inventory-close' data-dismiss='modal' aria-label='Close'>
 						<span aria-hidden='true'>&times;</span>
 					</button>
 					<h4 class='modal-title'>Add Inventory</h4>
 				</div>
 				<div class='modal-body'>
-					<div id="dialog" class='hidden' title="Basic dialog">
-						<p>This is the default dialog which is useful for displaying information. The dialog window can be moved, resized and closed with the 'x' icon.</p>
-					</div>
 					<div>
 						<h4>Details</h4>
 						@if(Auth::user()->type == "admin" || Auth::user()->type == "staff")
-						<button type='button' class='btn btn-default pull-right hidden edit-button' id='edit-button'>Edit</button>
+						<button type='button' class='btn btn-default pull-right hidden' id='inventory-edit-button'>Edit</button>
+						<button type='button' class='btn btn-default pull-right hidden' id='inventory-cancel-edit-button'>Cancel Edit</button>
 						@elseif(Auth::user()->type == 'student')
 						<div class='tool-tip' data-toggle="tooltip" data-placement="top">
 							<button type='button' class='btn btn-default pull-right hidden borrow-button' id='borrow-button'>Borrow</button>
 						</div>
 						@endif
-						<button type='button' class='btn btn-default pull-right cancel-edit hidden edit-button'>Cancel Edit</button>
 					</div>
+					<div class='details-div edit-table hidden'>
+						<table class='table table-bordered table-striped tables table-details'>
+							<thead>
+								<tr>
+									<th>Category</th>
+									<th>Accession Number</th>
+									<th>Object</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td class='td-category'></td>
+									<td class='td-acq'></td>
+									<td class='td-obj'></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>					
 					<div class="form-group">
-						<div class="input-group">
-							<span class="input-group-addon label-title">Category</span>
-							<select id='category' class='form-control' name='category'>
-								<option value='' selected disabled hidden>Choose Category</option>
-								<option value ='Artifacts'>Artifacts</option>
-								<option value ='Textiles'>Textiles</option>
-								<option value ='Farming Tools'>Farming Tools</option>
-								<option value ='Fishing Tools'>Fishing Tools</option>
-							</select>
+						<div class='inputfields'>
+							<div class="input-group">
+								<span class="input-group-addon label-title">Category</span>
+								<select id='category' class='form-control' name='category'>
+									<option value='' selected disabled hidden>Choose Category</option>
+									<option value ='Artifacts'>Artifacts</option>
+									<option value ='Textiles'>Textiles</option>
+									<option value ='Farming Tools'>Farming Tools</option>
+									<option value ='Fishing Tools'>Fishing Tools</option>
+								</select>
+							</div>
+
+							<span class="select-help help-block hidden">
+								<strong></strong>
+							</span>
+
+							<div class='input-group'>
+								<span class="input-group-addon label-title">Accession Number</span>
+								<input type='text' id='acqNumber' class='form-control' placeholder='B12345' name='acqNumber' value="{{ old('acqNumber') }}" />
+							</div>
+
+							<span class="acqNumber-help help-block {{$errors->has('acqNumber') ? '' :  'hidden' }}">
+								<strong>@if ($errors->has('acqNumber')) {{ $errors->first('acqNumber') }} @endif</strong>
+							</span>
+
+							<div class='input-group'>
+								<span class='input-group-addon label-title'>Object</span>
+								<input type='text' id='object' class='form-control' placeholder='Sword' name='object' value="{{ old('object') }}" />
+							</div>
+
+							<span class="object-help help-block {{$errors->has('object') ? '' :  'hidden' }}">
+								<strong>@if ($errors->has('object')) {{ $errors->first('object') }} @endif</strong>
+							</span>
 						</div>
 
-						<span class="select-help help-block hidden">
-							<strong></strong>
-						</span>
+						<div class='englishName-table edit-table hidden'>
+							<h4>English Names</h4>
+							<table class='table table-bordered table-striped tables'>
+								<tbody class='table-englishName deleteRows'>
 
-						<div class='input-group'>
-							<span class="input-group-addon label-title">Accession Number</span>
-							<input type='text' id='acqNumber' class='form-control' placeholder='B12345' name='acqNumber' value="{{ old('acqNumber') }}" />
+								</tbody>
+							</table>
 						</div>
 
-						<span class="acqNumber-help help-block {{$errors->has('acqNumber') ? '' :  'hidden' }}">
-							<strong>@if ($errors->has('acqNumber')) {{ $errors->first('acqNumber') }} @endif</strong>
-						</span>
-
-						<div class='input-group'>
-							<span class='input-group-addon label-title'>Object</span>
-							<input type='text' id='object' class='form-control' placeholder='Sword' name='object' value="{{ old('object') }}" />
-						</div>
-
-						<span class="object-help help-block {{$errors->has('object') ? '' :  'hidden' }}">
-							<strong>@if ($errors->has('object')) {{ $errors->first('object') }} @endif</strong>
-						</span>
-
-						<div class='english-name-new'>
+						<div class='english-name-new inputfields'>
 							<div class='input-group'>
 								<span class='input-group-addon label-title'>English Name</span>
 								<input type='text' id='engName' class='form-control' placeholder='Veil' name='engName'/>
@@ -79,9 +105,18 @@
 								<strong></strong>
 							</span>						
 						</div>
-						<span class='english-name'></span>	
+						<span class='english-name'></span>
 
-						<div class='venacular-name-new'>
+						<div class='venName-table edit-table hidden'>
+							<h4>Venacular Names</h4>
+							<table class='table table-bordered table-striped tables'>
+								<tbody class='table-venName deleteRows'>
+
+								</tbody>
+							</table>
+						</div>						
+
+						<div class='venacular-name-new inputfields'>
 							<div class='input-group'>
 								<span class='input-group-addon label-title'>Venacular Name</span>
 								<input type='text' id='venName' class='form-control' placeholder='Bandana' name='venName'/>
@@ -102,13 +137,18 @@
 
 					<h4 class='owner-header'>Owner</h4>
 
-					<table class='table table-bordered table-striped tables owner-table hidden'>
-						<tbody class='table-owner'>
+					<table class='table table-bordered table-striped tables owner-table edit-table hidden'>
+						<thead>
+							<th>Full Name</th>
+							<th>Nickname</th>
+							<th>Locality</th>
+						</thead>
+						<tbody class='table-owner deleteRows'>
 
-						</tbody>		
+						</tbody>
 					</table>
 
-					<div class="form-group owner">
+					<div class="form-group owner inputfields">
 						<span class='firstnames'>
 							<div class='input-group'>
 								<span class='input-group-addon label-title'>First Name</span>
@@ -139,6 +179,16 @@
 						</span>
 						</span>
 
+						<span class='nicknames'>
+						<div class='input-group'>
+							<span class='input-group-addon label-title'>Nickname</span>
+							<input type='text' id='owner-nickname' class='form-control' placeholder='Realonda' name='owner-nickname'/>
+						</div>	
+						<span class="owner-nickname-help help-block hidden">
+							<strong></strong>
+						</span>
+						</span>
+
 						<span class='localities'>
 						<div class='input-group'>
 							<span class='input-group-addon label-title'>Locality</span>
@@ -151,38 +201,57 @@
 					</div>			
 
 					<h4>Physical Description</h4>
-					<div class='input-group form-group measurement-radio'>
+					<div class='measure-div edit-table hidden'>
+						<table class='table table-bordered table-striped tables table-measure'>
+							<thead>
+								<tr>
+									<th>Length</th>
+									<th>Width</th>
+									<th>Unit</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td class='td-length'></td>
+									<td class='td-width'></td>
+									<td class='td-unit'></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>					
+					<div class='input-group form-group measurement-radio inputfields'>
 						<label class='radio-inline'>
-							<input type='radio' class='measurement' name='unit' value="m" />Meter
+							<input type='radio' class='measurement' id='meter' name='unit' value="m" />Meter
 						</label>
 						<label class='radio-inline'>
-							<input type='radio' class='measurement' name='unit' value="cm" />Centimeter
+							<input type='radio' class='measurement' id='centimeter' name='unit' value="cm" />Centimeter
 						</label>
 						<label class='radio-inline'>
-							<input type='radio' class='measurement' name='unit' value="mm" />Millimeter
+							<input type='radio' class='measurement' id='millimeter' name='unit' value="mm" />Millimeter
 						</label>
 						<span class="measure-status-help help-block {{$errors->has('unit') ? '' :  'hidden' }}">
 							<strong></strong>
 						</span>											
-					</div>	
-					<div class='input-group'>
-						<span class='input-group-addon label-title'>Length</span>
-						<input type='number' step='any' id='length' class='form-control' placeholder='10' name='length' value="{{ old('length') }}" />						
 					</div>
+					<div class='inputfields'>
+						<div class='input-group'>
+							<span class='input-group-addon label-title'>Length</span>
+							<input type='number' step='any' id='length' class='form-control' placeholder='10' name='length' value="{{ old('length') }}" />						
+						</div>
 
-					<span class="length-help help-block {{$errors->has('length') ? '' :  'hidden' }}">
-						<strong>@if ($errors->has('length')) {{ $errors->first('length') }} @endif</strong>
-					</span>
+						<span class="length-help help-block {{$errors->has('length') ? '' :  'hidden' }}">
+							<strong>@if ($errors->has('length')) {{ $errors->first('length') }} @endif</strong>
+						</span>
 
-					<div class='input-group'>
-						<span class='input-group-addon label-title'>Width</span>
-						<input type='number' step='any' id='width' class='form-control' placeholder='10' name='width' value="{{ old('width') }}" />						
+						<div class='input-group'>
+							<span class='input-group-addon label-title'>Width</span>
+							<input type='number' step='any' id='width' class='form-control' placeholder='10' name='width' value="{{ old('width') }}" />						
+						</div>
+
+						<span class="width-help help-block {{$errors->has('width') ? '' :  'hidden' }}">
+							<strong>@if ($errors->has('width')) {{ $errors->first('width') }} @endif</strong>
+						</span>						
 					</div>
-
-					<span class="width-help help-block {{$errors->has('width') ? '' :  'hidden' }}">
-						<strong>@if ($errors->has('width')) {{ $errors->first('width') }} @endif</strong>
-					</span>						
-
 					<div class='input-group'>
 						<span class='input-group-addon label-title'>Condition</span>
 						<textarea id='condition' class='form-control' placeholder='A mountain view.' name='condition' rows='4' value="{{ old('condition') }}"></textarea>					
@@ -192,13 +261,16 @@
 						<strong>@if ($errors->has('condition')) {{ $errors->first('condition') }} @endif</strong>
 					</span>
 
-					<table class='table table-bordered table-striped tables hidden'>
-						<tbody class='table-materials'>
-							
-						</tbody>
-					</table>					
+					<div class='materials-table edit-table hidden'>
+						<h4>Materials</h4>
+						<table class='table table-bordered table-striped tables'>
+							<tbody class='table-materials deleteRows'>
+
+							</tbody>
+						</table>
+					</div>				
 					
-					<div class='material-new'>
+					<div class='material-new inputfields'>
 					<div class='input-group'>
 						<span class='input-group-addon label-title'>Material</span>
 						<input type='text' id='material' class='form-control' placeholder='wood' name='material' value="{{ old('material') }}" />
@@ -213,9 +285,18 @@
 						<strong></strong>
 					</span>						
 					</div>
-					<span class='materials'></span>															
+					<span class='materials inputfields'></span>																				
 
-					<div class='color-new'>
+					<div class='colors-table edit-table hidden'>
+						<h4>Colors</h4>
+						<table class='table table-bordered table-striped tables'>
+							<tbody class='table-colors deleteRows'>
+
+							</tbody>
+						</table>
+					</div>	
+
+					<div class='color-new inputfields'>
 					<div class='input-group'>
 						<span class='input-group-addon label-title'>Color</span>
 						<input type='text' id='color' class='form-control' placeholder='blue' name='color' value="{{ old('color') }}" />
@@ -230,9 +311,18 @@
 						<strong></strong>
 					</span>						
 					</div>
-					<span class='colorss'></span>
+					<span class='colorss inputfields'></span>
 
-					<div class='decoration-new'>
+					<div class='decorations-table edit-table hidden'>
+						<h4>Decorations</h4>
+						<table class='table table-bordered table-striped tables'>
+							<tbody class='table-decorations deleteRows'>
+
+							</tbody>
+						</table>
+					</div>	
+
+					<div class='decoration-new inputfields'>
 					<div class='input-group'>
 						<span class='input-group-addon label-title'>Special Decorations</span>
 						<input type='text' id='decoration' class='form-control' placeholder='scratches' name='decoration' value="{{ old('decoration') }}" />
@@ -247,9 +337,18 @@
 						<strong></strong>
 					</span>						
 					</div>
-					<span class='decorationsss'></span>
+					<span class='decorationsss inputfields'></span>
 
-					<div class='mark-new'>
+					<div class='marks-table edit-table hidden'>
+						<h4>Marks</h4>
+						<table class='table table-bordered table-striped tables'>
+							<tbody class='table-marks deleteRows'>
+
+							</tbody>
+						</table>
+					</div>	
+
+					<div class='mark-new inputfields'>
 					<div class='input-group'>
 						<span class='input-group-addon label-title'>Special Marks</span>
 						<input type='text' id='mark' class='form-control' placeholder='carving' name='mark' value="{{ old('mark') }}" />
@@ -264,10 +363,10 @@
 						<strong></strong>
 					</span>						
 					</div>
-					<span class='marksss'></span>													
+					<span class='marksss inputfields'></span>													
 
 					@if(Auth::user()->type != "student")
-					<div class='acquisition-field'>
+					<div class='acquisition-field inputfields'>
 					<h4>Acquisition</h4>
 					<div class='form-group acquisition-radio'>
 						<div class='input-group'>
@@ -284,21 +383,25 @@
 						</span>						
 					</div>
 					</div>
-					<table class='table table-bordered table-striped tables table-donors hidden'>
-						<thead>
-							<tr>
-								<th>Donor</th>
-								<th>Year donated</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr>
-								<td class='td-donor'></td>
-								<td class='td-year'></td>
-							</tr>
-						</tbody>
-					</table>
+					<div class='donors-div hidden'>
+						<h4>Donor Details</h4>
+						<table class='table table-bordered table-striped tables table-donors'>
+							<thead>
+								<tr>
+									<th>Donor</th>
+									<th>Year donated</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td class='td-donor'></td>
+									<td class='td-date'></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
 					<div class='form-group donated-div hidden'>
+						<h4>Donor Details</h4>
 						<div class='input-group'>
 							<span class='input-group-addon label-title'>First Name</span>
 							<input type='text' id='donor-firstname' class='form-control' placeholder='Francis' name='donor-firstname' value="{{ old('donor-firstname') }}" />						
@@ -329,7 +432,28 @@
 						</span>																		
 					</div>
 
+					<div class='purchases-div hidden'>
+						<h4>Purchased Details</h4>
+						<table class='table table-bordered table-striped tables table-purchases'>
+							<thead>
+								<tr>
+									<th>Amount</th>
+									<th>Address</th>
+									<th>Date</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td class='td-amount'></td>
+									<td class='td-pur-address'></td>
+									<td class='td-pur-date'></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+
 					<div class='form-group purchased-div hidden'>
+						<h4>Purchased Details</h4>
 						<div class='input-group'>
 							<span class='input-group-addon label-title'>Amount</span>
 							<input type='text' id='amount' class='form-control' placeholder='1000' name='amount' value="{{ old('amount') }}" />	
@@ -359,7 +483,7 @@
 						</span>												
 					</div>
 					<h4>Image Upload</h4>
-					<div class='form-group image-group'>
+					<div class='form-group image-group inputfields'>
 						<div class="input-group">
                 					<label class="input-group-btn">
                     					<span class="btn btn-success">Browse&hellip; <input type="file" name='pic' id='image-upload' style="display: none;"/></span>
@@ -375,9 +499,9 @@
 				</div>
 				<div class='modal-footer'>
 					<div class='material-buttons'>
-						<button type='button' class='btn btn-default view-button-close hidden' data-dismiss='modal' aria-label='Close'>Close</button>
-						<button type='reset' id='material-reset' class='inventory-reset btn btn-danger'>Reset</button>
-						<button type='submit' id='inventory-submit' class='btn btn-success'>Add</button>
+						<button type='button' class='btn btn-default view-invent-button-close inventory-close hidden' data-dismiss='modal' aria-label='Close'>Close</button>
+						<button type='reset' id='material-reset' class='inventory-reset btn btn-danger invent-button'>Reset</button>
+						<button type='submit' id='inventory-submit' class='btn btn-success invent-button'>Add</button>
 					</div>
 				</div>
 			</form>
@@ -385,14 +509,31 @@
 	</div>
 </div>
 
-<div class='modal fade extension-modal' id='static' role='dialog' data-keyboard='false' data-backdrop='static'>
+<div class='modal fade extension-modal' role='dialog' data-keyboard='false' data-backdrop='static'>
 	<div class='modal-dialog'>
 		<div class='modal-content'>
 			<div class="modal-body">
-			  	<p>Please choose an image format. (e.g. JPEG, JPG, PNG, GIF)</p>
+			  	<p>Please choose an image format. (e.g. JPEG, JPG, PNG)</p>
 			</div>
 			<div class="modal-footer">
 				<button type="button" data-dismiss="modal" id='extension-close' class="btn btn-default">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class='modal fade' id='delete-confirm-modal' role='dialog' data-keyboard='false' data-backdrop='static'>
+	<div class='modal-dialog'>
+		<div class='modal-content'>
+			<div class='modal-header'>
+				<h3>Delete Inventory</h3>
+			</div>
+			<div class="modal-body">
+			  	<p class='p-delete-invent'></p>
+			</div>
+			<div class="modal-footer">
+				<button type="button" data-dismiss="modal" class="btn btn-default" id='delete-close'>Close</button>
+				<button type="button" class="btn btn-danger" id='inventory-confirm-delete'>Delete</button>
 			</div>
 		</div>
 	</div>

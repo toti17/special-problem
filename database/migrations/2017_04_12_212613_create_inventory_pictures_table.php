@@ -15,6 +15,8 @@ class CreateInventoryPicturesTable extends Migration
     {
         Schema::create('inventory_pictures', function (Blueprint $table) {
             $table->increments('id');
+            $table->string('name');
+            $table->enum('extension', ['jpeg', 'png', 'jpg']);
             $table->string('acqNumber');
         });
     }

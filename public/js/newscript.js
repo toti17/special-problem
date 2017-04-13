@@ -466,7 +466,6 @@ $(document).ready(function (){
 			$('.multimedia').removeClass('hidden');
 			$('.photograph').addClass('hidden');
 			$('.add-co-author').removeClass('hidden');			
-			$('.author-photographer-director').text('Director');
 		}
 		else{
 			$('.add-producer').addClass('hidden');
@@ -1303,6 +1302,7 @@ $(document).ready(function (){
 		$('#material-submit').addClass('hidden');
 		$('.co-author').addClass('hidden');
 		$('#add-co-author-button').addClass('hidden');
+		$('.acquisition-field').addClass('hidden');
 		$('.acquisition-radio').addClass('hidden');
 		$('.tables').removeClass('hidden');
 		$('.tag').addClass('hidden');
@@ -1380,6 +1380,7 @@ $(document).ready(function (){
 			}
 
 			if(category == 'Compact Discs' || category == 'Cassette Tapes' || category == 'Digital Versatile Discs' || category == 'Video Home Systems'){
+				$('.author-photographer-director').text('Directors');
 				if(producersArray.length != 0){
 					$('.add-producer').removeClass('hidden');
 				}
@@ -1404,6 +1405,7 @@ $(document).ready(function (){
 				}
 			}
 			else{
+				$('.author-photographer-director').text('Authors');
 				$('.add-producer').addClass('hidden');
 			}
 			if(authorsArray.length==0){
@@ -2238,7 +2240,7 @@ $(document).ready(function (){
 						);
 						$('.search').prop('disabled', true);
 						$('.search-type').prop('disabled', true);
-						$('.material-items').append(newMaterial);						
+						$('.material-items').append(newMaterial);				
 					}
 				}
 				else if(searchType == 'Author' || searchType == 'Photographer' || searchType == 'Tag'

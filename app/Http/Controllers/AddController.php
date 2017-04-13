@@ -73,6 +73,7 @@ class AddController extends Controller
         $owner_first_name = $request->input('owner-firstname');
         $owner_middle_name = $request->input('owner-middlename');
         $owner_last_name = $request->input('owner-lastname');
+        $owner_nickname = $request->input('owner-nickname');
         $owner_locality = $request->local;
         $unit = $request->unit;
         $length = $request->length;
@@ -95,9 +96,11 @@ class AddController extends Controller
         if($picture){
             $ext = $picture->extension();
             $extension = $acqNumber . '.' . $ext;
-            $picture->storeAs('inventory/', $extension, 'local');
+            $picture->storeAs('public/', $extension, 'local');
             $inventory_picture = new InventoryPictures;
             $inventory_picture->acqNumber = $acqNumber;
+            $inventory_picture->name = $acqNumber;
+            $inventory_picture->extension = $ext;
             $inventory_picture->save();
         }
 
@@ -127,6 +130,7 @@ class AddController extends Controller
         $owner = Owner::firstorNew(['firstname' => $owner_first_name, 'middlename' => $owner_middle_name, 'lastname' => $owner_last_name]);
         $local_address = Address::firstorNew(['address_name' => $owner_locality]);
         $local_address->save();
+        $owner->nickname = $owner_nickname;
         $owner->address_id = $local_address->getKey();
         $owner->save();
         $inventory->owner_id = $owner->getKey();
@@ -191,30 +195,6 @@ class AddController extends Controller
     }
 
     public function addMaterial(Request $request){
-        $validator = Validator::make($request->all(), [
-           	'acqNumber' => 'unique:material|max:50',
-            'title' => 'required|max:50',
-            'publisher' => 'max:50',
-            'published-year' =>'size:4|regex:/\d/',
-            'place' => 'max:50',
-            'donor-firstname' => 'max:50',
-            'donor-middlename' => 'max:50',
-            'donor-lastname' => 'max:50',
-            'donated-year' => 'size:4|regex:/\d/',
-            'amount' => 'max:50|regex:/^[\d,]*(\.\d*)?$/',
-            'purchased-year' => 'size:4|regex:/\d/',
-            'address' => 'max:50',
-            'school' => 'max:50',
-            'course' => 'max:50',
-            'size' => 'max:10',
-            'year' => 'size:4|regex:/\d/',
-            'description' => 'max:100',
-        ]);
-
-        if($validator->fails()){
-            return back()->withInput()->withErrors($validator);
-        }
-
         $category = $request->input('category');
         $category = trim($category);
         $material = Material::firstorNew(['acqNumber' => trim($request->input('acqNumber'))]);

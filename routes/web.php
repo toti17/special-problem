@@ -28,6 +28,8 @@ Route::group(['middleware' => ['login.check']], function () {
 
 	Route::post('/add/inventory', 'AddController@addInventory');
 
+	Route::post('/delete/inventory/{acqNumber}', 'DeleteController@deleteInventory');
+
 	Route::get('dashboard/material/check/{number}/{original}/{change}', 'AddController@checkAcq');
 
 	Route::get('/dashboard/check/borrowed/{acqNumber}', 'BorrowController@checkBorrowed');
@@ -55,6 +57,8 @@ Route::group(['middleware' => ['login.check']], function () {
 	Route::get('dashboard/material', 'ViewController@materialDashboard');
 
 	Route::get('/dashboard/show/inventory', 'ViewController@showInventory');
+
+	Route::get('/dashboard/retrieve/inventory/{acqNumber}', 'ViewController@retrieveInventory');
 
 	Route::get('/dashboard/inventory', 'ViewController@inventoryDashboard');
 

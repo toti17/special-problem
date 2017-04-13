@@ -18,6 +18,7 @@ class CreateOwnersTable extends Migration
             $table->string('firstname');
             $table->string('middlename');
             $table->string('lastname');
+            $table->string('nickname');
             $table->integer('address_id');
         });
     }

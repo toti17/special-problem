@@ -410,15 +410,11 @@ th{
 	left: -104px;
 }
 
-.success-status{
+.success-status, .delete-status{
 	position: absolute;	
 	right: 0;
 /*	line-height: 3px;
 	height: 10px;*/
-}
-
-.success-close{
-	/*line-height: 0;*/
 }
 
 .material-table, .confirm-material-table{
@@ -555,8 +551,10 @@ th{
 #image-preview{
   position: relative;
   overflow: hidden;
-  background-color: #ffffff;
-  color: #ecf0f1;
+}
+
+.englishName-table, .venName-table{
+	margin-top: 20px;
 }
 
 /*end of inventory page*/

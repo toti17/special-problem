@@ -10,7 +10,7 @@ $(document).ready(function (){
 	$(':file').on('fileselect', function(event, numFiles, label){
 		var extension = label.substr( (label.lastIndexOf('.') +1) ).toLowerCase();
 		if(label != ''){
-			if($.inArray(extension, ['gif','png','jpg','jpeg']) == -1) {
+			if($.inArray(extension, ['png','jpg','jpeg']) == -1) {
 				$('.extension-modal').modal('toggle');
 				$('.inventory-content').animate({
 					opacity: 0
@@ -226,6 +226,7 @@ $(document).ready(function (){
 		firstName = $.trim($('#owner-firstname').val());
 		middleName = $.trim($('#owner-middlename').val());
 		lastName = $.trim($('#owner-lastname').val());
+		nickname = $.trim($('#owner-nickname').val());
 		locality = $.trim($('#local').val());
 		length = $.trim($('#length').val());
 		width = $.trim($('#width').val());
@@ -377,6 +378,20 @@ $(document).ready(function (){
 			$('.owner-lastname-help').addClass('hidden');
 		}
 
+		if(nickname == ''){
+			$('.owner-nickname-help').removeClass('hidden');
+			$('.owner-nickname-help strong').text('The nickname field is required.');
+			errorCounter++;
+		}
+		else if(nickname.length > 50){
+			$('.owner-nickname-help').removeClass('hidden');
+			$('.owner-nickname-help strong').text('The nickname field should not exceed 50 characters.');
+			errorCounter++;
+		}
+		else{
+			$('.owner-nickname-help').addClass('hidden');
+		}
+
 		if(locality == ''){
 			$('.local-help').removeClass('hidden');
 			$('.local-help strong').text('The locality field is required.');
@@ -505,7 +520,9 @@ $(document).ready(function (){
 				}				
 			}
 			else{
+
 				$('#colors').val(colorArray);
+				console.log($('#colors').val());
 				$('.color-help').addClass('hidden');
 			}
 		});
@@ -685,6 +702,13 @@ $(document).ready(function (){
 		$('#image-preview').removeAttr('style');		
 	});
 
+	function retrieveInventory(acqNumber){
+		return $.ajax({
+			type: 'get',
+			url: '/dashboard/retrieve/inventory/' + acqNumber,
+		})
+	}
+
 	function showInventory(){
 		return $.ajax({
 			type: 'get',
@@ -692,9 +716,288 @@ $(document).ready(function (){
 		});
 	}
 
-	showInventory().done(function(){
+	var inventoryArray = [];
 
-	}).fail(function(){
+	$('.inventories-table').tablesorter();
 
+	function createPagination(data){
+		var totalPages = data.inventory.length;
+		var minPage = 5;
+		var total = 0;
+		var max =0;
+		var index =0;
+		var defaultOpts = {
+			totalPages: 1
+		};
+		if(data.inventory.length <= minPage){
+			totalPages = 1;
+		}
+		else{
+			totalPages = Math.ceil(data.inventory.length/minPage);
+		}
+		$('#pagination-demo').twbsPagination(defaultOpts);
+		$('#pagination-demo').twbsPagination('destroy');
+		$('#pagination-demo').twbsPagination($.extend({}, defaultOpts, {
+			startPage: 1,
+			totalPages: totalPages,
+			onPageClick: function(event, page){
+				$('.inventories-table').trigger('update');
+				inventoryLength = data.inventory.length;
+				total = page * minPage;
+				index = Math.abs(total-minPage);
+				max = data.inventory.length - index;
+				if(max <= 5){
+					max = data.inventory.length;
+				}
+				else{
+					max = index + minPage;
+				}
+				for(i=0;i<inventoryLength;i++){
+					$('.' + data.inventory[i].acqNumber).remove();
+				}
+				for(i=index;i<max;i++){
+					var newInventory = $(document.createElement('tr')).attr('class', data.inventory[i].acqNumber);
+					newInventory.after().html(
+						"<td class='inventory-view-button text-left'>" + data.inventory[i].acqNumber + 
+						"<input type='hidden' value='" + data.inventory[i].acqNumber +"'/>" +
+						"</td>" +
+						"<td class='inventory-view-button text-left'>" + data.inventory[i].object + 
+						"<input type='hidden' value='" + data.inventory[i].acqNumber +"'/>" +
+						"</td>" +
+						"<td class='inventory-view-button text-left'>" + data.type[i] + 
+						"<input type='hidden' value='" + data.inventory[i].acqNumber +"'/>" +
+						"</td>" +
+						"<td class='text-right action-buttons'>" + 
+						"<button type='button' class='btn btn-xs btn-danger inventory-delete-button' value='" + data.inventory[i].acqNumber + "'>" +
+						"<span class='glyphicon glyphicon-remove'></span>" +
+						"</button>" +
+						"</td>"			
+					);
+					$('.inventory-items').append(newInventory);	  
+				}
+			}
+		}));
+	}
+
+	if($('.inventory-search-type').val() == 'Object'){
+		showInventory().done(function(data){
+			console.log(data.inventory.length);
+			if(data.inventory.length == 0){
+				$('#no-inventories').removeClass('hidden');
+				$('.search-pagination').addClass('hidden');
+			}
+			else{
+				$('.search-pagination').removeClass('hidden');
+			}
+			createPagination(data);
+		});
+	}
+
+	function createTables(data){
+		for(i=0;i<data.english_name.length;i++){
+			newEnglishName = $(document.createElement('tr'));
+			newEnglishName.after().html(
+				"<td>" + data.english_name[i] + "</td>" 
+			);
+			$('.table-englishName').append(newEnglishName);
+		}
+		for(i=0;i<data.venacular_name.length;i++){
+			newVenacularName = $(document.createElement('tr'));
+			newVenacularName.after().html(
+				"<td>" + data.venacular_name[i] + "</td>" 
+			);
+			$('.table-venName').append(newVenacularName);
+		}
+		newOwner = $(document.createElement('tr'));
+		newOwner.after().html(
+			"<td>" + data.owner_firstname + " " + data.owner_middlename + " " + data.owner_lastname + "</td>" +
+			"<td>" + data.owner_nickname + "</td>" +
+			"<td>" + data.locality + "</td>"
+		);
+		$('.table-owner').append(newOwner);
+
+		for(i=0;i<data.material.length;i++){
+			newMaterial = $(document.createElement('tr'));
+			newMaterial.after().html(
+				"<td>" + data.material[i] + "</td>"				
+			);
+			$('.table-materials').append(newMaterial);
+		}
+
+		for(i=0;i<data.color.length;i++){
+			newColor = $(document.createElement('tr'));
+			newColor.after().html(
+				"<td>" + data.color[i] + "</td>"				
+			);
+			$('.table-colors').append(newColor);
+		}
+
+		for(i=0;i<data.decoration.length;i++){
+			newDecoration = $(document.createElement('tr'));
+			newDecoration.after().html(
+				"<td>" + data.decoration[i] + "</td>"
+			);
+			$('.table-decorations').append(newDecoration);
+		}
+
+		for(i=0;i<data.mark.length;i++){
+			newMark = $(document.createElement('tr'));
+			newMark.after().html(
+				"<td>" + data.mark[i] + "</td>"
+			);
+			$('.table-marks').append(newMark);
+		}
+	}
+
+	function deleteRows(){
+		$('.deleteRows').children().remove();
+		$('.td-donor').html('');
+	}
+
+	function showTables(){
+		hideInputFields();
+		$('.edit-table').removeClass('hidden');
+		if($('.td-donor').text().length != 0){
+			$('.donors-div').removeClass('hidden');
+		}
+		else{
+			$('.purchases-div').removeClass('hidden');
+		}
+	}
+
+	function hideInputFields(){
+		$('.inputfields').addClass('hidden');
+	}
+
+	function showInputFields(){
+		$('.inputfields').removeClass('hidden');
+	}
+
+	function hideTables(){
+		showInputFields();
+		$('.edit-table').addClass('hidden');
+		if($('.td-donor').text().length != 0){
+			$('.donors-div').addClass('hidden');
+		}
+		else{
+			$('.purchases-div').addClass('hidden');
+		}		
+	}
+
+	function showData(data){
+		$('#condition').prop('disabled', true);
+		$('.td-category').html(data.category);
+		$('.td-acq').html(data.accession.acqNumber);
+		$('.td-obj').html(data.object);
+		$('.td-length').html(data.length);
+		$('.td-width').html(data.width);
+		if(data.unit == 'm'){
+			$('.td-unit').html('meter');
+		}
+		else if(data.unit == 'cm'){
+			$('.td-unit').html('centimeter');
+		}
+		else if(data.unit == 'mm'){
+			$('.td-unit').html('millimeter');
+		}
+		$('#condition').val(data.condition);
+		if(data.donor_firstname.length != 0){
+			$('.td-donor').html(data.donor_firstname + " " + data.donor_middlename + " " + data.donor_lastname);
+			$('.td-date').html(data.donor_date);
+		}
+		else{
+			$('.td-amount').html(data.amount);
+			$('.td-pur-address').html(data.purchased_address);
+			$('.td-pur-date').html(data.purchased_date);
+		}		
+	}	
+
+
+
+	$('body').on('click', '.inventory-view-button', function(){
+		$('.modal-title').text('View Inventory');
+		$('.invent-button').addClass('hidden');
+		$('.view-invent-button-close').removeClass('hidden');
+		$('#edit-button').removeClass('hidden');
+		acqNumber = $(this).find('input').val();
+		$('body').css('cursor', 'wait');
+		$('.inventory-view-button').css({'pointer-events': 'none'});
+		retrieveInventory(acqNumber).done(function(data){
+			$('body').css('cursor', 'default');
+			$('.inventory-view-button').css({'pointer-events': 'auto'});
+			console.log(data);
+			showData(data);
+			createTables(data);
+			showTables();
+			$('#inventory-modal').modal('show');
+			if(data.picture != ''){
+				url = "url(" + data.picture + ")";
+				$('#image-preview').css({
+					'background-image': url,
+					'background-repeat': 'no-repeat',
+					'background-size': 'contain',
+					'background-position': 'center center',
+					'width': '100%',
+					'height': '400px'
+				});
+			}
+		});
+	});
+
+	$('#add-inventory-button').click(function(){
+		$('.modal-title').text('Add Inventory');		
+		$('.invent-button').removeClass('hidden');
+		$('.view-invent-button-close').addClass('hidden');
+	});
+
+	$('.inventory-close').click(function(){
+		$('#edit-button').addClass('hidden');
+		$('#condition').prop('disabled', false);
+		hideTables();
+		deleteRows();		
+	});
+
+	$('body').on('click', '.inventory-delete-button', function(){
+		acq = $(this).val();
+		object = $(this).parent().parent().children('td:first-child').text();
+		$('.delete-status').html(
+			"Successfully deleted object '" + object + "'!" +
+			"<button type='button' class='close success-close' aria-label='Close' data-dismiss='alert'>" +
+        		"<span aria-hidden='true'>&times;</span>" +
+    			"</button>"
+		);
+		$('.p-delete-invent').text("Please click the delete button to confirm deletion of object '" + object + "'.");
+		$('#delete-confirm-modal').modal('show');
+		$('#inventory-confirm-delete').val(acq);
+	});
+
+	function deleteInventory(acqNumber){
+		return $.ajax({
+			headers:{
+				'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+			},			
+			type: 'post',
+			url: '/delete/inventory/' + acqNumber,
+		});	
+	}
+
+	$('#inventory-confirm-delete').click(function(){
+		x = $(this);
+		x.text('Deleting...');
+		x.prop('disabled', true);
+		$('#delete-close').prop('disabled', true);
+		$('body').css('cursor', 'wait');	
+		deleteInventory(x.val()).done(function(){
+			$('body').css('cursor', 'default');
+			x.prop('disabled', false);
+			$('#delete-close').prop('disabled', false);				
+			$('.add-success').trigger('click');
+			$('.delete-status').removeClass('hidden');
+			$('#delete-confirm-modal').modal('hide');
+			$('.inventory-items').children('tr.' + x.val()).remove();
+			if($('.inventory-items').children().length == 0){
+				$('#no-inventories').removeClass('hidden');
+			}
+		});
 	});
 });

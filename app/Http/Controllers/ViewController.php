@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 
 use DB;
@@ -80,10 +81,123 @@ class ViewController extends Controller
 
     public function showInventory(){
         
-        $inventory = Object::class
+        $inventory = \App\Inventory::all();
+
+        $type_array = [];
+        foreach($inventory as $invent){
+            $type = Inventory_Type::find($invent->inventory_type_id);
+            $type =$type->type;
+            array_push($type_array, $type);
+        }
 
         return response()->json([
+            'inventory' => $inventory,
+            'type' => $type_array
+        ]);
+    }
 
+    public function retrieveInventory(Inventory $acqNumber){
+        $category = $acqNumber->inventory_type->type;
+        $accession = $acqNumber;
+        $object = $acqNumber->object;
+        $donor_id = $acqNumber->donor_id;
+        $donor_firstname = '';
+        $donor_middlename = '';
+        $donor_lastname = '';
+        $donor_date = '';
+        $amount = '';
+        $purchased_address = '';
+        $purchased_date = '';
+        $picture = '';
+
+        $englishNameArray = [];
+        for($i=0;$i<sizeof($acqNumber->english_name);$i++){
+            array_push($englishNameArray, $acqNumber->english_name[$i]->english_name);
+        }
+
+        $venNameArray = [];
+        for($i=0;$i<sizeof($acqNumber->venacular_name);$i++){
+            array_push($venNameArray, $acqNumber->venacular_name[$i]->venacular_name);
+        }
+
+        $owner_first_name = $acqNumber->owner->firstname;
+        $owner_middle_name = $acqNumber->owner->middlename;
+        $owner_last_name = $acqNumber->owner->lastname;
+        $owner_nickname = $acqNumber->owner->nickname;
+        $address = $acqNumber->owner->address->address_name;
+
+        $unit = $acqNumber->measurement->unit;
+        $length = $acqNumber->measurement->length;
+        $width = $acqNumber->measurement->width;
+
+        $condition = $acqNumber->conditions;
+
+        $materialArray = [];
+        for($i=0;$i<sizeof($acqNumber->materials);$i++){
+            array_push($materialArray, $acqNumber->materials[$i]->material_name);
+        }
+
+        $colorArray = [];
+        for($i=0;$i<sizeof($acqNumber->color);$i++){
+            array_push($colorArray, $acqNumber->color[$i]->color_name);
+        }
+
+        $decorArray = [];
+        for($i=0;$i<sizeof($acqNumber->decoration);$i++){
+            array_push($decorArray, $acqNumber->decoration[$i]->decoration_name);
+        }
+
+        $markArray = [];
+        for($i=0;$i<sizeof($acqNumber->mark);$i++){
+            array_push($markArray, $acqNumber->mark[$i]->mark_name);
+        }
+
+        if($donor_id != ''){
+            $donor_firstname = $acqNumber->donor->donor_name->firstname;
+            $donor_middlename = $acqNumber->donor->donor_name->middlename;
+            $donor_lastname = $acqNumber->donor->donor_name->lastname;
+            $donor_date = $acqNumber->donor->donor_date;
+        }
+        else{
+            $amount = $acqNumber->purchased_detail->amount;
+            $purchased_address = $acqNumber->purchased_detail->address->address_name;
+            $purchased_date = $acqNumber->purchased_detail->purchased_date;
+        }
+
+        if($acqNumber->picture != ''){
+            $name = $acqNumber->picture->name;
+            $extension = $acqNumber->picture->extension;            
+            $pic_name = $name . '.' . $extension;
+            $picture = Storage::url($pic_name);
+        }
+
+        return response()->json([
+            'category' => $category,
+            'accession' => $accession,
+            'object' => $object,
+            'english_name' => $englishNameArray,
+            'venacular_name' => $venNameArray,
+            'owner_firstname' => $owner_first_name,
+            'owner_middlename' => $owner_middle_name,
+            'owner_lastname' => $owner_last_name,
+            'owner_nickname' => $owner_nickname,
+            'locality' => $address,
+            'unit' => $unit,
+            'length' => $length,
+            'width' => $width,
+            'condition' => $condition,
+            'material' => $materialArray,
+            'color' => $colorArray,
+            'decoration' => $decorArray,
+            'mark' => $markArray,
+            'donor_firstname' => $donor_firstname,
+            'donor_middlename' => $donor_middlename,
+            'donor_lastname' => $donor_lastname,
+            'donor_date' => $donor_date,
+            'amount' => $amount,
+            'purchased_address' => $purchased_address,
+            'purchased_date' => $purchased_date,
+            'picture' => $picture
         ]);
     }
 
