@@ -24,11 +24,13 @@ Route::group(['middleware' => ['login.check']], function () {
 
 	Route::post('/add/studentnumber', 'AddStudentNumberController@add');
 
-	Route::post('/add/material', 'AddController@addMaterial');
+	Route::post('/add/material', 'Controller@addMaterial');
 
-	Route::post('/add/inventory', 'AddController@addInventory');
+	Route::post('/add/inventory', 'Controller@addInventory');
 
-	Route::post('/delete/inventory/{acqNumber}', 'DeleteController@deleteInventory');
+	Route::post('/edit/inventory/{acqNumber}', 'EditController@editInventory');
+
+	Route::post('/delete/inventory/{acqNumber}/{edit}/{picname}', 'Controller@deleteInventory');
 
 	Route::get('dashboard/material/check/{number}/{original}/{change}', 'AddController@checkAcq');
 
@@ -98,6 +100,6 @@ Route::group(['middleware' => ['login.check']], function () {
 
 	Route::post('/edit/material/{acqNumber}', 'EditController@edit');
 
-	Route::delete('dashboard/material/delete/{acqNumber}', 'DeleteController@deleteMaterial');
+	Route::delete('dashboard/material/delete/{acqNumber}', 'Controller@deleteMaterial');
 
 });

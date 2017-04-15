@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Owner extends Model
 {
 	protected $primaryKey = 'owner_id';
-	protected $fillable = ['firstname', 'middlename', 'lastname'];
+	protected $fillable = ['firstname', 'middlename', 'lastname', 'nickname', 'address_id'];
 	public $timestamps = false;
 
 	public function inventory()

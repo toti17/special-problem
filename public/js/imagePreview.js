@@ -18,7 +18,6 @@
         if (typeof($(settings.input_field)) !== 'undefined' && $(settings.input_field) !== null) {
           $(settings.input_field).change(function() {
             var files = this.files;
-
             if (files.length > 0) {
               var file = files[0];
               var reader = new FileReader();
@@ -27,8 +26,29 @@
               reader.addEventListener("load",function(event) {
                 var loadedFile = event.target;
 
+                var iSize = (file.size / 1024);
+                var sizeType = '';
+                var sizeAllow = true;
+                if (iSize / 1024 > 1){
+                  if (((iSize / 1024) / 1024) > 1){
+                    iSize = (Math.round(((iSize / 1024) / 1024) * 100) / 100);
+                    sizeType = 'gb';
+                    sizeAllow = false;
+                  }
+                  else{
+                    iSize = (Math.round((iSize / 1024) * 100) / 100);
+                    if(iSize > 7){
+                      sizeAllow = false;
+                    }
+                    sizeType = 'mb';
+                  }
+                }
+                else{
+                  iSize = (Math.round(iSize * 100) / 100);
+                  sizeType = 'kb';
+                }
                 // Check format
-                if (file.type.match('image')) {
+                if (file.type.match('image') && sizeAllow == true) {
                   // Image
                   $(settings.preview_box).css("background-image", "url("+loadedFile.result+")");
                   $(settings.preview_box).css("background-repeat", "no-repeat");

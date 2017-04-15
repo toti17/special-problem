@@ -6,21 +6,24 @@
 			      <div>{{ $error }}</div>
 			  @endforeach
 			@endif
-			<form class="material-form" role="form" method="POST" action="{{ url('/add/inventory') }}" enctype='multipart/form-data'>
+			<form class="inventory-form" role="form" method="POST" action="{{ url('/add/inventory') }}" enctype='multipart/form-data'>
 				{{ csrf_field() }}
 				<input type='hidden' value='available' name='material-status'/>
 				<div class='modal-header'>
-					<button type='button' class='close inventory-close' data-dismiss='modal' aria-label='Close'>
+					<button type='button' class='close inventory-close' aria-label='Close'>
 						<span aria-hidden='true'>&times;</span>
 					</button>
+					<button type='button' class='close edit-close hidden' aria-label='Close'>
+						<span aria-hidden='true'>&times;</span>
+					</button>					
 					<h4 class='modal-title'>Add Inventory</h4>
 				</div>
 				<div class='modal-body'>
 					<div>
 						<h4>Details</h4>
 						@if(Auth::user()->type == "admin" || Auth::user()->type == "staff")
-						<button type='button' class='btn btn-default pull-right hidden' id='inventory-edit-button'>Edit</button>
-						<button type='button' class='btn btn-default pull-right hidden' id='inventory-cancel-edit-button'>Cancel Edit</button>
+						<button type='button' class='btn btn-default pull-right hidden edit-button' id='inventory-edit-button'>Edit</button>
+						<button type='button' class='btn btn-default pull-right hidden edit-button hidden' id='inventory-cancel-edit-button'>Cancel Edit</button>
 						@elseif(Auth::user()->type == 'student')
 						<div class='tool-tip' data-toggle="tooltip" data-placement="top">
 							<button type='button' class='btn btn-default pull-right hidden borrow-button' id='borrow-button'>Borrow</button>
@@ -105,7 +108,7 @@
 								<strong></strong>
 							</span>						
 						</div>
-						<span class='english-name'></span>
+						<span class='english-name inputfields'></span>
 
 						<div class='venName-table edit-table hidden'>
 							<h4>Venacular Names</h4>
@@ -131,7 +134,7 @@
 								<strong></strong>
 							</span>						
 						</div>
-						<span class='venacular-name'></span>	
+						<span class='venacular-name inputfields'></span>	
 											
 					</div>
 
@@ -400,7 +403,7 @@
 							</tbody>
 						</table>
 					</div>
-					<div class='form-group donated-div hidden'>
+					<div class='form-group donated-div inputfields hidden'>
 						<h4>Donor Details</h4>
 						<div class='input-group'>
 							<span class='input-group-addon label-title'>First Name</span>
@@ -452,7 +455,7 @@
 						</table>
 					</div>
 
-					<div class='form-group purchased-div hidden'>
+					<div class='form-group purchased-div inputfields hidden'>
 						<h4>Purchased Details</h4>
 						<div class='input-group'>
 							<span class='input-group-addon label-title'>Amount</span>
@@ -482,11 +485,12 @@
 							<strong></strong>
 						</span>												
 					</div>
-					<h4>Image Upload</h4>
+					<h4 id='image-header'>Image Upload</h4>
 					<div class='form-group image-group inputfields'>
 						<div class="input-group">
                 					<label class="input-group-btn">
                     					<span class="btn btn-success">Browse&hellip; <input type="file" name='pic' id='image-upload' style="display: none;"/></span>
+                    					<input type='hidden' name='picname' id='picname'/>
                 					</label>
                 					<input type="text" class="form-control file-name" value='Click the browse button to select pictures...' readonly>
                 					<label class="input-group-btn">
@@ -494,13 +498,13 @@
                 					</label>                				
             				</div>
 					</div>
-					<div id='image-preview'></div>
+					<div class='image-preview'></div>
 					@endif			
 				</div>
 				<div class='modal-footer'>
 					<div class='material-buttons'>
-						<button type='button' class='btn btn-default view-invent-button-close inventory-close hidden' data-dismiss='modal' aria-label='Close'>Close</button>
-						<button type='reset' id='material-reset' class='inventory-reset btn btn-danger invent-button'>Reset</button>
+						<button type='button' class='btn btn-default view-invent-button-close inventory-close hidden' aria-label='Close'>Close</button>
+						<button type='reset' id='inventory-reset' class='inventory-reset btn btn-danger invent-button'>Reset</button>
 						<button type='submit' id='inventory-submit' class='btn btn-success invent-button'>Add</button>
 					</div>
 				</div>
@@ -513,7 +517,7 @@
 	<div class='modal-dialog'>
 		<div class='modal-content'>
 			<div class="modal-body">
-			  	<p>Please choose an image format. (e.g. JPEG, JPG, PNG)</p>
+			  	<p class='invalid-format'></p>
 			</div>
 			<div class="modal-footer">
 				<button type="button" data-dismiss="modal" id='extension-close' class="btn btn-default">Close</button>
@@ -534,6 +538,84 @@
 			<div class="modal-footer">
 				<button type="button" data-dismiss="modal" class="btn btn-default" id='delete-close'>Close</button>
 				<button type="button" class="btn btn-danger" id='inventory-confirm-delete'>Delete</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class='modal fade' id='cancel-confirm-modal' role='dialog' data-keyboard='false' data-backdrop='static'>
+	<div class='modal-dialog'>
+		<div class='modal-content'>
+			<div class='modal-header'>
+				<h3>Cancel Edit</h3>
+			</div>
+			<div class="modal-body">
+			  	<p>Please click the ok button to cancel editing.</p>
+			</div>
+			<div class="modal-footer">
+				<button type="button" data-dismiss="modal" class="btn btn-default" id='cancel-close'>Cancel</button>
+				<button type="button" class="btn btn-danger confirm-modal" id='inventory-confirm-cancel'>Ok</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class='modal fade' id='confirm-add-modal' role='dialog' data-keyboard='false' data-backdrop='static'>
+	<div class='modal-dialog modal-lg'>
+		<div class='modal-content'>
+			<div class='modal-header'>
+				<h3>Confirm Inventory</h3>
+			</div>
+			<div class="modal-body">
+				<div class='row'>
+					<div class='col-md-6'>
+						<h4 class='text-center'>Details</h4>
+						<p>Category: <span class='con-category'></span></p>
+						<p>Accession Number: <span class='con-acq'></span></p>
+						<p>English Names: <span class='con-eng'></span></p>
+						<p>Venacular Names: <span class='con-ven'></span></p>					
+					</div>
+					<div class='col-md-6'>
+						<h4 class='text-center'>Owner</h4>
+						<p>Full Name: <span class='con-fullname'></span></p>
+						<p>Nickname: <span class='con-nickname'></span></p>
+						<p>Locality: <span class='con-local'></span></p>
+					</div>	
+				</div>
+				<div class='row'>
+					<div class='col-md-6'>
+						<h4 class='text-center'>Physical Descriptions</h4>
+						<p>Length: <span class='con-length'></span></p>
+						<p>Width: <span class='con-width'></span></p>
+						<p>Condition: <span class='con-condition'></span></p>
+						<p>Materials: <span class='con-material'></span></p>
+						<p>Colors: <span class='con-color'></span></p>
+						<p>Decorations: <span class='con-decoration'></span></p>
+						<p>Marks: <span class='con-mark'></span></p>					
+					</div>	
+					<div class='col-md-6'>
+						<h4 class='text-center'>Acquisition</h4>
+						<span class='confirm-donors hidden'>
+							<p>Donor: <span class='con-donor'></span></p>
+							<p>Date Donated: <span class='con-date-donated'></span></p>
+						</span>
+						<span class='confirm-purchased hidden'>
+							<p>Amount: <span class='con-amount'></span></p>
+							<p>Date Purchased: <span class='con-pur-date'></span></p>
+							<p>Purchased Address: <span class='con-pur-address'></span></p>
+						</span>
+					</div>	
+				</div>
+				<div class='row'>
+					<div class='col-md-12'>
+						<h4 class='text-center'>Image Upload</h4>
+						<div class='image-preview'></div>
+					</div>
+				</div>																			  	
+			</div>
+			<div class="modal-footer">
+				<button type="button" data-dismiss="modal" class="btn btn-default" id='confirm-cancel'>Cancel</button>
+				<button type="button" class="btn btn-success" id='confirm-submit'>Add</button>
 			</div>
 		</div>
 	</div>

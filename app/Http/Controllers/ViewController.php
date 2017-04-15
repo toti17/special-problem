@@ -109,6 +109,7 @@ class ViewController extends Controller
         $purchased_address = '';
         $purchased_date = '';
         $picture = '';
+        $pic_name = '';
 
         $englishNameArray = [];
         for($i=0;$i<sizeof($acqNumber->english_name);$i++){
@@ -197,7 +198,8 @@ class ViewController extends Controller
             'amount' => $amount,
             'purchased_address' => $purchased_address,
             'purchased_date' => $purchased_date,
-            'picture' => $picture
+            'picture' => $picture,
+            'picture_name' => $pic_name,
         ]);
     }
 

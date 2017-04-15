@@ -1,32 +1,70 @@
 $(document).ready(function (){
 
-	$(document).on('change', ':file', function() {
+	$('body').on('change', '#image-upload', function() {
+		$('.remove-picture').trigger('click');
+		var iSize = ($(this)[0].files[0].size / 1024);
+		var sizeType = '';
+     		if (iSize / 1024 > 1){
+        		if (((iSize / 1024) / 1024) > 1){
+		            iSize = (Math.round(((iSize / 1024) / 1024) * 100) / 100);
+		            console.log(iSize + 'gb');
+		            sizeType = 'gb';
+        		}
+			else{
+			    iSize = (Math.round((iSize / 1024) * 100) / 100);
+			    console.log(iSize + 'mb');
+			    sizeType = 'mb';
+			}
+     		}
+	     else{
+		      iSize = (Math.round(iSize * 100) / 100);
+		      console.log(iSize + 'kb');
+		      sizeType = 'kb';
+	     }		
 		var input = $(this),
 			numFiles = input.get(0).files ? input.get(0).files.length : 1,
 	        	label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
-	    	input.trigger('fileselect', [numFiles, label]);
+	    	input.trigger('fileselect', [numFiles, label, iSize, sizeType]);
 	});
 
-	$(':file').on('fileselect', function(event, numFiles, label){
+	$(':file').on('fileselect', function(event, numFiles, label, iSize, sizeType){
+		var sizeAllow = true;
+		if(sizeType == 'gb'){
+			fadeModal();
+			sizeAllow = false;
+			$('#image-upload').val('');
+			$('.invalid-format').text('The file size is huge. Please select a file with a size below or equal to 7 MB');
+			$('.extension-modal').modal('show');
+		}
+		else if(sizeType == 'mb'){
+			if(iSize > 7){
+				fadeModal();
+				sizeAllow = false;
+				$('.invalid-format').text('The file size is huge. Please select a file with a size below or equal to 7 MB');
+				$('#image-upload').val('');
+				$('.extension-modal').modal('show');
+			}			
+		}
 		var extension = label.substr( (label.lastIndexOf('.') +1) ).toLowerCase();
 		if(label != ''){
 			if($.inArray(extension, ['png','jpg','jpeg']) == -1) {
-				$('.extension-modal').modal('toggle');
-				$('.inventory-content').animate({
-					opacity: 0
-				}, 400 );
-				return false;
+				$('#image-upload').val('');
+				$('.invalid-format').text('Please choose an image format. (e.g. JPEG, JPG, PNG)');
+				$('.extension-modal').modal('show');
+				fadeModal();
 			}
-			$('.file-name').val(label);
-			$('#image-preview').css({"width": '100%'});
-			$('#image-preview').css({"height": '400px'});
+			else{
+				if(sizeAllow == true){
+					$('.file-name').val(label);
+					$('.image-preview').css({"width": '100%'});
+					$('.image-preview').css({"height": '400px'});					
+				}
+			}
 		}
 	});
 
 	$('#extension-close').click(function(){
-		$('.inventory-content').animate({
-			opacity: 1
-		}, 400 );
+		showModal();
 	});
 
 	$( '.extension-modal' ).on( 'hidden.bs.modal' , function(){
@@ -35,7 +73,7 @@ $(document).ready(function (){
 
 	$.uploadPreview({
 		input_field: "#image-upload",   // Default: .image-upload
-		preview_box: "#image-preview",  // Default: .image-preview
+		preview_box: ".image-preview",  // Default: .image-preview
 		label_field: "#image-label",    // Default: .image-label
 		label_default: "Choose File",   // Default: Choose File
 		label_selected: "Change File",  // Default: Change File
@@ -44,7 +82,7 @@ $(document).ready(function (){
 
 	$('.remove-picture').click(function(){
 		$('.file-name').val('Click the browse button to select pictures...');
-		$('#image-preview').removeAttr('style');
+		$('.image-preview').removeAttr('style');
 	})
 
 	var englishNameNum = 1;
@@ -158,7 +196,7 @@ $(document).ready(function (){
 			"<span class='mark-help help-block hidden'>" +"<strong></strong>" +"</span>"			
 		);
 		$('.marksss').append(newMark);
-		decorationNum++;
+		markNum++;
 	});
 
 	$('body').on('click', '.remove-engName', function(){
@@ -219,8 +257,31 @@ $(document).ready(function (){
 		}
 	});
 
+	var editChange = false;
+	var acqNumber = '';
+	var origAcqNumber = 0;
+
+	function checkAccession(acqNumber, origAcqNumber, change){
+		return $.ajax({
+			type: 'get',
+			url: 'material/check/' + acqNumber + '/' + origAcqNumber + '/' + change,
+			success: function(data){
+				if(data.accessionNumber == 0){
+					$('.acqNumber-help').addClass('hidden');
+				}
+				else{
+					console.log('nagsulod di');
+					$('.acqNumber-help').removeClass('hidden');
+					$('.acqNumber-help strong').text('The accession number ' + acqNumber + ' already exists.');					
+					errorCounter++;
+				}
+			}
+		});
+	}
+
 	$('#inventory-submit').click(function(event){
 		errorCounter = 0;
+		category = $('#category').val();
 		acq = $.trim($('#acqNumber').val());
 		object = $.trim($('#object').val());
 		firstName = $.trim($('#owner-firstname').val());
@@ -240,6 +301,26 @@ $(document).ready(function (){
 		colorArray = [];
 		decorArray = [];
 		markArray = [];
+		unit = '';
+		console.log(measureStatus);
+		if(measureStatus == 'Meter'){
+			unit = 'm';
+		}
+		else if(measureStatus == 'Centimeter'){
+			unit = 'cm';
+		}
+		else if(measureStatus == 'Millimeter'){
+			unit = 'mm';
+		}
+
+		$('.con-category').text(category);
+		$('.con-acq').text(acq);
+		$('.con-fullname').text(firstName + ' ' + middleName + ' ' + lastName);
+		$('.con-nickname').text(nickname);
+		$('.con-local').text(locality);
+		$('.con-length').text(length + ' ' + unit);
+		$('.con-width').text(width + ' ' + unit);
+		$('.con-condition').text(condition);
 
 		if($('#category').val() == null){
 			$('.select-help').removeClass('hidden');
@@ -307,6 +388,14 @@ $(document).ready(function (){
 			}
 		});
 
+		engNames = '';
+		for(i=0;i<engNameArray.length;i++){
+			engNames += engNameArray[i];
+			engNames += ', ';
+		}
+		engNames = engNames.replace(/,\s*$/, "");
+		$('.con-eng').text(engNames);
+
 		$('.venacular-name-new').each(function(){
 			venName = $.trim($(this).children().children('input').val());
 
@@ -334,7 +423,15 @@ $(document).ready(function (){
 				$('#venNames').val(venNameArray);
 				$('.venName-help').addClass('hidden');
 			}
-		});		
+		});
+
+		venNames = '';
+		for(i=0;i<venNameArray.length;i++){
+			venNames += venNameArray[i];
+			venNames += ', ';
+		}
+		venNames = venNames.replace(/,\s*$/, "");
+		$('.con-ven').text(venNames);		
 
 		if(firstName == ''){
 			$('.owner-firstname-help').removeClass('hidden');
@@ -496,6 +593,14 @@ $(document).ready(function (){
 			}
 		});
 
+		materials = '';
+		for(i=0;i<matArray.length;i++){
+			materials += matArray[i];
+			materials += ', ';
+		}
+		materials = materials.replace(/,\s*$/, "");
+		$('.con-material').text(materials);		
+
 		$('.color-new').each(function(){
 			color = $.trim($(this).children().children('input').val());
 
@@ -522,10 +627,17 @@ $(document).ready(function (){
 			else{
 
 				$('#colors').val(colorArray);
-				console.log($('#colors').val());
 				$('.color-help').addClass('hidden');
 			}
 		});
+
+		colors = '';
+		for(i=0;i<colorArray.length;i++){
+			colors += colorArray[i];
+			colors += ', ';
+		}
+		colors = colors.replace(/,\s*$/, "");
+		$('.con-color').text(colors);			
 
 		$('.decoration-new').each(function(){
 			decoration = $.trim($(this).children().children('input').val());
@@ -556,6 +668,14 @@ $(document).ready(function (){
 			}
 		});
 
+		decorations = '';
+		for(i=0;i<decorArray.length;i++){
+			decorations += decorArray[i];
+			decorations += ', ';
+		}
+		decorations = decorations.replace(/,\s*$/, "");
+		$('.con-decoration').text(decorations);	
+
 		$('.mark-new').each(function(){
 			mark = $.trim($(this).children().children('input').val());
 
@@ -584,6 +704,14 @@ $(document).ready(function (){
 				$('.mark-help').addClass('hidden');
 			}
 		});
+
+		marks = '';
+		for(i=0;i<markArray.length;i++){
+			marks += markArray[i];
+			marks += ', ';
+		}
+		marks = marks.replace(/,\s*$/, "");
+		$('.con-mark').text(marks);
 
 		if(acquisitionStatus.length == 0){
 			$('.inventory-acquisition-mode-help').removeClass('hidden');
@@ -645,6 +773,12 @@ $(document).ready(function (){
 			else{
 				$('.donor-date-help').addClass('hidden');
 			}
+
+			donor_fullname = $('#donor-firstname').val() + ' ' + $('#donor-middlename').val() + ' ' + $('#donor-lastname').val();
+			$('.confirm-purchased').addClass('hidden');
+			$('.confirm-donors').removeClass('hidden');
+			$('.con-donor').text(donor_fullname);
+			$('.con-date-donated').text(donatedDate);;
 		}
 		else if(acquisitionStatus == 'Purchased'){
 			amountPattern = new RegExp(/^[\d,]*(\.\d*)?$/,"g");
@@ -686,20 +820,37 @@ $(document).ready(function (){
 			}
 			else{
 				$('.purchased-date-help').addClass('hidden');
-			}				
+			}
+			$('.confirm-donors').addClass('hidden');
+			$('.confirm-purchased').removeClass('hidden');
+			$('.con-amount').html($('#amount').val() + ' ' + '&#8369;');
+			$('.con-pur-date').text(purchasedDate);
+			$('.con-pur-address').text($('#address').val());
 		}
 
-		if(errorCounter != 0){
+		if(errorCounter==0){
+			checkAccession($('#acqNumber').val(), origAcqNumber, editChange).done(function(data){
+				if(data.accessionNumber != 0){
+					event.preventDefault();
+				}
+				else{
+					hideModal();
+					$('#confirm-add-modal').modal('show');
+				}
+			});			
+		}
+		else{
+			return false;
 			event.preventDefault();
 		}
 
+		return false;
 	});
 
-	$('.inventory-reset').click(function(){
-		measureStatus = '';
-		acquisitionStatus = '';
-		$('.file-name').val('Click the browse button to select pictures...');
-		$('#image-preview').removeAttr('style');		
+	$('#confirm-cancel').click(function(){
+		$('.confirm-donors').addClass('hidden');
+		$('.confirm-purchased').addClass('hidden');		
+		showModal();
 	});
 
 	function retrieveInventory(acqNumber){
@@ -781,7 +932,6 @@ $(document).ready(function (){
 
 	if($('.inventory-search-type').val() == 'Object'){
 		showInventory().done(function(data){
-			console.log(data.inventory.length);
 			if(data.inventory.length == 0){
 				$('#no-inventories').removeClass('hidden');
 				$('.search-pagination').addClass('hidden');
@@ -885,6 +1035,8 @@ $(document).ready(function (){
 	}
 
 	function showData(data){
+		$('#picname').val(data.picture_name);
+		origAcqNumber = data.accession.acqNumber;
 		$('#condition').prop('disabled', true);
 		$('.td-category').html(data.category);
 		$('.td-acq').html(data.accession.acqNumber);
@@ -892,12 +1044,15 @@ $(document).ready(function (){
 		$('.td-length').html(data.length);
 		$('.td-width').html(data.width);
 		if(data.unit == 'm'){
+			measureStatus = 'Meter';
 			$('.td-unit').html('meter');
 		}
 		else if(data.unit == 'cm'){
+			measureStatus = 'Centimeter';
 			$('.td-unit').html('centimeter');
 		}
 		else if(data.unit == 'mm'){
+			measureStatus = 'Millimeter';
 			$('.td-unit').html('millimeter');
 		}
 		$('#condition').val(data.condition);
@@ -913,8 +1068,11 @@ $(document).ready(function (){
 	}	
 
 
+	var inventoryData = '';
 
 	$('body').on('click', '.inventory-view-button', function(){
+
+		$('#inventory-edit-button').removeClass('hidden');
 		$('.modal-title').text('View Inventory');
 		$('.invent-button').addClass('hidden');
 		$('.view-invent-button-close').removeClass('hidden');
@@ -926,13 +1084,15 @@ $(document).ready(function (){
 			$('body').css('cursor', 'default');
 			$('.inventory-view-button').css({'pointer-events': 'auto'});
 			console.log(data);
+			inventoryData = data;
 			showData(data);
 			createTables(data);
 			showTables();
 			$('#inventory-modal').modal('show');
 			if(data.picture != ''){
+				$('#image-header').removeClass('hidden');
 				url = "url(" + data.picture + ")";
-				$('#image-preview').css({
+				$('.image-preview').css({
 					'background-image': url,
 					'background-repeat': 'no-repeat',
 					'background-size': 'contain',
@@ -941,20 +1101,118 @@ $(document).ready(function (){
 					'height': '400px'
 				});
 			}
+			else{
+				$('#image-header').addClass('hidden');
+			}
 		});
 	});
 
+	var addCounter = false;
+	var editCounter = false;
+
 	$('#add-inventory-button').click(function(){
-		$('.modal-title').text('Add Inventory');		
+		addCounter = true;
+		editChange = false;
+		$('.modal-title').text('Add Inventory');
+		$('#inventory-edit-button').addClass('hidden');
 		$('.invent-button').removeClass('hidden');
-		$('.view-invent-button-close').addClass('hidden');
+		$('.view-invent-button-close').removeClass('hidden');
+		$('.view-invent-button-close').addClass('pull-left');
+		$(this).prop('disabled', true);
+		$('#inventory-modal').modal('show');
 	});
 
+	function fadeModal(){
+		$('#inventory-modal').animate({
+			opacity: 0.9
+		}, 400 );
+	}
+
+	function hideModal(){
+		$('#inventory-modal').animate({
+			opacity: 0
+		}, 400 );		
+	}
+
+	function showModal(){
+		$('#inventory-modal').animate({
+			opacity: 1
+		}, 400 );		
+	}
+
 	$('.inventory-close').click(function(){
+		$('#inventory-modal').modal('hide');
 		$('#edit-button').addClass('hidden');
-		$('#condition').prop('disabled', false);
 		hideTables();
-		deleteRows();		
+		deleteRows();
+	});
+
+	$('.edit-close').click(function(){
+		editCounter = false;
+		$('#cancel-confirm-modal').modal('show');
+	});
+
+	$('#cancel-close').click(function(){
+		showModal();
+		$('#inventory-cancel-edit-button').removeClass('hidden');
+	});
+
+	$('#inventory-confirm-cancel').click(function(){
+		if(editCounter == false){
+			$('.edit-close').addClass('hidden');
+			$('.inventory-close').removeClass('hidden');
+			$('#inventory-modal').modal('hide');
+		}
+		$('#cancel-confirm-modal').modal('hide');
+		goBackView();
+	});
+
+	$('#inventory-cancel-edit-button').click(function(){
+		$(this).addClass('hidden');
+		editCounter = true;
+		fadeModal();		
+		$('#cancel-confirm-modal').modal('show');
+	});
+
+	$('#inventory-edit-button').click(function(){
+		editCounter = true;
+		hideTables();
+		putBackData(inventoryData);
+		$(this).addClass('hidden');
+		showEditButtons();
+	});
+
+	function goBackView(){
+		showTables();
+		$('#material-reset').trigger('click');
+		$('#inventory-cancel-edit-button').addClass('hidden');
+		hideEditButtons();
+	}
+
+	$('#inventory-reset').click(function(){
+		measureStatus = '';
+		acquisitionStatus = '';
+		$('.file-name').val('Click the browse button to select pictures...');
+		$('.image-preview').removeAttr('style');	
+
+		for(i=0;i<englishNameNum;i++){
+			$('.remove-engName').trigger('click');
+		}
+		for(i=0;i<venacularNameNum;i++){
+			$('.remove-venName').trigger('click');
+		}
+		for(i=0;i<materialNum;i++){
+			$('.remove-material').trigger('click');
+		}
+		for(i=0;i<colorNum;i++){
+			$('.remove-color').trigger('click');
+		}
+		for(i=0;i<decorationNum;i++){
+			$('.remove-decoration').trigger('click');
+		}
+		for(i=0;i<markNum;i++){
+			$('.remove-mark').trigger('click');
+		}							
 	});
 
 	$('body').on('click', '.inventory-delete-button', function(){
@@ -971,13 +1229,13 @@ $(document).ready(function (){
 		$('#inventory-confirm-delete').val(acq);
 	});
 
-	function deleteInventory(acqNumber){
+	function deleteInventory(acqNumber, edit){
 		return $.ajax({
 			headers:{
 				'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
 			},			
 			type: 'post',
-			url: '/delete/inventory/' + acqNumber,
+			url: '/delete/inventory/' + acqNumber + '/' + edit + '/' + 'none',
 		});	
 	}
 
@@ -987,7 +1245,7 @@ $(document).ready(function (){
 		x.prop('disabled', true);
 		$('#delete-close').prop('disabled', true);
 		$('body').css('cursor', 'wait');	
-		deleteInventory(x.val()).done(function(){
+		deleteInventory(x.val(), false).done(function(){
 			$('body').css('cursor', 'default');
 			x.prop('disabled', false);
 			$('#delete-close').prop('disabled', false);				
@@ -999,5 +1257,135 @@ $(document).ready(function (){
 				$('#no-inventories').removeClass('hidden');
 			}
 		});
+	});
+
+	function putBackData(data){
+		$('#category').val(data.category);
+		$('#acqNumber').val(data.accession.acqNumber);
+		$('#object').val(data.object);
+		$('#owner-firstname').val(data.owner_firstname);
+		$('#owner-middlename').val(data.owner_middlename);
+		$('#owner-lastname').val(data.owner_lastname);
+		$('#owner-nickname').val(data.owner_nickname);
+		$('#local').val(data.locality);
+		$('#length').val(data.length);
+		$('#width').val(data.width);		
+		$('.measurement').each(function(){
+			if($(this).val() == data.unit){
+				$(this).prop('checked', true);
+			}
+		});
+		for(i=1;i<data.english_name.length;i++){
+			$('#add-engName').trigger('click');
+		}
+		for(i=1;i<data.venacular_name.length;i++){
+			$('#add-venName').trigger('click');
+		}
+		for(i=1;i<data.material.length;i++){
+			$('#add-materials').trigger('click');
+		}
+		for(i=1;i<data.color.length;i++){
+			$('#add-color').trigger('click');
+		}
+		for(i=1;i<data.decoration.length;i++){
+			$('#add-decoration').trigger('click');
+		}
+		for(i=1;i<data.mark.length;i++){
+			$('#add-mark').trigger('click');
+		}					
+		i=0;
+		$('.english-name-new').each(function(){
+			$(this).children('.input-group').children('input').val(data.english_name[i]);
+			i++;
+		});
+		i=0;
+		$('.venacular-name-new').each(function(){
+			$(this).children('.input-group').children('input').val(data.venacular_name[i]);
+			i++;
+		});
+		i=0;
+		$('.material-new').each(function(){
+			$(this).children('.input-group').children('input').val(data.material[i]);
+			i++;
+		});
+		i=0;
+		$('.color-new').each(function(){
+			$(this).children('.input-group').children('input').val(data.color[i]);
+			i++;
+		});	
+		i=0;
+		$('.decoration-new').each(function(){
+			$(this).children('.input-group').children('input').val(data.decoration[i]);
+			i++;
+		});
+		i=0;
+		$('.mark-new').each(function(){
+			$(this).children('.input-group').children('input').val(data.mark[i]);
+			i++;
+		});
+		if(data.donor_firstname.length != 0){
+			$('.donated').trigger('click');
+			$('#donor-firstname').val(data.donor_firstname);
+			$('#donor-middlename').val(data.donor_middlename);
+			$('#donor-lastname').val(data.donor_lastname);
+			$('#donated-date').val(data.donor_date);
+		}
+		else{
+			$('.purchased').trigger('click');
+			$('#amount').val(data.amount);
+			$('#address').val(data.purchased_address);
+			$('#purchased-date').val(data.purchased_date);
+		}
+		if(data.picture_name.length != 0){
+			$('.file-name').val(data.picture_name);
+		}
+	}
+
+	function showEditButtons(){
+		$('.inventory-close').addClass('hidden');
+		$('.edit-close').removeClass('hidden');		
+		$('.invent-button').removeClass('hidden');
+		$('#inventory-cancel-edit-button').removeClass('hidden');
+		$('#condition').prop('disabled', false);
+		$('.view-invent-button-close').addClass('pull-left');
+		$('#inventory-submit').text('Save Changes');
+		$('.inventory-form').attr('action', 'http://localhost:8000/edit/inventory/' + acqNumber);
+		editChange = true;
+	}
+
+	function hideEditButtons(){
+		$('.inventory-close').removeClass('hidden');
+		$('.edit-close').addClass('hidden');		
+		$('#inventory-edit-button').removeClass('hidden');
+		$('.invent-button').addClass('hidden');
+		$('.view-invent-button-close').addClass('pull-right');
+		$('#condition').prop('disabled', true);
+		$('#inventory-submit').text('Add');
+		$('.inventory-form').attr('action', 'http://localhost:8000/add/inventory');
+	}
+
+	$('#confirm-submit').click(function(){
+		$('#confirm-submit').text('Adding...');
+		$('#confirm-cancel').prop('disabled', true);
+		$('#confirm-submit').prop('disabled', true);
+		$("body").css("cursor", "wait");
+		$('.inventory-form').submit();
+	});
+
+	$( '#cancel-confirm-modal' ).on( 'hidden.bs.modal' , function(){
+		$('body').addClass('modal-open');
+		showModal();		
+	});
+
+	$( '#confirm-add-modal' ).on( 'hidden.bs.modal' , function(){
+		$('body').addClass('modal-open');
+	});
+
+	$( '#inventory-modal' ).on( 'hidden.bs.modal' , function(){
+		hideTables();
+		deleteRows();
+		$('#condition').prop('disabled', false);
+		$('#inventory-reset').trigger('click');		
+		$('#add-inventory-button').prop('disabled', false);
 	});
 });

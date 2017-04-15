@@ -1069,10 +1069,8 @@ $(document).ready(function (){
 					url: 'material/check/' + acqNumber + '/' + aqoh + '/' + change,
 					success: function(data){
 						accessionCheck = data.accessionNumber;
-						change = data.params;
-						if(accessionCheck == null){
+						if(accessionCheck == 0){
 							$('.acqNumber-help').addClass('hidden');
-							errorCounter++;
 						}
 						else{
 							$('.acqNumber-help').removeClass('hidden');
@@ -1085,7 +1083,7 @@ $(document).ready(function (){
 			if(errorCounter == 0){
 				checkAcq().done(function(r){
 					$("body").css("cursor", "default");
-					if(r.accessionNumber != null){
+					if(r.accessionNumber != 0){
 						return false;
 					}
 					else{

@@ -35,7 +35,7 @@
 					<li><a href="#">English Name</a></li>
 					<li><a href="#">Owner</a></li>
 					<li><a href="#">Donor</a></li>
-					<li><a href="#">Locality</a></li>											
+					<li><a href="#">Locality</a></li>				
 				</ul>
 			</div>
 		</div>			
