@@ -17,6 +17,12 @@
     </button>
 </div>
 
+<div class="col-md-6 alert  alert-danger delete-status hidden"> 
+    <button type="button" class="close delete-success" aria-label="Close" data-dismiss='alert'>
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+
 <input type='hidden' value="{{Auth::user()->type}}" id='user-type'>
 
 <div class='col-md-7 col-md-offset-2 search-div'>
@@ -92,7 +98,7 @@
 				<th class='text-right action-th'>Action</th>
 			</tr>
 			<tr id='no-materials'>
-				<td>Please add materials...</td>
+				<td>No results found.</td>
 			</tr>
 		</thead>
 		<tbody class='text-center material-items'>

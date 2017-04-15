@@ -98,8 +98,6 @@ class Controller extends BaseController
         $purchased_date = $request->input('purchased-date');
         $picture = $request->pic;
 
-        // return $request->pic;
-
         if($picture){
             $ext = $picture->extension();
             $extension = $acqNumber . '.' . $ext;
@@ -115,16 +113,20 @@ class Controller extends BaseController
         $inventory->acqNumber = $acqNumber;
         $inventory->object = $object;
 
-        for($i=0;$i<sizeof($english_names);$i++){
-            $english_name = English_Name::firstorNew(['english_name' => $english_names[$i]]);
-            $english_name->save();
-            $inventory->english_name()->attach($english_name->english_name_id);
+        if($english_names[0] != ''){
+          for($i=0;$i<sizeof($english_names);$i++){
+              $english_name = English_Name::firstorNew(['english_name' => $english_names[$i]]);
+              $english_name->save();
+              $inventory->english_name()->attach($english_name->english_name_id);
+          }
         }
 
-        for($i=0;$i<sizeof($venacular_names);$i++){
-            $venacular_name = Venacular_Name::firstorNew(['venacular_name' => $venacular_names[$i]]);
-            $venacular_name->save();
-            $inventory->venacular_name()->attach($venacular_name->venacular_name_id);
+        if($venacular_names[0] != ''){
+          for($i=0;$i<sizeof($venacular_names);$i++){
+              $venacular_name = Venacular_Name::firstorNew(['venacular_name' => $venacular_names[$i]]);
+              $venacular_name->save();
+              $inventory->venacular_name()->attach($venacular_name->venacular_name_id);
+          }
         }
 
         $inventory->conditions = $condition;
@@ -179,29 +181,38 @@ class Controller extends BaseController
         $measurement->acqNumber = $inventory->getKey();
         $measurement->save();
 
-        for($i=0;$i<sizeof($materials);$i++){
-            $material = Invent_Material::firstorNew(['material_name' => $materials[$i]]);
-            $material->save();
-            $material->inventory()->attach($inventory->getKey());
+        if($materials[0] != ''){
+          for($i=0;$i<sizeof($materials);$i++){
+              $material = Invent_Material::firstorNew(['material_name' => $materials[$i]]);
+              $material->save();
+              $material->inventory()->attach($inventory->getKey());
+          }
         }
 
-        for($i=0;$i<sizeof($colors);$i++){
-            $color = Color::firstorNew(['color_name' => $colors[$i]]);
-            $color->save();
-            $color->inventory()->attach($inventory->getKey());
+        if($colors[0] != ''){
+          for($i=0;$i<sizeof($colors);$i++){
+              $color = Color::firstorNew(['color_name' => $colors[$i]]);
+              $color->save();
+              $color->inventory()->attach($inventory->getKey());
+          }
         }
 
-        for($i=0;$i<sizeof($decorations);$i++){
-            $decoration = Decoration::firstorNew(['decoration_name' => $decorations[$i]]);
-            $decoration->save();
-            $decoration->inventory()->attach($inventory->getKey());
+        if($decorations[0] != ''){
+          for($i=0;$i<sizeof($decorations);$i++){
+              $decoration = Decoration::firstorNew(['decoration_name' => $decorations[$i]]);
+              $decoration->save();
+              $decoration->inventory()->attach($inventory->getKey());
+          }
         }
 
-        for($i=0;$i<sizeof($marks);$i++){
-            $mark = Mark::firstorNew(['mark_name' => $marks[$i]]);
-            $mark->save();
-            $mark->inventory()->attach($inventory->getKey());
+        if($marks[0] != ''){
+          for($i=0;$i<sizeof($marks);$i++){
+              $mark = Mark::firstorNew(['mark_name' => $marks[$i]]);
+              $mark->save();
+              $mark->inventory()->attach($inventory->getKey());
+          }          
         }
+        
         return back()->with('status', $object . ' added successfully!');
     }
 
@@ -573,5 +584,15 @@ class Controller extends BaseController
       $user->modify()->attach($acqNumber->acqNumber);
 
       $acqNumber->delete();
-   }    
+   }
+
+    public function getInventoryType($inventory){
+        $type_array = [];
+        foreach($inventory as $invent){
+            $type = Inventory_Type::find($invent->inventory_type_id);
+            $type =$type->type;
+            array_push($type_array, $type);
+        }
+        return $type_array;        
+    }       
 }

@@ -27,33 +27,33 @@
 	<div class='input-group'>
 		<div class='input-group-btn'>
 			<div class='dropdown'>
-				<button class='btn btn-default dropdown-toggle inventory-search-type' type='button' data-toggle='dropdown' value='Object'>Object
+				<button class='btn btn-default dropdown-toggle inventory-search-type' type='button' data-toggle='dropdown' value='Object'>Accession Number
 					<span class='caret'></span>
 				</button>
 				<ul class='dropdown-menu inventory-type-dropdown'>
-					<li><a href="#">Object</a></li>					
-					<li><a href="#">English Name</a></li>
+					<li><a href="#">Accession Number</a></li>
+					<li><a href="#">Object</a></li>			
+					<li role="separator" class="divider"></li>
 					<li><a href="#">Owner</a></li>
-					<li><a href="#">Donor</a></li>
-					<li><a href="#">Locality</a></li>				
+					<li><a href="#">Donor</a></li>									
 				</ul>
 			</div>
 		</div>			
 		<input type='text' class = 'form-control inventory-search'/>
 	</div>
+	<span class='author-info hidden'><i>Click the name to view the list of inventories he/she has owned or donated.</i></span>
 </div>
-
-<div class='col-md-12 inventory-div'>
+<div class='col-md-9 col-md-offset-1 inventory-div'>
 	<table class="table table-condensed table-hover wait inventories-table tablesorter">
 		<thead>
 			<tr>
-				<th class='text-left object-th'>Object&nbsp;&nbsp;<i class="fa fa-sort" aria-hidden="true"></i></th>
-				<th class='text-left venName-th'>Name of Owner&nbsp;&nbsp;<i class="fa fa-sort" aria-hidden="true"></i></th>
-				<th class='text-left venName-th'>Type&nbsp;&nbsp;<i class="fa fa-sort" aria-hidden="true"></i></th>	
+				<th class='text-left acq-th'>Accession Number&nbsp;&nbsp;<i class="fa fa-sort" aria-hidden="true"></i></th>
+				<th class='text-left obj-th'>Object&nbsp;&nbsp;<i class="fa fa-sort" aria-hidden="true"></i></th>
+				<th class='text-left type-th'>Type&nbsp;&nbsp;<i class="fa fa-sort" aria-hidden="true"></i></th>	
 				<th class='text-right action-th'>Action</th>
 			</tr>
 			<tr id='no-inventories' class='hidden'>
-				<td>Please add inventories...</td>
+				<td>No results found.</td>
 			</tr>
 		</thead>
 		<tbody class='text-center inventory-items'>
@@ -64,13 +64,16 @@
 		<ul id="pagination-demo" class="pagination-sm"></ul>
 	</div>	
 
-	<table class="table table-condensed table-hover wait tablesorter authors-table hidden">
+	<table class="table table-condensed table-hover wait owners-table tablesorter hidden">
 		<thead>
 			<tr>
-				<th class='text-left author-th'>Author&nbsp;&nbsp;<i class="fa fa-sort" aria-hidden="true"></i></th>
+				<th class='text-left owner-th'>Owner&nbsp;&nbsp;<i class="fa fa-sort" aria-hidden="true"></i></th>
 			</tr>
+			<tr id='no-donors' class='hidden'>
+				<td>No results found.</td>
+			</tr>			
 		</thead>
-		<tbody class='text-center author-items'>
+		<tbody class='text-center owner-items'>
 
 		</tbody>
 	</table>

@@ -32,6 +32,16 @@ Route::group(['middleware' => ['login.check']], function () {
 
 	Route::post('/delete/inventory/{acqNumber}/{edit}/{picname}', 'Controller@deleteInventory');
 
+	Route::get('/inventory/accession', 'ViewController@showInventory');
+
+	Route::get('/inventory/owners', 'ViewController@showOwners');
+
+	Route::get('/inventory/donors', 'ViewController@showDonors');
+
+	Route::get('/inventory/retrieveCreated/{id}/{searchType}', 'SearchController@retrieveCreated');
+
+	Route::get('/search/inventory/{searchType}/{query}', 'SearchController@searchInventory');
+
 	Route::get('dashboard/material/check/{number}/{original}/{change}', 'AddController@checkAcq');
 
 	Route::get('/dashboard/check/borrowed/{acqNumber}', 'BorrowController@checkBorrowed');

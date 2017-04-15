@@ -384,12 +384,29 @@
 				</div>
 				<div class='modal-footer'>
 					<div class='material-buttons'>
-						<button type='button' class='btn btn-default view-button-close hidden' data-dismiss='modal' aria-label='Close'>Close</button>
+						<button type='button' class='btn btn-default view-button-close pull-left' data-dismiss='modal' aria-label='Close'>Close</button>
 						<button type='reset' id='material-reset' class='btn btn-danger'>Reset</button>
 						<button type='submit' id='material-submit' class='btn btn-success'>Add</button>
 					</div>
 				</div>
 			</form>
+		</div>
+	</div>
+</div>
+
+<div class='modal fade' id='delete-confirm-modal' role='dialog' data-keyboard='false' data-backdrop='static'>
+	<div class='modal-dialog'>
+		<div class='modal-content'>
+			<div class='modal-header'>
+				<h3>Delete Material</h3>
+			</div>
+			<div class="modal-body">
+			  	<p class='p-delete-invent'></p>
+			</div>
+			<div class="modal-footer">
+				<button type="button" data-dismiss="modal" class="btn btn-default" id='delete-close'>Close</button>
+				<button type="button" class="btn btn-danger" id='material-confirm-delete'>Delete</button>
+			</div>
 		</div>
 	</div>
 </div>

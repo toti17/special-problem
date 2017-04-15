@@ -18,8 +18,94 @@ use App\Producer;
 use App\Tags;
 use App\User;
 
+use \App\Inventory;
+use \App\Inventory_Type;
+use \App\Owner;
+use \App\Measurement;
+use \App\English_Name;
+use \App\Venacular_Name;
+use \App\Invent_Material;
+use \App\Color;
+use \App\Decoration;
+use \App\Mark;
+use \App\InventoryDonor;
+use \App\InventoryPurchasedDetails;
+use \App\InventoryPictures;
+
 class SearchController extends Controller
 {
+
+	public function retrieveCreated($id, $searchType){
+		if($searchType == 'Owner'){
+			$owner = Owner::find($id);
+			$inventory = $owner->inventory;
+		}
+		else if($searchType == 'Donor'){
+			$inventory_array = [];
+			$donor = InventoryDonor::where('donor_name_id', $id)->get();
+			foreach($donor as $don){
+				array_push($inventory_array, $don->inventory);
+			}
+			$inventory = $inventory_array[0];
+		}
+
+		$type = $this->getInventoryType($inventory);
+
+		return response()->json([
+			'inventory' => $inventory,
+			'type' => $type
+		]);
+	}
+
+	public function searchInventory($searchType, $query){
+		if($searchType == 'Accession Number' || $searchType == 'Object'){
+			if($searchType == 'Accession Number'){
+				$inventory = DB::table('inventories')->where('acqNumber', 'LIKE', '%' . $query . '%')->get();
+			}
+			else{
+				$inventory = DB::table('inventories')->where('object', 'LIKE', '%' . $query . '%')->get();
+			}
+			
+			$type = $this->getInventoryType($inventory);
+			return response()->json([
+				'inventory' => $inventory,
+				'type' => $type
+			]);
+		}
+		else if($searchType == 'Owner'){
+			$query = explode(' ', $query);
+			for($i=0;$i<sizeof($query);$i++){
+				$owner = DB::table('owners')->where('firstname', 'LIKE', '%' . $query[$i] . '%')
+				->orWhere('middlename', 'LIKE', '%' . $query[$i] .'%')
+				->orWhere('nickname', 'LIKE', '%' .$query[$i] . '%')
+				->orWhere('lastname', 'LIKE', '%' . $query[$i] .'%')->get();
+			}
+			return response()->json([
+				'owner' => $owner
+			]);
+		}
+		else if($searchType == 'Donor'){
+			$query = explode(' ', $query);
+			$donor_names = [];
+			for($i=0;$i<sizeof($query);$i++){
+				$donors = DB::table('donor_name')->where('firstname', 'LIKE', '%' . $query[$i] . '%')
+				->orWhere('middlename', 'LIKE', '%' . $query[$i] .'%')
+				->orWhere('lastname', 'LIKE', '%' . $query[$i] .'%')->get();
+			}
+
+			foreach($donors as $donor){
+				$donor_count = InventoryDonor::where('donor_name_id', $donor->donor_name_id)->get()->count();
+				if($donor_count == 1){
+					array_push($donor_names, $donor);
+				}
+			}
+
+			return response()->json([
+				'donor' => $donor_names
+			]);
+		}
+	}
+
 	public function search($type, $term){
 		if($type == 'Accession Number'){
 			$material = DB::table('material')->where('acqNumber', 'LIKE',  '%' . $term . '%')->get();
@@ -223,9 +309,16 @@ class SearchController extends Controller
 		return $producer;
 	}
 
-	public function retrieveDonor(){
-		$donor = Donor_Name::all();
-		return $donor;
+	public function retrieveDonor(){		
+		$donors = DB::table('donor')->get();
+		$donor_name_array = [];
+		foreach($donors as $donor){
+			$donor = Donor_Name::find($donor->donor_name_id);
+			array_push($donor_name_array, $donor);
+		}
+		return response()->json([
+			'donor' => $donor_name_array
+		]);
 	}
 
 	public function retrievePublisher(){

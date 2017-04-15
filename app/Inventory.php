@@ -56,6 +56,6 @@ class Inventory extends Model
     }
     public function donor()
     {
-        return $this->belongsTo(InventoryDonor::class);
+        return $this->belongsTo(InventoryDonor::class, 'donor_id');
     }
 }

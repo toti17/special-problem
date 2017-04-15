@@ -12,7 +12,7 @@ class InventoryDonor extends Model
 
 	public function inventory()
 	{
-		return $this->hasMany(Material::class);
+		return $this->hasMany(Inventory::class, 'donor_id');
 	}
 	public function donor_name()
 	{

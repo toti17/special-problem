@@ -61,7 +61,6 @@
 					<th class='text-left acq-th hidden'>Accession Number&nbsp;&nbsp;<i class="fa fa-sort" aria-hidden="true"></i></th>				
 					<th class='text-left title-th'>Title&nbsp;&nbsp;<i class="fa fa-sort" aria-hidden="true"></i></th>
 					<th class='text-left type-th hidden'>Type&nbsp;&nbsp;<i class="fa fa-sort" aria-hidden="true"></i></th>	
-	<!-- 				<th class='text-left author-th hidden'>Author</th> -->
 					<th class='text-right action-th'>Action</th>
 				</tr>
 				<tr id='no-materials'>

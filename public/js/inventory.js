@@ -361,7 +361,6 @@ $(document).ready(function (){
 
 		$('.english-name-new').each(function(){
 			engName = $.trim($(this).children().children('input').val());
-
 			if(engName != ''){
 				engNameArray.push(engName);
 			}
@@ -373,19 +372,7 @@ $(document).ready(function (){
 			else{
 				$(this).children('span').addClass('hidden');
 			}
-
-			if(engNameArray.length == 0){
-				$('.engName-help strong').text('The english name field should have at least one description.');
-				$('.engName-help').removeClass('hidden');
-				errorCounter++;
-				for(i=1;i<=englishNameNum;i++){
-					$('.remove-engName').trigger('click');
-				}				
-			}
-			else{
-				$('#engNames').val(engNameArray);
-				$('.engName-help').addClass('hidden');
-			}
+			$('#engNames').val(engNameArray);
 		});
 
 		engNames = '';
@@ -410,19 +397,7 @@ $(document).ready(function (){
 			else{
 				$(this).children('span').addClass('hidden');
 			}
-
-			if(venNameArray.length == 0){
-				$('.venName-help strong').text('The venacular name field should have at least one description.');
-				$('.venName-help').removeClass('hidden');
-				errorCounter++;
-				for(i=1;i<=venacularNameNum;i++){
-					$('.remove-venName').trigger('click');
-				}				
-			}
-			else{
-				$('#venNames').val(venNameArray);
-				$('.venName-help').addClass('hidden');
-			}
+			$('#venNames').val(venNameArray);
 		});
 
 		venNames = '';
@@ -578,19 +553,7 @@ $(document).ready(function (){
 			else{
 				$(this).children('span').addClass('hidden');
 			}
-
-			if(matArray.length == 0){
-				$('.material-help strong').text('The material field should have at least one description.');
-				$('.material-help').removeClass('hidden');
-				errorCounter++;
-				for(i=1;i<=materialNum;i++){
-					$('.remove-material').trigger('click');
-				}				
-			}
-			else{
-				$('#materials').val(matArray);
-				$('.material-help').addClass('hidden');
-			}
+			$('#materials').val(matArray);
 		});
 
 		materials = '';
@@ -615,20 +578,7 @@ $(document).ready(function (){
 			else{
 				$(this).children('span').addClass('hidden');
 			}
-
-			if(colorArray.length == 0){
-				$('.color-help strong').text('The color field should have at least one description.');
-				$('.color-help').removeClass('hidden');
-				errorCounter++;
-				for(i=1;i<=colorNum;i++){
-					$('.remove-color').trigger('click');
-				}				
-			}
-			else{
-
-				$('#colors').val(colorArray);
-				$('.color-help').addClass('hidden');
-			}
+			$('#colors').val(colorArray);
 		});
 
 		colors = '';
@@ -653,19 +603,7 @@ $(document).ready(function (){
 			else{
 				$(this).children('span').addClass('hidden');
 			}
-
-			if(decorArray.length == 0){
-				$('.decoration-help strong').text('The decoration field should have at least one description.');
-				$('.decoration-help').removeClass('hidden');
-				errorCounter++;
-				for(i=1;i<=decorationNum;i++){
-					$('.remove-decoration').trigger('click');
-				}				
-			}
-			else{
-				$('#decorations').val(decorArray);
-				$('.decoration-help').addClass('hidden');
-			}
+			$('#decorations').val(decorArray);
 		});
 
 		decorations = '';
@@ -690,19 +628,7 @@ $(document).ready(function (){
 			else{
 				$(this).children('span').addClass('hidden');
 			}
-
-			if(markArray.length == 0){
-				$('.mark-help strong').text('The special marks field should have at least one description.');
-				$('.mark-help').removeClass('hidden');
-				errorCounter++;
-				for(i=1;i<=markNum;i++){
-					$('.remove-mark').trigger('click');
-				}				
-			}
-			else{
-				$('#marks').val(markArray);
-				$('.mark-help').addClass('hidden');
-			}
+			$('#marks').val(markArray);
 		});
 
 		marks = '';
@@ -780,6 +706,7 @@ $(document).ready(function (){
 			$('.con-donor').text(donor_fullname);
 			$('.con-date-donated').text(donatedDate);;
 		}
+
 		else if(acquisitionStatus == 'Purchased'){
 			amountPattern = new RegExp(/^[\d,]*(\.\d*)?$/,"g");
 			amountValue = amountPattern.test($('#amount').val());				
@@ -870,9 +797,28 @@ $(document).ready(function (){
 	var inventoryArray = [];
 
 	$('.inventories-table').tablesorter();
+	$('.owners-table').tablesorter();
 
 	function createPagination(data){
-		var totalPages = data.inventory.length;
+		$('.inventory-items').children().remove();
+		$('.owner-items').children().remove();
+		$('#no-inventories').addClass('hidden');
+		$('#no-donors').addClass('hidden');
+		var dataLength = 0;
+		if(data.owner != undefined){
+			$('.owners-table').removeClass('hidden');
+			dataLength = data.owner.length;
+		}
+		else if(data.inventory != undefined){
+			$('.inventories-table').removeClass('hidden');
+			dataLength = data.inventory.length;
+		}
+		else if(data.donor != undefined){
+			$('.owners-table').removeClass('hidden');
+			dataLength = data.donor.length;
+		}
+		console.log(data);
+		var totalPages = dataLength;
 		var minPage = 5;
 		var total = 0;
 		var max =0;
@@ -880,11 +826,11 @@ $(document).ready(function (){
 		var defaultOpts = {
 			totalPages: 1
 		};
-		if(data.inventory.length <= minPage){
+		if(dataLength <= minPage){
 			totalPages = 1;
 		}
 		else{
-			totalPages = Math.ceil(data.inventory.length/minPage);
+			totalPages = Math.ceil(dataLength/minPage);
 		}
 		$('#pagination-demo').twbsPagination(defaultOpts);
 		$('#pagination-demo').twbsPagination('destroy');
@@ -892,43 +838,88 @@ $(document).ready(function (){
 			startPage: 1,
 			totalPages: totalPages,
 			onPageClick: function(event, page){
-				$('.inventories-table').trigger('update');
-				inventoryLength = data.inventory.length;
 				total = page * minPage;
 				index = Math.abs(total-minPage);
-				max = data.inventory.length - index;
+				max = dataLength - index;
 				if(max <= 5){
-					max = data.inventory.length;
+					max = dataLength;
 				}
 				else{
 					max = index + minPage;
 				}
-				for(i=0;i<inventoryLength;i++){
-					$('.' + data.inventory[i].acqNumber).remove();
+
+				if(data.inventory != undefined){	
+					if(data.inventory.length == 0){
+						$('#no-inventories').removeClass('hidden');
+					}
+					else{
+						$('.inventories-table').trigger('update');
+						for(i=index;i<max;i++){
+							var newInventory = $(document.createElement('tr')).attr('class', data.inventory[i].acqNumber);
+							newInventory.after().html(
+								"<td class='inventory-view-button text-left'>" + data.inventory[i].acqNumber + 
+								"<input type='hidden' value='" + data.inventory[i].acqNumber +"'/>" +
+								"</td>" +
+								"<td class='inventory-view-button text-left'>" + data.inventory[i].object + 
+								"<input type='hidden' value='" + data.inventory[i].acqNumber +"'/>" +
+								"</td>" +
+								"<td class='inventory-view-button text-left'>" + data.type[i] + 
+								"<input type='hidden' value='" + data.inventory[i].acqNumber +"'/>" +
+								"</td>" +
+								"<td class='text-right action-buttons'>" + 
+								"<button type='button' class='btn btn-xs btn-danger inventory-delete-button' value='" + data.inventory[i].acqNumber + "'>" +
+								"<span class='glyphicon glyphicon-remove'></span>" +
+								"</button>" +
+								"</td>"			
+							);
+							$('.inventory-items').append(newInventory);	  
+						}
+					}
 				}
-				for(i=index;i<max;i++){
-					var newInventory = $(document.createElement('tr')).attr('class', data.inventory[i].acqNumber);
-					newInventory.after().html(
-						"<td class='inventory-view-button text-left'>" + data.inventory[i].acqNumber + 
-						"<input type='hidden' value='" + data.inventory[i].acqNumber +"'/>" +
-						"</td>" +
-						"<td class='inventory-view-button text-left'>" + data.inventory[i].object + 
-						"<input type='hidden' value='" + data.inventory[i].acqNumber +"'/>" +
-						"</td>" +
-						"<td class='inventory-view-button text-left'>" + data.type[i] + 
-						"<input type='hidden' value='" + data.inventory[i].acqNumber +"'/>" +
-						"</td>" +
-						"<td class='text-right action-buttons'>" + 
-						"<button type='button' class='btn btn-xs btn-danger inventory-delete-button' value='" + data.inventory[i].acqNumber + "'>" +
-						"<span class='glyphicon glyphicon-remove'></span>" +
-						"</button>" +
-						"</td>"			
-					);
-					$('.inventory-items').append(newInventory);	  
+
+				else if(data.owner != undefined){
+					$('.owner-items').children().remove();
+					if(data.owner.length != 0){
+						$('.owners-table').trigger('update');
+						for(i=index;i<max;i++){
+							var newOwner = $(document.createElement('tr')).attr('class', data.owner[i].owner_id);
+							newOwner.after().html(
+								"<td class='inventory-owner text-left'>" + 
+								data.owner[i].firstname + " " + data.owner[i].middlename + " " + data.owner[i].lastname +
+								"<input type='hidden' value='" + data.owner[i].owner_id + "'/>" +
+								"</td>"
+							);
+							$('.owner-items').append(newOwner);
+						}						
+					}
+					else{
+						$('#no-donors').removeClass('hidden');
+					}
+				}
+
+				else if(data.donor != undefined){
+					$('.owner-items').children().remove();
+					$('.owners-table').trigger('update');
+					if(data.donor.length != 0){
+						for(i=index;i<max;i++){
+							var newOwner = $(document.createElement('tr')).attr('class', data.donor[i].donor_name_id);
+							newOwner.after().html(
+								"<td class='inventory-owner text-left'>" + 
+								data.donor[i].firstname + " " + data.donor[i].middlename + " " + data.donor[i].lastname +
+								"<input type='hidden' value='" + data.donor[i].donor_name_id + "'/>" +
+								"</td>"
+							);
+							$('.owner-items').append(newOwner);
+						}						
+					}
+					else{
+						$('#no-donors').removeClass('hidden');
+					}
 				}
 			}
 		}));
 	}
+
 
 	if($('.inventory-search-type').val() == 'Object'){
 		showInventory().done(function(data){
@@ -1035,6 +1026,7 @@ $(document).ready(function (){
 	}
 
 	function showData(data){
+		console.log(data);
 		$('#picname').val(data.picture_name);
 		origAcqNumber = data.accession.acqNumber;
 		$('#condition').prop('disabled', true);
@@ -1064,14 +1056,13 @@ $(document).ready(function (){
 			$('.td-amount').html(data.amount);
 			$('.td-pur-address').html(data.purchased_address);
 			$('.td-pur-date').html(data.purchased_date);
-		}		
+		}
 	}	
 
 
 	var inventoryData = '';
 
 	$('body').on('click', '.inventory-view-button', function(){
-
 		$('#inventory-edit-button').removeClass('hidden');
 		$('.modal-title').text('View Inventory');
 		$('.invent-button').addClass('hidden');
@@ -1089,6 +1080,42 @@ $(document).ready(function (){
 			createTables(data);
 			showTables();
 			$('#inventory-modal').modal('show');
+			if(data.english_name.length == 0){
+				$('.englishName-table').addClass('hidden');
+			}
+			else{
+				$('.englishName-table').removeClass('hidden');
+			}
+			if(data.venacular_name.length == 0){
+				$('.venName-table').addClass('hidden');
+			}
+			else{
+				$('.venName-table').removeClass('hidden');
+			}
+			if(data.material.length == 0){
+				$('.materials-table').addClass('hidden');
+			}
+			else{
+				$('.materials-table').removeClass('hidden');
+			}
+			if(data.color.length == 0){
+				$('.colors-table').addClass('hidden');
+			}
+			else{
+				$('.colors-table').removeClass('hidden');
+			}
+			if(data.decoration.length == 0){
+				$('.decorations-table').addClass('hidden');
+			}
+			else{
+				$('.decorations-table').removeClass('hidden');
+			}
+			if(data.mark.length == 0){
+				$('.marks-table').addClass('hidden');
+			}
+			else{
+				$('.marks-table').removeClass('hidden');
+			}			
 			if(data.picture != ''){
 				$('#image-header').removeClass('hidden');
 				url = "url(" + data.picture + ")";
@@ -1256,6 +1283,9 @@ $(document).ready(function (){
 			if($('.inventory-items').children().length == 0){
 				$('#no-inventories').removeClass('hidden');
 			}
+			showInventory().done(function(data){
+				createPagination(data);
+			});
 		});
 	});
 
@@ -1387,5 +1417,127 @@ $(document).ready(function (){
 		$('#condition').prop('disabled', false);
 		$('#inventory-reset').trigger('click');		
 		$('#add-inventory-button').prop('disabled', false);
+	});
+
+	var searchType = 'Accession Number';
+
+	$('.inventory-type-dropdown').on('click', 'li a', function(){
+		$('.inventory-search-type').html($(this).text() + " <span class='caret'></span>");
+		$('.inventory-search-type').val($(this).text());
+		searchType = $.trim($(this).text());
+		displayTypeData(searchType);
+	});
+
+	function getAccession(){
+		return $.ajax({
+			type: 'get',
+			url: '/inventory/accession'
+		});
+	}
+
+	function getOwners(){
+		return $.ajax({
+			type: 'get',
+			url: '/inventory/owners'
+		});
+	}
+
+	function getDonors(){
+		return $.ajax({
+			type: 'get',
+			url: '/inventory/donors'
+		});
+	}
+
+	function displayTypeData(searchType){
+		if(searchType == 'Accession Number' || searchType == 'Object'){
+			$('.author-info').addClass('hidden');
+			$('.inventories-table').removeClass('hidden');
+			$('.owners-table').addClass('hidden');
+			getAccession().done(function(data){
+				createPagination(data);
+			});
+		}
+		else if(searchType == 'Owner'){
+			$('.author-info').removeClass('hidden');
+			$('.inventories-table').addClass('hidden');
+			$('.owners-table').removeClass('hidden');	
+			getOwners().done(function(data){
+				createPagination(data);
+			});
+		}	
+		else if(searchType == 'Donor'){
+			$('.author-info').removeClass('hidden');
+			$('.inventories-table').addClass('hidden');
+			$('.owners-table').removeClass('hidden');				
+			getDonors().done(function(data){
+				createPagination(data);
+			})
+		}
+	}
+
+	var delay = (function(){
+		var timer = 0;
+		return function(callback, ms){
+			clearTimeout (timer);
+			timer = setTimeout(callback, ms);
+		};
+	})();
+
+	function retrieveResults(query){
+		return $.ajax({
+			type: 'get',
+			url: '/search/inventory/' + searchType + '/' + query,
+		});
+	}
+
+	$('.inventory-search').keypress(function(){
+		$('.inventories-table').css('pointer-events', 'none');
+		$('.owners-table').css('pointer-events', 'none');
+	});
+
+	$('.inventory-search').keyup(function(){
+		var query = $(this).val();
+		delay(function(){
+			$('.inventories-table').css('pointer-events', 'auto');
+			$('.owners-table').css('pointer-events', 'auto');			
+			retrieveResults(query).done(function(data){
+				createPagination(data);
+			}).fail(function(){
+				if(searchType == 'Accession Number' || searchType == 'Object'){
+					$('.owners-table').addClass('hidden');
+					showInventory().done(function(data){
+						createPagination(data);
+					});
+				}
+				else if(searchType == 'Owner'){
+					$('.inventories-table').addClass('hidden');
+					getOwners().done(function(data){
+						createPagination(data);
+					});
+				}
+				else if(searchType == 'Donor'){
+					$('.inventories-table').addClass('hidden');
+					getDonors().done(function(data){
+						createPagination(data);
+					});
+				}
+			});
+		}, 500);
+	});
+
+	function retrieveCreated(id, searchType){
+		return $.ajax({
+			type: 'get',
+			url: '/inventory/retrieveCreated/' + id + '/' + searchType
+		})
+	}
+	$('body').on('click', '.inventory-owner', function(){
+		$('.owners-table').addClass('hidden');
+		id = $(this).find('input').val();
+		console.log(id);
+		retrieveCreated(id, searchType).done(function(data){
+			createPagination(data);
+		});
 	});
 });

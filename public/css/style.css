@@ -417,7 +417,7 @@ th{
 	height: 10px;*/
 }
 
-.material-table, .confirm-material-table{
+.material-table, .confirm-material-table, .inventories-table, .owners-table{
 	margin-top: 20px;
 }
 
@@ -555,6 +555,14 @@ th{
 
 .englishName-table, .venName-table{
 	margin-top: 20px;
+}
+
+.inventories-table thead tr > th, .owners-table thead tr > th{
+	cursor: default;
+}
+
+.inventory-items tr > td, .owner-items tr > td{
+	cursor: pointer;
 }
 
 /*end of inventory page*/

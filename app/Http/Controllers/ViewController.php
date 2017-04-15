@@ -21,6 +21,8 @@ use App\Periodicals;
 use App\Thesis;
 use App\User;
 
+use App\Donor_Name;
+
 use \App\Inventory;
 use \App\Inventory_Type;
 use \App\Owner;
@@ -80,19 +82,31 @@ class ViewController extends Controller
     }
 
     public function showInventory(){
-        
-        $inventory = \App\Inventory::all();
-
-        $type_array = [];
-        foreach($inventory as $invent){
-            $type = Inventory_Type::find($invent->inventory_type_id);
-            $type =$type->type;
-            array_push($type_array, $type);
-        }
-
+        $inventory = DB::table('inventories')->orderBy('acqNumber', 'desc')->get();
+        $type = $this->getInventoryType($inventory);
         return response()->json([
             'inventory' => $inventory,
-            'type' => $type_array
+            'type' => $type
+        ]);
+    }
+
+    public function showOwners(){
+        $owners = DB::table('owners')->get();
+
+        return response()->json([
+            'owner' => $owners 
+        ]);
+    }
+
+    public function showDonors(){
+        $donors = DB::table('inventory_donors')->get();
+        $donor_name_array = [];
+        foreach($donors as $donor){
+            $donor = Donor_Name::find($donor->donor_name_id);
+            array_push($donor_name_array, $donor);
+        }
+        return response()->json([
+            'donor' => $donor_name_array
         ]);
     }
 
