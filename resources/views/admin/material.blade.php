@@ -123,9 +123,11 @@
 
 		</tbody>
 	</table>
-	<div class='search-pagination'>
-		<ul id="pagination-demo" class="pagination-sm"></ul>
-	</div>	
+	<div class='row'>
+		<div class='search-pagination'>
+			<ul id="pagination-demo" class="pagination-sm"></ul>
+		</div>	
+	</div>
 
 	<table class="table table-condensed table-hover wait tablesorter authors-table hidden">
 		<thead>

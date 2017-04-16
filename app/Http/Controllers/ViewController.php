@@ -39,6 +39,9 @@ use \App\InventoryPictures;
 
 class ViewController extends Controller
 {
+    public function about(){
+        return view('about');
+    }
     public function userDashboard(){
         if (Auth::user()->type == "admin" || Auth::user()->type == "staff"){
             return view('admin.user', ['user' => Auth::user()->type]);
@@ -60,7 +63,62 @@ class ViewController extends Controller
     public function dashboard(){
         if(Auth::check()){
             if (Auth::user()->type == "admin" || Auth::user()->type == "staff"){
-                return view('dashboard');
+
+                $vertical_count = Material::where('material_type_id', 1)->orWhere('material_type_id', 2)
+                ->orWhere('material_type_id', 3)->orWhere('material_type_id',4)->get()->count();
+
+                $book_count = Material::where('material_type_id', 4)->orWhere('material_type_id', 5)->get()->count();
+
+                $thesis = Material::where('material_type_id', 6)->get()->count();
+
+                $periodical = Material::where('material_type_id', 7)->orWhere('material_type_id', 8)->orWhere('material_type_id', 9)
+                ->orWhere('material_type_id', 10)->get()->count();
+
+                $picture = Material::where('material_type_id', 11)->get()->count();
+
+                $multimedia = Material::where('material_type_id', 12)->orWhere('material_type_id', 13)->orWhere('material_type_id', 14)
+                ->orWhere('material_type_id', 15)->get()->count();
+
+                $material_count = $vertical_count + $book_count + $thesis + $periodical + $picture + $multimedia;
+
+                $artifact_count = Inventory::where('inventory_type_id', 5)->get()->count();
+
+                $textile_count = Inventory::where('inventory_type_id', 6)->get()->count();
+
+                $farming_count = Inventory::where('inventory_type_id', 7)->get()->count();
+
+                $fishing_count = Inventory::where('inventory_type_id', 8)->get()->count();
+
+                $inventory_count = $artifact_count + $textile_count + $farming_count + $fishing_count;
+
+                $check_out_count = DB::table('borrowed')->where('status', 'checked out')->get()->count();
+
+                $pending_count = DB::table('borrowed')->where('status', 'pending')->get()->count();
+
+                $confirmed_count = User::where('status', 'confirmed')->get()->count();
+
+                $unconfirmed_count = User::where('status', 'unconfirmed')->get()->count();
+
+
+                return view('home',
+                [
+                    'vertical_count' => $vertical_count,
+                    'book_count' => $book_count,
+                    'thesis_count' => $thesis,
+                    'periodical_count' => $periodical,
+                    'picture_count' => $picture,
+                    'multimedia_count' => $multimedia,
+                    'material_count' => $material_count,
+                    'artifact_count' => $artifact_count,
+                    'textile_count' => $textile_count,
+                    'farming_count' => $farming_count,
+                    'fishing_count' => $fishing_count,
+                    'inventory_count' => $inventory_count,
+                    'check_count' => $check_out_count,
+                    'pending_count' => $pending_count,
+                    'confirmed_count' => $confirmed_count,
+                    'unconfirmed_count' => $unconfirmed_count
+                ]);
             }
             else if(Auth::user()->type == "student"){
                 $borrowed = DB::table('borrowed')->where('username', Auth::user()->username)
@@ -71,8 +129,8 @@ class ViewController extends Controller
                 return view('student.student', ['borrowed' => $borrowed]);
             }
         }
-        else{
-            return view('layout');
+        else{      
+            return view('index');
         }
     }
 

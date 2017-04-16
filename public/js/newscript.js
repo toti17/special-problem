@@ -286,8 +286,7 @@ $(document).ready(function (){
 			$(this).removeClass('btn-success').addClass('btn-danger');
 		}
 		confirm(confirmStatus, id).done(function(){
-			$('.user-status').removeClass('hidden');
-			$('.success-status').removeClass('hidden');
+			$('.user-status').fadeIn().delay(2000).fadeOut();
 		});
 	});
 
@@ -363,5 +362,13 @@ $(document).ready(function (){
 	});
 
 	// end of add student number script
+
+	// facebook link
+
+	$('#facebook-link').click(function(){
+		window.open("https://www.facebook.com/cwvs.upv?ref=br_rs", '_blank');
+	});
+
+	// end of facebook link
 
 });

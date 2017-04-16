@@ -14,11 +14,13 @@ Auth::routes();
 
 Route::get('/', 'ViewController@dashboard');
 
+Route::post('/student/register', 'RegisterController@register');
+
+Route::get('/student/register', 'RegisterController@studentregister');
+
+Route::get('/about', 'ViewController@about');
+
 Route::group(['middleware' => ['login.check']], function () {
-
-	Route::post('/student/register', 'RegisterController@register');
-
-	Route::get('/student/register', 'RegisterController@studentregister');
 
 	Route::get('/dashboard/user/confirm/{username}/{confirmStatus}', 'RegisterController@confirmAccount');
 

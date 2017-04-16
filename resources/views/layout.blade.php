@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html>
 	<head>
+		<link rel="shortcut icon" type="image/x-icon" href="/images/cwvslogo.jpg" />
 		<meta charset="utf-8">
 		<meta name="csrf-token" content="{{ csrf_token() }}">
 		<link href="/css/bootstrap.min.css" rel="stylesheet"  type="text/css">
+		<link href="/css/font-awesome/css/font-awesome.css" rel="stylesheet">
+		<link href="/css/bootstrap-social.css" rel="stylesheet">
 		<link href="/css/jquery-ui.css" rel="stylesheet"  type="text/css">
 		<link href="/css/style.css" rel="stylesheet"  type="text/css">
-		<link href="/css/font-awesome/css/font-awesome.css" rel="stylesheet">
 		<script src="/js/jquery-3.1.1.js"></script>
 		<script src="/js/jquery-ui.js"></script>
 		<script src="/js/bootstrap.min.js"></script>		
@@ -28,10 +30,11 @@
 	</head>
 	<body class ='pagecontainer'>
 	<header class="container-fluid main-header">
-	    <img class="up-logo" src="/images/University of the Philippines Visayas.png"/>
-	    <h7 class="header-inline header-color">
-	            CENTER FOR WEST VISAYAN STUDIES ARCHIVE & INVENTORY SYSTEM
-	    </h7>
+		<img class="up-logo" src="/images/University of the Philippines Visayas.png"/>
+		<h7 class="header-inline header-color">
+		        CENTER FOR WEST VISAYAN STUDIES ARCHIVE & INVENTORY SYSTEM
+		</h7>
+	    <img class="up-logo" src="/images/cwvslogo.jpg"/>
 	</header>
 	<nav class="navbar navbar-inverse custom-navbar">
 	    <div class="container-fluid">
@@ -46,6 +49,12 @@
 	            <ul class="nav navbar-nav">
 	                @if(Auth::check())	              	
 	                @else
+	                <li class=:"pull-left">
+	                	<a href="{{'/'}}">Home</a>
+	                </li>
+	                <li>
+	                	<a href="{{ url('/about')}}">About</a>
+	                </li>
 	                <li class="pull-right">
 	                	<a href="{{ url('/login') }}">Sign in</a>
 	                </li>     	                
@@ -67,17 +76,7 @@
 				              </form>
 				</li>
 				@endif
-				@endif                                  
-<!-- 	                <li>
-	                    <a href="">Artifacts & Museum</a>
-	                    <ul class="sub" id="sub-inventory">
-	                        <li><a href="">Artifacts</a></li>
-	                        <li><a href="">Fabrics</a></li>
-	                        <li><a href="">Textile</a></li>
-	                        <li><a href="">Farming Tools</a></li>
-	                        <li><a href="">Fishing Tools</a></li>                                                
-	                    </ul>                                                  
-	                </li>      -->              
+				@endif         
 	            </ul>
 	        </nav>
 	    </div>

@@ -63,6 +63,7 @@ th{
 /*header*/
 
 .main-header{
+	text-align: center;
 	position: fixed;
 	width: 100%;
 	z-index: 1030;
@@ -279,7 +280,7 @@ th{
 /*sidebar*/
 
 .custom-container{
-	padding-top: 133px;
+	padding-top: 130px;
 }
 
 .sidebar{
@@ -332,7 +333,7 @@ th{
 }
 
 .staff-confirm-account-div{
-	margin-top: 74px;
+	margin-top: 130px;
 }
 
 .student-number-panel{
@@ -383,7 +384,7 @@ th{
 
 .user-search-div{
 	position: absolute;
-	top: 25px;
+	top: 80px;
 }
 
 /*end of user panel*/
@@ -425,6 +426,7 @@ th{
 }
 
 .user-status{
+	display: none;
 	top: 10px;
 }
 
@@ -577,3 +579,128 @@ th{
 }
 
 /*end of inventory page*/
+
+/*home page*/
+
+.home-table-div{
+	/*margin-top: 10px;*/
+}
+
+.table-caption{
+	text-align: center;
+	width: 100%;
+}
+	
+/*end of home page*/
+
+/*index page*/
+
+.index-container{
+	padding-top: 122px;
+}
+
+.carousel-img{
+	width: 55%;
+	  display: block;
+	  margin-left: auto;
+	  margin-right: auto;	
+}
+
+.overlay{
+	background-color: black;
+	opacity: 0.4;
+	position: absolute;
+	top: 0;
+	/*left: 22%;*/
+	/*width: 56%;*/
+	width: 100%;
+	height: 100%;
+	z-index: 10;
+	pointer-events: none;
+}
+
+.footer-background{
+	background-color: lightgrey;
+}
+
+.footer{
+	padding: 10px;
+}
+
+.social-footer{
+	padding-top: 15px;
+}
+
+@media (min-width: 768px) and (max-width: 979px){
+	.overlay{
+		width:50%;
+		height:50%;
+	}    
+ }
+
+@media (max-width: 767px){
+	.overlay{
+		width:50%;
+		height:50%;
+	}
+}
+@media (max-width: 480px){
+	.overlay{
+	width:50%;
+	height:50%;
+	}
+}
+
+.info{
+	padding-top: 150px;
+	padding-bottom: 150px;
+}
+
+.info-desc{
+	margin-top: 60px;
+	margin-left: 20px;
+	text-align: center;
+	font-size: 22px;
+}
+/*end of index page*/
+
+/*about page*/
+
+.about-photo{
+	padding-left: 0px;
+}
+.about-div{
+	padding-top: 2%;
+}
+
+.about-info-size{
+	font-size: 18px;
+}
+
+.mission-vision-objective{
+	padding-top: 10%;
+}
+
+.block-right{
+	border-right: solid 5px #eee;
+}
+
+.about-admin{
+	padding-top: 10%;
+}
+
+.admin-pic{
+	margin-left: 17%;
+	transform:          rotate(90deg);
+	-ms-transform:      rotate(90deg);
+	-moz-transform:     rotate(90deg);
+	-webkit-transform:  rotate(90deg);
+	-o-transform:       rotate(90deg);	
+}
+
+.staff-header{
+	margin-left: 5%;
+	margin-top: 30%;
+	text-align: center;
+}
+/*end of about page*/

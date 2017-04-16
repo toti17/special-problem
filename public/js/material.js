@@ -1615,6 +1615,7 @@ $(document).ready(function (){
 	// staff search material script
 
 	$('.search-material-button').click(function(){
+		$('.results-div').removeClass('hidden');
 		$('.search').val('');
 		$('.search-type').html('Title ' + "<span class='caret'></span>");
 		$('.search-type').val('Title');
@@ -1835,6 +1836,7 @@ $(document).ready(function (){
 		});
 	}
 	$('.confirm-materials-button').click(function(){
+		$('.results-div').addClass('hidden');
 		displayBorrowedUsers();
 		$('.search').val('');
 		$('#no-borrowed-materials').toggle(false);

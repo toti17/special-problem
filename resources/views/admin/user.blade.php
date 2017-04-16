@@ -25,7 +25,7 @@
     </button>
 </div>
 
-<div class="col-md-6 alert  alert-danger success-status user-status hidden"><span class='success-message'></span>
+<div class="col-md-6 alert  alert-danger success-status user-status"><span class='success-message'></span>
     <button type="button" class="close confirm-success" aria-label="Close">
         <span aria-hidden="true">&times;</span>
     </button>
