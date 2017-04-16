@@ -48,13 +48,13 @@ Route::group(['middleware' => ['login.check']], function () {
 
 	Route::get('/dashboard/delete/borrowed/{acqNumber}', 'BorrowController@delete');
 
-	Route::get('/dashboard/confirm/borrowedmaterials/{acqNumber}/{username}', 'BorrowController@confirmMaterials');
+	Route::post('/dashboard/confirm/borrowedmaterials/{acqNumber}/{username}', 'BorrowController@confirmMaterials');
 
-	Route::get('/dashboard/unconfirm/borrowedmaterials/{acqNumber}/{username}', 'BorrowController@unconfirmMaterials');
+	Route::post('/dashboard/unconfirm/borrowedmaterials/{acqNumber}/{username}', 'BorrowController@unconfirmMaterials');
 
 	Route::get('/dashboard/borrowedmaterials', 'BorrowController@borrowedmaterials');
 
-	Route::get('/dashboard/material/staffDelete/{acqNumber}/{username}', 'BorrowController@staffDelete');
+	Route::post('/dashboard/material/staffDelete/{acqNumber}/{username}', 'BorrowController@staffDelete');
 
 	Route::get('dashboard/borrow/{acqNumber}', 'BorrowController@borrow');
 

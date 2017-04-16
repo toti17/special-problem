@@ -8,11 +8,14 @@
 			@endif
 			<form class="material-form" role="form" method="POST" action="{{ url('/add/material') }}">
 				{{ csrf_field() }}
-				<input type='hidden' value='available' name='material-status'/>
+				<input type='hidden' value="{{Auth::user()->type}}" id='user-type'>
 				<div class='modal-header'>
-					<button type='button' class='close material-close' data-dismiss='modal' aria-label='Close'>
+					<button type='button' class='close material-close' aria-label='Close'>
 						<span aria-hidden='true'>&times;</span>
 					</button>
+					<button type='button' class='close edit-close hidden' aria-label='Close'>
+						<span aria-hidden='true'>&times;</span>
+					</button>					
 					<h4 class='modal-title'>Add Material</h4>
 				</div>
 				<div class='modal-body'>
@@ -20,12 +23,12 @@
 					<h4>Details</h4>
 					@if(Auth::user()->type == "admin" || Auth::user()->type == "staff")
 					<button type='button' class='btn btn-default pull-right hidden edit-button' id='edit-button'>Edit</button>
+					<button type='button' class='btn btn-default pull-right cancel-edit hidden edit-button'>Cancel Edit</button>
 					@elseif(Auth::user()->type == 'student')
 					<div class='tool-tip' data-toggle="tooltip" data-placement="top">
 						<button type='button' class='btn btn-default pull-right hidden borrow-button' id='borrow-button'>Borrow</button>
 					</div>
 					@endif
-					<button type='button' class='btn btn-default pull-right cancel-edit hidden edit-button'>Cancel Edit</button>
 					</div>
 					<div class="form-group">
 						<div class="input-group">
@@ -134,6 +137,9 @@
 								<span class='input-group-addon label-title'>Description</span>
 								<textarea id='description' class='form-control' placeholder='A mountain view.' name='description' rows='4' value="{{ old('description') }}"></textarea>
 							</div>
+							<span class="description-help help-block {{$errors->has('description') ? '' :  'hidden' }}">
+								<strong>@if ($errors->has('description')) {{ $errors->first('description') }} @endif</strong>
+							</span>							
 						</div>
 						<div class='multimedia hidden'>
 							<div class='input-group'>
@@ -384,12 +390,46 @@
 				</div>
 				<div class='modal-footer'>
 					<div class='material-buttons'>
-						<button type='button' class='btn btn-default view-button-close pull-left' data-dismiss='modal' aria-label='Close'>Close</button>
+						<button type='button' class="btn btn-default view-button-close @if (Auth::user()->type == 'student') pull-right @else pull-left @endif " aria-label='Close'>Close</button>
 						<button type='reset' id='material-reset' class='btn btn-danger'>Reset</button>
 						<button type='submit' id='material-submit' class='btn btn-success'>Add</button>
 					</div>
 				</div>
 			</form>
+		</div>
+	</div>
+</div>
+
+<div class='modal fade' id='edit-confirm-modal' role='dialog' data-keyboard='false' data-backdrop='static'>
+	<div class='modal-dialog'>
+		<div class='modal-content'>
+			<div class='modal-header'>
+				<h3>Cancel Edit Material</h3>
+			</div>
+			<div class="modal-body">
+			  	<p>Please click the ok button to cancel editing material.</p>
+			</div>
+			<div class="modal-footer">
+				<button type="button" data-dismiss="modal" class="btn btn-default" id='edit-confirm-close'>Cancel</button>
+				<button type="button" class="btn btn-danger confirm-modal" id='edit-confirm-cancel'>Ok</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class='modal fade' id='add-confirm-modal' role='dialog' data-keyboard='false' data-backdrop='static'>
+	<div class='modal-dialog'>
+		<div class='modal-content'>
+			<div class='modal-header'>
+				<h3>Cancel Add</h3>
+			</div>
+			<div class="modal-body">
+			  	<p>Please click the ok button to cancel adding material.</p>
+			</div>
+			<div class="modal-footer">
+				<button type="button" data-dismiss="modal" class="btn btn-default" id='add-close'>Close</button>
+				<button type="button" class="btn btn-danger" id='material-cancel-add'>Ok</button>
+			</div>
 		</div>
 	</div>
 </div>
@@ -406,6 +446,81 @@
 			<div class="modal-footer">
 				<button type="button" data-dismiss="modal" class="btn btn-default" id='delete-close'>Close</button>
 				<button type="button" class="btn btn-danger" id='material-confirm-delete'>Delete</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class='modal fade' id='confirm-add-modal' role='dialog' data-keyboard='false' data-backdrop='static'>
+	<div class='modal-dialog modal-lg'>
+		<div class='modal-content'>
+			<div class='modal-header'>
+				<h3>Confirm Material</h3>
+			</div>
+			<div class="modal-body">
+				<div class='row'>
+					<div class='col-md-6 multimedia-div'>
+						<h4 class='text-center'>Details</h4>
+						<p>Category: <span class='con-category'></span></p>
+						<p>Accession Number: <span class='con-acq'></span></p>
+						<p>Title: <span class='con-title'></span></p>
+						<span class='con-thesis hidden'>
+							<p>School: <span class='con-school'></span></p>
+							<p>Course: <span class='con-course'></span></p>
+						</span>
+						<span class='con-photographs hidden'>
+							<p>Size: <span class='con-pic-size'></span></p>
+							<p>Year Taken: <span class='con-pic-year'></span></p>
+							<p>Description: <span class='con-pic-description'></span></p>
+						</span>
+						<span class='con-multimedia hidden'>
+							<p>Duration: <span class='con-duration'></span></p>
+						</span>
+					</div>
+					<div class='col-md-6 multimedia-div'>
+						<h4 class='text-center person'>Authors</h4>
+						<p>Full Name: <span class='con-fullname'></span></p>
+					</div>
+					<div class='col-md-4 prod-div hidden'>
+						<h4>Producers</h4>
+						<p>Full Name: <span class='con-prod-fullname'></span></p>
+					</div>
+				</div>
+				<hr/>
+				<div class='row'>
+					<div class='col-md-6'>
+						<h4 class='text-center'>Publish Details</h4>
+						<p>Publish Status: <span class='con-pub-status'></span></p>	
+						<span class='published-span hidden'>			
+							<p>Publisher: <span class='con-pub-fullname'></span></p>
+							<p>Year Published: <span class='con-pub-year'></span></p>
+							<p>Place Published: <span class='con-pub-place'></span></p>
+						</span>
+					</div>
+					<div class='col-md-6'>
+						<h4 class='text-center'>Acquisition</h4>
+						<span class='confirm-donors hidden'>
+							<p>Donor: <span class='con-donor'></span></p>
+							<p>Date Donated: <span class='con-date-donated'></span></p>
+						</span>
+						<span class='confirm-purchased hidden'>
+							<p>Amount: <span class='con-amount'></span></p>
+							<p>Date Purchased: <span class='con-pur-date'></span></p>
+							<p>Purchased Address: <span class='con-pur-address'></span></p>
+						</span>
+					</div>							
+				</div>
+				<hr/>
+				<div class='row'>
+					<div class='col-md-6 con-tags hidden'>
+						<h4 class='text-center'>Tags</h4>
+						<p>Tags: <span class='con-tag'></span></p>				
+					</div>
+				</div>																		  	
+			</div>
+			<div class="modal-footer">
+				<button type="button" data-dismiss="modal" class="btn btn-default" id='confirm-cancel'>Cancel</button>
+				<button type="button" class="btn btn-success" id='confirm-submit'>Add</button>
 			</div>
 		</div>
 	</div>

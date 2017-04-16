@@ -250,35 +250,49 @@ $(document).ready(function (){
 	$('#confirm-account-button').click(function(){
 		$('.staff-search-div').removeClass('hidden');
 		$('#no-confirmed-users').toggle(false);
+		$(".student-number-panel").addClass('hidden');
 		$('.student-form').addClass('hidden');
 		$('#user-form').addClass('hidden');
 		$('.confirm-account-div').removeClass('hidden');
 		displayUsers();
 	});
 
+
+	function confirm(confirmStatus, id){
+		$("body").css("cursor", "wait");
+		return $.ajax({
+			type: 'GET',
+			url: '/dashboard/user/confirm/' + id + '/' + confirmStatus,
+			success: function(data){
+				$("body").css("cursor", "default");
+			}
+		});
+	}
+
 	$('body').on('click', '.user-confirm-button', function(){
+
 		var confirmStatus = $.trim($(this).text());
-		var id = $(this).parent().children('input').val()
+		var id = $(this).parent().children('input').val();
 		if(confirmStatus == 'confirmed'){
+			$('.user-status').removeClass('alert-danger').addClass('alert-success');
+			$('.success-message').text("Username '" + id + "' confirmed successfully!");
 			$(this).removeClass('btn-danger').addClass('btn-success');
 			$(this).parent().children('.user-confirm-button').removeClass('btn-danger').addClass('btn-default');
 		}
 		else if(confirmStatus == 'unconfirmed'){
+			$('.user-status').removeClass('alert-success').addClass('alert-danger');
+			$('.success-message').text("Username '" + id + "' unconfirmed successfully!");
 			$(this).parent().children('.user-confirm-button').removeClass('btn-success').addClass('btn-default');
 			$(this).removeClass('btn-success').addClass('btn-danger');
 		}
+		confirm(confirmStatus, id).done(function(){
+			$('.user-status').removeClass('hidden');
+			$('.success-status').removeClass('hidden');
+		});
+	});
 
-		function confirm(confirmStatus){
-			$("body").css("cursor", "wait");
-			return $.ajax({
-				type: 'GET',
-				url: '/dashboard/user/confirm/' + id + '/' + confirmStatus,
-				success: function(data){
-					$("body").css("cursor", "default");
-				}
-			});
-		}
-		confirm(confirmStatus);
+	$('.confirm-success').click(function(){
+		$('.user-status').addClass('hidden');
 	});
 
 	// endof confirm accounts script

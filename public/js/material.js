@@ -17,7 +17,10 @@ $(document).ready(function (){
 
 	// add material script
 
+	var addCounter = false;
+
 	$('#add-material-button').click(function(){
+		addCounter = true;
 		$('.search-type').html('Accession Number ' + "<span class='caret'></span>");
 		$('.type-dropdown').removeClass('hidden');
 		$('.borrowed-dropdown').addClass('hidden');
@@ -45,7 +48,7 @@ $(document).ready(function (){
 		$('.purchased-div').addClass('hidden');			
 		$('input').each(function(){
 			$(this).prop('disabled', false);	
-			if($(this).attr('name') == '_token' || $(this).attr('name') == 'size-type'
+			if($(this).attr('name') == '_token' || $(this).attr('name') == 'size-type'  || $(this).attr('type') == 'hidden'
 			|| $(this).attr('name') == 'duration-type' || $(this).attr('name') == 'material-acqNumber' || $(this).attr('name') == 'pic'){
 			}
 			else{
@@ -61,7 +64,12 @@ $(document).ready(function (){
 		$('#add-material-button').prop('disabled', true);
 	});
 
-	$('#material-modal').on('hide.bs.modal', function (){
+	$('#edit-confirm-modal').on('hidden.bs.modal', function (){
+		$('body').addClass('modal-open');
+	});
+
+	$('#material-modal').on('hidden.bs.modal', function (){
+		 exitMaterialModal();
 		$('#add-material-button').prop('disabled', false);
 	});
 
@@ -224,6 +232,8 @@ $(document).ready(function (){
 			errorCounter++;
 		}
 
+		$('.con-category').text(category);
+
 		var acqNumber = $('#acqNumber').val();
 		acqNumber = $.trim(acqNumber);
 
@@ -238,7 +248,7 @@ $(document).ready(function (){
 			errorCounter++;
 		}
 
-
+		$('.con-acq').text(acqNumber);
 
 		var title = $('#title').val();
 		title = $.trim(title);
@@ -256,7 +266,10 @@ $(document).ready(function (){
 			$('.title-help').addClass('hidden');
 		}
 
+		$('.con-title').text(title);
+
 		if(category == 'Thesis'){
+			$('.con-thesis').removeClass('hidden');
 			var school = $('#school').val();
 				school = $.trim(school);
 
@@ -274,6 +287,8 @@ $(document).ready(function (){
 					$('.school-help').addClass('hidden');
 				}
 
+				$('.con-school').text(school);
+
 				var course = $('#course').val();
 				course = $.trim(course);
 
@@ -290,6 +305,11 @@ $(document).ready(function (){
 				else{
 					$('.course-help').addClass('hidden');
 				}
+
+				$('.con-course').text(course);
+		}
+		else{
+			$('.con-thesis').addClass('hidden');
 		}
 
 		nameArray=[];
@@ -298,8 +318,16 @@ $(document).ready(function (){
 		var name = '';
 		if(category != 'Compact Discs' && category != 'Digital Versatile Discs' && category != 'Video Home Systems' && category != 'Cassette Tapes'){
 			name = 'author';
+			$('.multimedia-div').addClass('col-md-6').removeClass('col-md-4');
+			$('.prod-div').addClass('hidden');
+			$('.con-multimedia').addClass('hidden');
+			$('.person').text('Authors');
 		}
 		else{
+			$('.person').text('Directors');
+			$('.con-multimedia').removeClass('hidden');
+			$('.multimedia-div').removeClass('col-md-6').addClass('col-md-4');
+			$('.prod-div').removeClass('hidden');	
 			name = 'director';
 			var hour =$('#hours').val();
 			var minute = $('#minutes').val();
@@ -311,54 +339,71 @@ $(document).ready(function (){
 			var hourValue = hourPattern.test(hour);
 			var secondValue = secondPattern.test(second);
 
-		producerArray=[];
-		nameArray=[];
-		$('.prod').each(function(){
-			if($(this).children('.prod-firstnames').children().children('input').val() == ''){
-				$(this).children('.prod-firstnames').children('span').removeClass('hidden');
-				$(this).children('.prod-firstnames').children('span').children('strong').text('The first name of the producer is required.');
-				errorCounter++;
-			}
-			else if($(this).children('.prod-firstnames').children().children('input').val() >= 50){
-				$(this).children('.prod-firstnames').children('span').removeClass('hidden');
-				$(this).children('.prod-firstnames').children('span').children('strong').text('The first name of the producer should not exceed 50 characters.');
+			producerArray=[];
+			nameArray=[];
+			$('.prod').each(function(){
+				if($(this).children('.prod-firstnames').children().children('input').val() == ''){
+					$(this).children('.prod-firstnames').children('span').removeClass('hidden');
+					$(this).children('.prod-firstnames').children('span').children('strong').text('The first name of the producer is required.');
+					errorCounter++;
+				}
+				else if($(this).children('.prod-firstnames').children().children('input').val() >= 50){
+					$(this).children('.prod-firstnames').children('span').removeClass('hidden');
+					$(this).children('.prod-firstnames').children('span').children('strong').text('The first name of the producer should not exceed 50 characters.');
+				}
+				else{
+					$(this).children('.prod-firstnames').children('span').addClass('hidden');
+					nameArray.push($(this).children('.prod-firstnames').children().children('input').val());
+				}
+				if($(this).children('.prod-middlenames').children().children('input').val() == ''){
+					$(this).children('.prod-middlenames').children('span').removeClass('hidden');
+					$(this).children('.prod-middlenames').children('span').children('strong').text('The middle name of the producer is required.');
+					errorCounter++;				
+				}
+				else if($(this).children('.prod-middlenames').children().children('input').val() >= 50){
+					$(this).children('.prod-middlenames').children('span').removeClass('hidden');
+					$(this).children('.prod-middlenames').children('span').children('strong').text('The middle name of the producer should not exceed 50 characters.');
+					errorCounter++;
+				}
+				else{
+					$(this).children('.prod-middlenames').children('span').addClass('hidden');
+					nameArray.push($(this).children('.prod-middlenames').children().children('input').val());
+				}
+				if($(this).children('.prod-lastnames').children().children('input').val() == ''){
+					$(this).children('.prod-lastnames').children('span').removeClass('hidden');
+					$(this).children('.prod-lastnames').children('span').children('strong').text('The last name of the producer is required.');
+					errorCounter++;				
+				}
+				else if($(this).children('.prod-lastnames').children().children('input').val() >= 50){
+					$(this).children('.prod-lastnames').children('span').removeClass('hidden');
+					$(this).children('.prod-lastnames').children('span').children('strong').text('The last name of the producer should not exceed 50 characters.');
+					errorCounter++;
+				}
+				else{
+					$(this).children('.prod-lastnames').children('span').addClass('hidden');
+					nameArray.push($(this).children('.prod-lastnames').children().children('input').val());
+				}			
+			});
+
+			if(nameArray.length == 0){
+				$('.multimedia-div').removeClass('col-md-4').addClass('col-md-6');
+				$('.prod-div').addClass('hidden');
 			}
 			else{
-				$(this).children('.prod-firstnames').children('span').addClass('hidden');
-				nameArray.push($(this).children('.prod-firstnames').children().children('input').val());
+				producers = '';
+				for(i=0;i<nameArray.length;i+=3){
+					fullname = nameArray[i] + ' ' + nameArray[i+1] + ' ' + nameArray[i+2];
+					producers += fullname;
+					producers += ', ';
+				}
+
+				producers = producers.replace(/,\s*$/, "");
+				$('.con-prod-fullname').text(producers);				
 			}
-			if($(this).children('.prod-middlenames').children().children('input').val() == ''){
-				$(this).children('.prod-middlenames').children('span').removeClass('hidden');
-				$(this).children('.prod-middlenames').children('span').children('strong').text('The middle name of the producer is required.');
-				errorCounter++;				
-			}
-			else if($(this).children('.prod-middlenames').children().children('input').val() >= 50){
-				$(this).children('.prod-middlenames').children('span').removeClass('hidden');
-				$(this).children('.prod-middlenames').children('span').children('strong').text('The middle name of the producer should not exceed 50 characters.');
-				errorCounter++;
-			}
-			else{
-				$(this).children('.prod-middlenames').children('span').addClass('hidden');
-				nameArray.push($(this).children('.prod-middlenames').children().children('input').val());
-			}
-			if($(this).children('.prod-lastnames').children().children('input').val() == ''){
-				$(this).children('.prod-lastnames').children('span').removeClass('hidden');
-				$(this).children('.prod-lastnames').children('span').children('strong').text('The last name of the producer is required.');
-				errorCounter++;				
-			}
-			else if($(this).children('.prod-lastnames').children().children('input').val() >= 50){
-				$(this).children('.prod-lastnames').children('span').removeClass('hidden');
-				$(this).children('.prod-lastnames').children('span').children('strong').text('The last name of the producer should not exceed 50 characters.');
-				errorCounter++;
-			}
-			else{
-				$(this).children('.prod-lastnames').children('span').addClass('hidden');
-				nameArray.push($(this).children('.prod-lastnames').children().children('input').val());
-			}			
-		});
-		producerArray.push(nameArray);
-		nameArray=[];
-		$('#producers').val(producerArray);
+
+			producerArray.push(nameArray);
+			nameArray=[];
+			$('#producers').val(producerArray);
 
 			if(hour=='' && minute =='' && second == ''){
 				$('.duration-help').removeClass('hidden');
@@ -440,14 +485,36 @@ $(document).ready(function (){
 					hour += tempHour;
 					$('#hours').val(hour);
 				}
-			}			
+			}
+			$('.con-duration').text(hour + ':' + minute + ':' + second);
 		}
 		if(category == 'Photographs'){
+			$('.con-photographs').removeClass('hidden');
 			name = 'photographer';
 			var size = $('#size').val();
 			size = $.trim(size);
 			sizePattern = new RegExp(/^(\d)+$/, "g");
 			sizeValue = sizePattern.test(size);
+
+
+			var description = $.trim($('#description').val());
+
+			if(description.length == 0){
+				errorCounter++;
+				$('.description-help').removeClass('hidden');
+				$('.description-help strong').text('The description field is required.');
+			}
+			else if(description.length > 50){
+				errorCounter++;
+				$('.description-help').removeClass('hidden');
+				$('.description-help strong').text('The description field should not exceed 50 characters.');
+			}
+			else{
+				$('.description-help').addClass('hidden');
+			}
+
+			$('.con-pic-description').text(description);
+			$('.con-pic-size').text(size + ' ' + $.trim($('.size-type').text()));
 
 			if(sizeValue == false){
 				$('.size-help').removeClass('hidden');
@@ -475,7 +542,14 @@ $(document).ready(function (){
 				$('.year-help').removeClass('hidden');
 				$('.year-help strong').text('The format of year field is incorrect.');
 				errorCounter++;
-			}			
+			}
+			else{
+				$('.year-help').addClass('hidden');
+			}
+			$('.con-pic-year').text(photographYear);
+		}
+		else{
+			$('.con-photographs').addClass('hidden');
 		}
 		$('.co-author').each(function(){
 				if($(this).children('.firstnames').children().children("input").val() == ""){
@@ -523,7 +597,28 @@ $(document).ready(function (){
 					nameArray.push($(this).children('.lastnames').children().children("input").val());
 				}					
 		});
+
+		authors = '';
+		for(i=0;i<nameArray.length;i+=3){
+			fullname = nameArray[i] + ' ' + nameArray[i+1] + ' ' + nameArray[i+2];
+			authors += fullname;
+			authors += ', ';
+		}
+
+		authors = authors.replace(/,\s*$/, "");
+		$('.con-fullname').text(authors);
 		
+		if($('#category').val() == 'Photographs'){
+			$('.person').text('Photographer');
+		}
+		else if($('#category').val() != 'Photographs' 
+		&& $('#category').val() != 'Compact Discs' 
+		&& $('#category').val() != 'Digital Versatile Discs' 
+		&& $('#category').val() != 'Video Home Systems' 
+		&& $('#category').val() != 'Cassette Tapes'){
+			$('.person').text('Authors');
+		}
+
 		tagArray=[];
 		$('#authors').val(nameArray);
 		$('.tag').each(function(){
@@ -541,6 +636,22 @@ $(document).ready(function (){
 				$(this).children('span').addClass('hidden');
 			}
 		});
+
+		if(tagArray.length == 0){
+			$('.con-tags').addClass('hidden');
+		}
+		else{
+			$('.con-tags').removeClass('hidden');
+			tags = '';
+			for(i=0;i<tagArray.length;i++){
+				tags += tagArray[i];
+				tags += ', ';
+			}
+
+			tags = tags.replace(/,\s*$/, "");
+			$('.con-tag').text(tags);		
+		}
+
 		$('#tags').val(tagArray);
 		if(pubStatus.length == 0){
 			$('.publish-status-help strong').text('The publish field is required.');
@@ -550,6 +661,8 @@ $(document).ready(function (){
 		else{
 			$('.publish-status-help').addClass('hidden');
 			if(pubStatus == 'Published'){
+				$('.published-span').removeClass('hidden');
+				$('.con-pub-status').text(pubStatus);
 				if($('#publisher').val() == ""){
 					$('.pub-help strong').text('The publisher field is required.');
 					$('.pub-help').removeClass('hidden');
@@ -563,6 +676,9 @@ $(document).ready(function (){
 				else{
 					$('.pub-help').addClass('hidden');
 				}
+
+				$('.con-pub-fullname').text($('#publisher').val());
+
 				publishedYearValue = YearPattern.test($('#published-year').val());
 				if($('#published-year').val() == ""){
 					$('.year-help strong').text('The year field is required.');
@@ -578,6 +694,8 @@ $(document).ready(function (){
 					$('.year-help').addClass('hidden');
 				}
 
+				$('.con-pub-year').text($('#published-year').val());
+
 				if($('#place').val() == ""){
 					$('.place-help strong').text('The place field is required.');
 					$('.place-help').removeClass('hidden');
@@ -586,9 +704,15 @@ $(document).ready(function (){
 				else{
 					$('.place-help').addClass('hidden');
 				}
+
+				$('.con-pub-place').text($('#place').val());
 			}
 			else if(pubStatus == 'Unpublished'){
+				$('.con-pub-status').text(pubStatus);
+				$('.published-span').addClass('hidden');
 				$('#published-year').val('');
+				$('#publisher').val('');
+				$('#place').val('');
 			}
 		}
 				
@@ -601,6 +725,8 @@ $(document).ready(function (){
 		else{
 			$('.acquisition-mode-help').addClass('hidden');
 			if(acquisitionMode == 'Donated'){
+				$('.confirm-purchased').addClass('hidden');
+				$('.confirm-donors').removeClass('hidden');
 				$('#amount').val('');
 				$('#purchased-year').val('');
 				$('#address').val('');
@@ -618,6 +744,7 @@ $(document).ready(function (){
 				else{
 					$('.donor-first-name-help').addClass('hidden');
 				}
+
 				if($('#donor-middlename').val() == ""){
 					$('.donor-middle-name-help strong').text('The middle name field is required.');
 					$('.donor-middle-name-help').removeClass('hidden');
@@ -644,6 +771,9 @@ $(document).ready(function (){
 				else{
 					$('.donor-last-name-help').addClass('hidden');
 				}
+
+				$('.con-donor').text($('#donor-firstname').val() +' ' + $('#donor-middlename').val() + ' ' + $('#donor-lastname').val());
+
 				donatedYearValue = YearPattern.test($('#donated-year').val());
 				if($('#donated-year').val() == ""){
 					$('.donor-year-help strong').text('The year field is required.');
@@ -658,8 +788,12 @@ $(document).ready(function (){
 				else{
 					$('.donor-year-help').addClass('hidden');
 				}
+
+				$('.con-date-donated').text($('#donated-year').val());
 			}
 			else if(acquisitionMode == 'Purchased'){
+				$('.confirm-purchased').removeClass('hidden');
+				$('.confirm-donors').addClass('hidden');				
 				$('#donor-firstname').val('');
 				$('#donor-middlename').val('');
 				$('#donor-lastname').val('');
@@ -685,6 +819,8 @@ $(document).ready(function (){
 					$('.amount-help').addClass('hidden');
 				}
 
+				$('.con-amount').text($('#amount').val());
+
 				purchasedYearValue = YearPattern.test($('#purchased-year').val());				
 				if($('#purchased-year').val() ==""){
 					$('.purchased-year-help strong').text('The year field is required.');
@@ -699,6 +835,9 @@ $(document).ready(function (){
 				else{
 					$('.purchased-year-help').addClass('hidden');
 				}
+
+				$('.con-pur-date').text($('#purchased-year').val());
+
 				if($('#address').val() ==""){
 					$('.purchased-address-help strong').text('The address field is required.');
 					$('.purchased-address-help').removeClass('hidden');
@@ -706,7 +845,9 @@ $(document).ready(function (){
 				}
 				else{
 					$('.purchased-address-help').addClass('hidden');
-				}								
+				}
+
+				$('.con-pur-address').text($('#address').val());
 			}
 		}
 
@@ -738,11 +879,8 @@ $(document).ready(function (){
 						return false;
 					}
 					else{
-						$('#material-submit').text('Adding');
-						$('#material-reset').prop('disabled', true);
-						$('#material-submit').prop('disabled', true);
-						$("body").css("cursor", "wait");
-						$('.material-form').submit();
+						hideModal();
+						$('#confirm-add-modal').modal('show');
 					}
 				}).
 				fail(function(x){
@@ -754,8 +892,31 @@ $(document).ready(function (){
 			}
 			return false;				
 
+	});
 
 
+	function hideModal(){
+		$('#material-modal').animate({
+			opacity: 0
+		}, 400 );		
+	}
+
+	function showModal(){
+		$('#material-modal').animate({
+			opacity: 1
+		}, 400 );		
+	}
+
+	$('#confirm-cancel').click(function(){
+		showModal();
+	})
+
+	$('#confirm-submit').click(function(){
+		$('#confirm-cancel').prop('disabled', true);
+		$('#confirm-submit').text('Adding');
+		$('#confirm-submit').prop('disabled', true);
+		$("body").css("cursor", "wait");
+		$('.material-form').submit();
 	});
 
 	var num = 1;
@@ -878,7 +1039,7 @@ $(document).ready(function (){
 
 	// edit script
 
-	$('.material-close').click(function(){
+	function exitMaterialModal(){
 		$('#material-submit').text('Add');
 		$('.add-producer').addClass('hidden');
 		$('#material-reset').trigger('click');	
@@ -892,12 +1053,24 @@ $(document).ready(function (){
 			$('.table-producers').children().remove();
 		}
 		$('.tags-header').removeClass('hidden');
-		$('.cancel-edit').trigger('click');
+		// $('.cancel-edit').trigger('click');
 		$('.search').prop('disabled', false);
+	}
+
+	$('#material-cancel-add').click(function(){
+		addCounter = false;
+		$('#add-confirm-modal').modal('hide');
+		$('#material-modal').modal('hide');
+	});
+
+	$('.material-close').click(function(){
+		if(addCounter == true){
+			$('#add-confirm-modal').modal('show');
+		}	
 	});
 
 	$('.view-button-close').click(function(){
-		$('.material-close').trigger('click');
+		$('.edit-close').trigger('click');
 	});
 
 	var tableAuthorCounter = 0;
@@ -944,34 +1117,11 @@ $(document).ready(function (){
 		});
 	}
 
-	function checkBorrowed(){
+	function checkBorrowed(material_id){
 		return $.ajax({
 			type: 'GET',
 			url: '/dashboard/check/borrowed/' + material_id,
 			success: function(data){
-			}
-		});				
-	}
-	if($('#user-type').val() == 'student'){
-		checkBorrowed().done(function(r){
-			if(r.acq_count == 1){
-				$('.tool-tip').tooltip('hide')
-				          .attr('data-original-title', 'You have already borrowed this material.')
-				          .tooltip('fixTitle');
-			}
-			if(r.user_borrowed_count >= 3){
-				$('.tool-tip').tooltip('hide')
-				          .attr('data-original-title', 'You can only borrow up to three materials.')
-				          .tooltip('fixTitle');			
-			}
-			if(r.user_borrowed_count < 3 && r.acq_count == 0){
-				$('.borrow-button').prop('disabled', false);
-				$('.tool-tip').tooltip('hide')
-				          .attr('data-original-title', '')
-				          .tooltip('fixTitle');				
-			}
-			else{
-				$('.borrow-button').prop('disabled', true);				
 			}
 		});				
 	}
@@ -1146,7 +1296,7 @@ $(document).ready(function (){
 					$('.photograph').addClass('hidden');
 				}
 				$('input').each(function(){
-				if($(this).attr('name') == '_token' || $(this).attr('name') == 'material-acqNumber'){
+				if($(this).attr('name') == '_token' || $(this).attr('name') == 'material-acqNumber' || $(this).attr('value') == 'student'){
 				}
 				else{
 					$(this).prop('disabled', true);
@@ -1157,9 +1307,9 @@ $(document).ready(function (){
 		});
 	}
 
-	
-
 	$('body').on('click', '.material-view-button', function(){
+		$('.material-close').addClass('hidden');
+		$('.edit-close').removeClass('hidden');
 		$('.modal-title').text('View Material');
 		$('#material-reset').addClass('hidden');
 		$('#material-submit').addClass('hidden');
@@ -1172,13 +1322,65 @@ $(document).ready(function (){
 		$('#edit-button').removeClass('hidden');
 		var material_id = $(this).find('input').val();
 		$("body").css("cursor", "wait");
-		viewMaterial(material_id).done(function(data){
-			addViewCount(data.acqNumber);
+		viewMaterial(material_id).done(function(data){	
+			if($('#user-type').val() == 'student'){
+				checkBorrowed(material_id).done(function(r){
+					if(r.acq_count == 1){
+						$('.tool-tip').tooltip('hide')
+						          .attr('data-original-title', 'You have already borrowed this material.')
+						          .tooltip('fixTitle');
+					}
+					if(r.user_borrowed_count >= 3){
+						$('.tool-tip').tooltip('hide')
+						          .attr('data-original-title', 'You can only borrow up to three materials.')
+						          .tooltip('fixTitle');			
+					}
+					if(r.user_borrowed_count < 3 && r.acq_count == 0){
+						$('.borrow-button').prop('disabled', false);
+						$('.tool-tip').tooltip('hide')
+						          .attr('data-original-title', '')
+						          .tooltip('fixTitle');				
+					}
+					else{
+						$('.borrow-button').prop('disabled', true);				
+					}
+				});
+				console.log(data);
+				addViewCount(data.acqNumber);
+			}
 			$('#material-modal').modal('show');
 		});
 	});
 
+	$('.edit-close').click(function(){
+		if(editCounter == true){
+			$('#edit-confirm-modal').modal('show');
+			editCounter = false;
+		}
+		else{
+			$('#material-modal').modal('hide');
+		}
+	});
+
+	$('#edit-confirm-cancel').click(function(){
+		hideEditView();
+		$('#edit-confirm-modal').modal('hide');
+		if(editCounter == true){
+			editCounter = false;
+		}
+		else{
+			$('.material-close').removeClass('hidden');
+			$('.edit-close').addClass('hidden');
+			$('.cancel-edit').addClass('hidden');
+			$('#edit-confirm-modal').modal('hide');
+			$('#material-modal').modal('hide');
+		}
+	});
+
+	var editCounter = false;
+
 	$('#edit-button').click(function(){
+		editCounter = true;
 		num=1;
 		tagNum=1;
 		$('#description').prop('disabled', false);
@@ -1276,7 +1478,7 @@ $(document).ready(function (){
 		}	
 	});
 
-	$('.cancel-edit').click(function(){
+	function hideEditView(){
 		$('#material-submit').text('Add');
 		if(category == 'Compact Discs' || category == 'Cassette Tapes' || category == 'Digital Versatile Discs' || category == 'Video Home Systems'){
 			$('.author-photographer-director').text('Directors');
@@ -1360,11 +1562,15 @@ $(document).ready(function (){
 		$('#course').val(course);
 		$('#hours').val(durationArray[0]);
 		$('#minutes').val(durationArray[1]);
-		$('#seconds').val(durationArray[2]);	
+		$('#seconds').val(durationArray[2]);		
+	}
+
+	$('.cancel-edit').click(function(){
+		$('#edit-confirm-modal').modal('show');
 	});
 	// end of edit script
 
-	function deleteMaterials(){
+	function deleteMaterials(material_id){
 		return $.ajax({
 			headers: {
 			'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -1430,54 +1636,61 @@ $(document).ready(function (){
 		          .tooltip('fixTitle');		
 	}
 
+	function borrowAllow(){
+		return $.ajax({
+			type: 'GET',
+			url: '/dashboard/borrow/' + id
+		});
+	}
+
 	$('.borrow-button').click(function(){
 		$(this).prop('disabled', true);
 		$('.tool-tip').tooltip('hide')
 		          .attr('data-original-title', 'You have already borrowed this material.')
 		          .tooltip('fixTitle');
 		id = $('.borrow-button').val();
-		$.ajax({
-			type: 'GET',
-			url: '/dashboard/borrow/' + id,
-			success: function(data){
-			}
+		borrowAllow().done(function(){
+			$('.borrow-status').removeClass('alert-danger').addClass('alert-success');
+			$('.borrow-status').fadeIn().delay(2000).fadeOut();
+			$('.borrow-message').text("Material '" + id +"' is pending for borrowing.");
 		});
 	});
 
-	$('.borrowed-button').click(function(){	
-		function getBorrowedMaterials(){
-			return $.ajax({
-				type: 'GET',
-				url: '/dashboard/borrowedmaterials',
-				success: function(data){
-					titleArray = [];
-					statusArray=[];
-					for(i=0;i<data.materials.length;i++){
-						var newMaterial = $(document.createElement('tr'));
-						if(data.materials[i].pivot.status == 'checked out'){
-							newMaterial.after().html(
-								"<td>" + data.materials[i].title + "</td>" +
-								"<td>" + data.materials[i].pivot.status + "</td>" +
-								"<td class='pull-right'></td>"
-							);						
-						}
-						else{
-							newMaterial.after().html(
-								"<td>" + data.materials[i].title + "</td>" +
-								"<td>" + data.materials[i].pivot.status + "</td>" +
-								"<td class='pull-right'>" +
-								"<button class='btn btn-xs btn-danger student-remove-borrowed-button' value='" + data.materials[i].acqNumber   +   "'>" +
-								 "<span class='glyphicon glyphicon-remove'></span>" +
-								"</button>" +
-								"</td>"
-							);							
-						}
-
-						$('.borrowed-materials-tbody').append(newMaterial);
+	function getBorrowedMaterials(){
+		return $.ajax({
+			type: 'GET',
+			url: '/dashboard/borrowedmaterials',
+			success: function(data){
+				titleArray = [];
+				statusArray=[];
+				for(i=0;i<data.materials.length;i++){
+					var newMaterial = $(document.createElement('tr'));
+					if(data.materials[i].pivot.status == 'checked out'){
+						newMaterial.after().html(
+							"<td>" + data.materials[i].title + "</td>" +
+							"<td>" + data.materials[i].pivot.status + "</td>" +
+							"<td class='pull-right'></td>"
+						);						
 					}
+					else{
+						newMaterial.after().html(
+							"<td>" + data.materials[i].title + "</td>" +
+							"<td>" + data.materials[i].pivot.status + "</td>" +
+							"<td class='pull-right'>" +
+							"<button class='btn btn-xs btn-danger student-remove-borrowed-button' value='" + data.materials[i].acqNumber   +   "'>" +
+							 "<span class='glyphicon glyphicon-remove'></span>" +
+							"</button>" +
+							"</td>"
+						);							
+					}
+
+					$('.borrowed-materials-tbody').append(newMaterial);
 				}
-			});
-		}
+			}
+		});
+	}
+
+	$('.borrowed-button').click(function(){	
 		getBorrowedMaterials().done(function(){
 			if($('.borrowed-materials-tbody').children().length == 0){
 				$('#no-borrowed-materials').toggle(true);
@@ -1485,23 +1698,39 @@ $(document).ready(function (){
 			else{
 				$('#no-borrowed-materials').toggle(false);		
 			}
+			$('#borrow-modal').modal('show');
 		});
 	});
 
+	function deleteBorrowedMaterials(acqNumber, username){
+		return $.ajax({
+			headers: {
+			'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+			},			
+			type: 'post',
+			url: '/dashboard/material/staffDelete/' + acqNumber + '/' + username,
+			success: function(data){
+			}
+		});
+	}
+
 	$('body').on('click', '.remove-borrowed-button', function(){	
-		var x = $(this);
 		username = $(this).parent().parent().children('td:nth-child(1)').text();
 		acqNumber = $(this).val();
-		function deleteBorrowedMaterials(){
-			return $.ajax({
-				type: 'GET',
-				url: '/dashboard/material/staffDelete/' + acqNumber + '/' + username,
-				success: function(data){
-				}
-			});
-		}
-		deleteBorrowedMaterials().done(function(){
-			x.parent().parent().remove();
+		$('#staff-borrowed-confirm-delete').val(username);
+		$('#staff-delete-close').val(acqNumber);
+		$('#delete-borrowed-confirm-modal').modal('show');
+	});
+
+	$('#staff-borrowed-confirm-delete').click(function(){
+		$('#delete-borrowed-confirm-modal').modal('hide');
+		acqNumber = $('#staff-delete-close').val();
+		username = $('#staff-borrowed-confirm-delete').val();
+		$('.borrowed-materials-tbody').children('tr.' + username).remove();
+		deleteBorrowedMaterials(acqNumber, username).done(function(){
+			$('.delete-borrowed-status').removeClass('alert-success').addClass('alert-danger');
+			$('.delete-borrowed-status').text("Borrowed material '" + acqNumber + "' deleted successfully");
+			$('.delete-borrowed-status').fadeIn().delay(2000).fadeOut();
 			if($('.borrowed-materials-tbody').children().length == 0){
 				$('#no-borrowed-materials').toggle(true);
 			}
@@ -1619,20 +1848,42 @@ $(document).ready(function (){
 		$('.confirm-material-table').removeClass('hidden');
 	});
 
-	$('body').on('click', '.student-remove-borrowed-button', function(){
-		x = $(this);
-		function removeBorrowed(value){
-			id = value;
-			return $.ajax({
-				type: 'GET',
-				url: '/dashboard/delete/borrowed/' + id,
-				success: function(data){
-				}
+	function removeBorrowed(value){
+		id = value;
+		return $.ajax({
+			type: 'GET',
+			url: '/dashboard/delete/borrowed/' + id
+		});
+	}
 
-			});
-		}
+	function fadeBorrowedModal(){
+		$('#borrow-modal').animate({
+			opacity: 0.9
+		}, 400 );
+	}
+
+	function showBorrowedModal(){
+		$('#borrow-modal').animate({
+			opacity: 1
+		}, 400 );		
+	}
+
+	$('body').on('click', '.student-remove-borrowed-button', function(){
+		fadeBorrowedModal();
+		$(this).parent().parent().addClass($(this).val());
+		$('#borrowed-confirm-delete').val($(this).val());
+		$('#delete-confirm-modal').modal('show');
+	});
+
+	$('#borrowed-confirm-delete').click(function(){
+		showBorrowedModal();
+		x = $(this).val();
 		removeBorrowed($(this).val()).done(function(r){
-			x.parent().parent().remove();
+			$('.borrow-status').removeClass('alert-success').addClass('alert-danger');
+			$('.borrow-status').fadeIn().delay(2000).fadeOut();
+			$('.borrow-message').text("Material '" + id +"' deleted successfully.");			
+			$('.borrowed-materials-tbody').children('tr.' + x).remove();
+			$('#delete-confirm-modal').modal('hide');
 			if($('.borrowed-materials-tbody').children().length == 0){
 				$('#no-borrowed-materials').toggle(true);
 			}
@@ -1652,19 +1903,25 @@ $(document).ready(function (){
 		})
 	}
 
+	function confirmMaterials(value){
+		id = value.val();
+		username = value.parent().parent().children('td:nth-child(1)').text();
+		return $.ajax({
+			headers: {
+			'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+			},			
+			type: 'post',
+			url: '/dashboard/confirm/borrowedmaterials/' + id + '/' + username,
+			success: function(data){
+			},
+		});
+	}
+
 	$('body').on('click', '.confirm-borrowed-button', function(){
 		x = $(this);
-		function confirmMaterials(value){
-			id = value.val();
-			username = value.parent().parent().children('td:nth-child(1)').text();
-			return $.ajax({
-				type: 'GET',
-				url: '/dashboard/confirm/borrowedmaterials/' + id + '/' + username,
-				success: function(data){
-				},
-			});
-		}
 		confirmMaterials($(this)).done(function(){
+			$('.confirm-borrowed-status').text("Borrowed material '" + x.val() + "' confirmed successfully!");
+			$('.confirm-borrowed-status').fadeIn().delay(2000).fadeOut();			
 			addBorrowCount(x.val());
 			x.parent().parent().parent().children().each(function(){
 				if($(this).children('td:nth-child(2)').text() == x.val()){
@@ -1686,19 +1943,23 @@ $(document).ready(function (){
 		})
 	}
 
+	function unconfirmMaterials(value){
+		id = value.val();
+		username = value.parent().parent().children('td:nth-child(1)').text();			
+		return $.ajax({
+			headers: {
+			'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+			},			
+			type: 'post',
+			url: '/dashboard/unconfirm/borrowedmaterials/' + id + '/' + username
+		});
+	}
+
 	$('body').on('click', '.unconfirm-borrowed-button', function(){
 		x = $(this);
-		function unconfirmMaterials(value){
-			id = value.val();
-			username = value.parent().parent().children('td:nth-child(1)').text();			
-			return $.ajax({
-				type: 'GET',
-				url: '/dashboard/unconfirm/borrowedmaterials/' + id + '/' + username,
-				success: function(data){
-				}
-			});
-		}
 		unconfirmMaterials($(this)).done(function(){
+			$('.unconfirm-borrowed-status').text("Borrowed material '" + x.val() + "' unconfirmed successfully!");
+			$('.unconfirm-borrowed-status').fadeIn().delay(2000).fadeOut();			
 			deleteBorrowCount(x.val());
 			x.parent().parent().parent().children().each(function(){
 				if($(this).children('td:nth-child(2)').text() == x.val()){
@@ -1813,7 +2074,10 @@ $(document).ready(function (){
 		$('#no-materials').addClass('hidden');
 		$('.search-pagination').removeClass('hidden');		
 		if(searchType == 'Title' || searchType == 'Accession Number'){
-			$('.action-th').removeClass('hidden');
+			if($('#user-type').val() != 'student'){
+				$('.action-th').removeClass('hidden');
+			}
+			
 			$('.acq-th').removeClass('hidden');
 			$('.type-th').removeClass('hidden');			
 			x = retrieveTitle(sortType);

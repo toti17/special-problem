@@ -25,6 +25,12 @@
     </button>
 </div>
 
+<div class="col-md-6 alert  alert-danger success-status user-status hidden"><span class='success-message'></span>
+    <button type="button" class="close confirm-success" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+
 <div class='col-md-7 col-md-offset-2 @if(Auth::user()->type == "admin") staff-search-div hidden @else user-search-div @endif'>
     <div class='input-group'>
         <div class='input-group-btn'>

@@ -8,7 +8,6 @@
 			@endif
 			<form class="inventory-form" role="form" method="POST" action="{{ url('/add/inventory') }}" enctype='multipart/form-data'>
 				{{ csrf_field() }}
-				<input type='hidden' value='available' name='material-status'/>
 				<div class='modal-header'>
 					<button type='button' class='close inventory-close' aria-label='Close'>
 						<span aria-hidden='true'>&times;</span>
@@ -547,14 +546,31 @@
 	<div class='modal-dialog'>
 		<div class='modal-content'>
 			<div class='modal-header'>
-				<h3>Cancel Edit</h3>
+				<h3>Cancel Edit Inventory</h3>
 			</div>
 			<div class="modal-body">
-			  	<p>Please click the ok button to cancel editing.</p>
+			  	<p>Please click the ok button to cancel editing inventory.</p>
 			</div>
 			<div class="modal-footer">
 				<button type="button" data-dismiss="modal" class="btn btn-default" id='cancel-close'>Cancel</button>
 				<button type="button" class="btn btn-danger confirm-modal" id='inventory-confirm-cancel'>Ok</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class='modal fade' id='cancel-add-modal' role='dialog' data-keyboard='false' data-backdrop='static'>
+	<div class='modal-dialog'>
+		<div class='modal-content'>
+			<div class='modal-header'>
+				<h3>Cancel Add Inventory</h3>
+			</div>
+			<div class="modal-body">
+			  	<p>Please click the ok button to cancel adding inventory.</p>
+			</div>
+			<div class="modal-footer">
+				<button type="button" data-dismiss="modal" class="btn btn-default" id='cancel-add-close'>Cancel</button>
+				<button type="button" class="btn btn-danger confirm-modal" id='cancel-add-confirm'>Ok</button>
 			</div>
 		</div>
 	</div>

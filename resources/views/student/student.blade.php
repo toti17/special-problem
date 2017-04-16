@@ -5,7 +5,7 @@
 	<div class="col-md-12 @if(Auth::user()->status == 'unconfirmed') borrowed-div @else confirm-div @endif " data-toggle="tooltip" data-placement="top">
 		<button 
 			@if(Auth::user()->status == 'unconfirmed') disabled @endif type='button' 
-			class='btn btn-default borrowed-button' data-toggle='modal' data-target='#borrow-modal'>Borrowed Materials
+			class='btn btn-default borrowed-button'>Borrowed Materials
 			@if($borrowed !=0)
 			<span class="borrow-badge badge">
 				{{$borrowed}}
@@ -13,6 +13,11 @@
 			@endif
 		</button>
 	</div>
+	<div class="col-md-6 alert  alert-success borrow-status"><span class='borrow-message'></span>
+	    <button type="button" class="close borrow-success" aria-label="Close" data-dismiss='alert'>
+	        <span aria-hidden="true">&times;</span>
+	    </button>
+	</div>	
 	<input type='hidden' value="{{Auth::user()->type}}" id='user-type'>
 	<div class="col-md-6 col-md-offset-3 main">
 		<div class='input-group student-div' @if(Auth::user()->status == 'unconfirmed') style='margin-top: 60px' @endif >

@@ -1134,9 +1134,8 @@ $(document).ready(function (){
 		});
 	});
 
-	var addCounter = false;
 	var editCounter = false;
-
+	var addCounter = false;
 	$('#add-inventory-button').click(function(){
 		addCounter = true;
 		editChange = false;
@@ -1148,6 +1147,8 @@ $(document).ready(function (){
 		$(this).prop('disabled', true);
 		$('#inventory-modal').modal('show');
 	});
+
+
 
 	function fadeModal(){
 		$('#inventory-modal').animate({
@@ -1167,11 +1168,36 @@ $(document).ready(function (){
 		}, 400 );		
 	}
 
-	$('.inventory-close').click(function(){
+	$('#cancel-add-confirm').click(function(){
+		$('#cancel-add-modal').modal('hide');
+		showModal();
+		exitInventoryModal();
+		addCounter = false;
+	});
+
+	$('#cancel-add-close').click(function(){
+		showModal();
+	});
+
+	$('#cancel-add-modal').on('hidden.bs.modal', function(){
+		$('body').addClass('modal-open');
+	});
+
+	function exitInventoryModal(){
 		$('#inventory-modal').modal('hide');
 		$('#edit-button').addClass('hidden');
 		hideTables();
-		deleteRows();
+		deleteRows();		
+	}
+
+	$('.inventory-close').click(function(){
+		if(addCounter == true){
+			fadeModal();
+			$('#cancel-add-modal').modal('show');
+		}
+		else{
+			exitInventoryModal();
+		}
 	});
 
 	$('.edit-close').click(function(){
@@ -1211,7 +1237,7 @@ $(document).ready(function (){
 
 	function goBackView(){
 		showTables();
-		$('#material-reset').trigger('click');
+		$('#inventory-reset').trigger('click');
 		$('#inventory-cancel-edit-button').addClass('hidden');
 		hideEditButtons();
 	}

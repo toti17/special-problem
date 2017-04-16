@@ -410,11 +410,22 @@ th{
 	left: -104px;
 }
 
-.success-status, .delete-status{
+.success-status, .delete-status, .borrow-status{
 	position: absolute;	
 	right: 0;
-/*	line-height: 3px;
-	height: 10px;*/
+}
+
+.borrow-status, .delete-borrowed-status, .confirm-borrowed-status, .unconfirm-borrowed-status{
+	display: none;
+	z-index: 999999;
+	width: 25%;
+	position: fixed;
+	right: 37px;
+	top: 31px;
+}
+
+.user-status{
+	top: 10px;
 }
 
 .material-table, .confirm-material-table, .inventories-table, .owners-table{
