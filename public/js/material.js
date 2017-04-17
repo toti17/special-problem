@@ -1296,7 +1296,7 @@ $(document).ready(function (){
 					$('.photograph').addClass('hidden');
 				}
 				$('input').each(function(){
-				if($(this).attr('name') == '_token' || $(this).attr('name') == 'material-acqNumber' || $(this).attr('value') == 'student'){
+				if($(this).attr('name') == '_token' || $(this).attr('name') == 'material-acqNumber' || $(this).attr('value') == 'user'){
 				}
 				else{
 					$(this).prop('disabled', true);
@@ -1323,7 +1323,7 @@ $(document).ready(function (){
 		var material_id = $(this).find('input').val();
 		$("body").css("cursor", "wait");
 		viewMaterial(material_id).done(function(data){	
-			if($('#user-type').val() == 'student'){
+			if($('#user-type').val() == 'user'){
 				checkBorrowed(material_id).done(function(r){
 					if(r.acq_count == 1){
 						$('.tool-tip').tooltip('hide')
@@ -2076,7 +2076,7 @@ $(document).ready(function (){
 		$('#no-materials').addClass('hidden');
 		$('.search-pagination').removeClass('hidden');		
 		if(searchType == 'Title' || searchType == 'Accession Number'){
-			if($('#user-type').val() != 'student'){
+			if($('#user-type').val() != 'user'){
 				$('.action-th').removeClass('hidden');
 			}
 			
@@ -2261,7 +2261,7 @@ $(document).ready(function (){
 							$('.' + acqNumberArray[i]).remove();
 						}
 			                	for(i=index;i<max;i++){
-							if($('#user-type').val() == 'student'){
+							if($('#user-type').val() == 'user'){
 								actionButton = '';
 								$('.action-th').addClass('hidden');
 							}
@@ -2547,7 +2547,7 @@ $(document).ready(function (){
 
 	function createTable(index, max, data){
 		for(i=index;i<max;i++){
-			if($('.user-type').val() == 'student'){
+			if($('#user-type').val() == 'user'){
 				actionButton = '';
 			}
 			else{
@@ -2963,7 +2963,7 @@ $(document).ready(function (){
 						$('.' + acqNumberArray[i]).remove();
 					}
 					for(i=index;i<max;i++){
-						if($('.user-type').val() == 'student'){
+						if($('#user-type').val() == 'user'){
 							actionButton = '';
 						}
 						else{

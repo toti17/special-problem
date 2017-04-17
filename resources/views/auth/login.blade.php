@@ -3,7 +3,7 @@
 @section('content')
 <div class="container sign-in-container">
     <div class="row">
-        <div class='register-panel center-block'>
+        <div class='register-panel center-block sign-in-panel'>
             <div class="panel panel-default center-block">
                 <div class="panel-heading sign-in-heading">
                     <div class='col-md-4 user-login user-active up-color'>

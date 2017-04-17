@@ -761,6 +761,14 @@ $(document).ready(function (){
 					event.preventDefault();
 				}
 				else{
+					if($('.file-name').val() == 'Click the browse button to select pictures...'){
+						console.log('bb');
+						$('.image-confirm-upload').addClass('hidden');
+					}
+					else{
+						console.log('aa');
+						$('.image-confirm-upload').removeClass('hidden');
+					}
 					hideModal();
 					$('#confirm-add-modal').modal('show');
 				}
@@ -838,6 +846,10 @@ $(document).ready(function (){
 			startPage: 1,
 			totalPages: totalPages,
 			onPageClick: function(event, page){
+				$('.inventory-items').children().remove();
+				$('.owner-items').children().remove();
+				$('.owners-table').trigger('update');
+				$('.inventories-table').trigger('update');
 				total = page * minPage;
 				index = Math.abs(total-minPage);
 				max = dataLength - index;
@@ -853,7 +865,6 @@ $(document).ready(function (){
 						$('#no-inventories').removeClass('hidden');
 					}
 					else{
-						$('.inventories-table').trigger('update');
 						for(i=index;i<max;i++){
 							var newInventory = $(document.createElement('tr')).attr('class', data.inventory[i].acqNumber);
 							newInventory.after().html(
@@ -880,7 +891,6 @@ $(document).ready(function (){
 				else if(data.owner != undefined){
 					$('.owner-items').children().remove();
 					if(data.owner.length != 0){
-						$('.owners-table').trigger('update');
 						for(i=index;i<max;i++){
 							var newOwner = $(document.createElement('tr')).attr('class', data.owner[i].owner_id);
 							newOwner.after().html(
@@ -1299,6 +1309,7 @@ $(document).ready(function (){
 		$('#delete-close').prop('disabled', true);
 		$('body').css('cursor', 'wait');	
 		deleteInventory(x.val(), false).done(function(){
+			x.text('Delete');
 			$('body').css('cursor', 'default');
 			x.prop('disabled', false);
 			$('#delete-close').prop('disabled', false);				

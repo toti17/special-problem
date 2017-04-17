@@ -23,7 +23,7 @@
 						@if(Auth::user()->type == "admin" || Auth::user()->type == "staff")
 						<button type='button' class='btn btn-default pull-right hidden edit-button' id='inventory-edit-button'>Edit</button>
 						<button type='button' class='btn btn-default pull-right hidden edit-button hidden' id='inventory-cancel-edit-button'>Cancel Edit</button>
-						@elseif(Auth::user()->type == 'student')
+						@elseif(Auth::user()->type == 'user')
 						<div class='tool-tip' data-toggle="tooltip" data-placement="top">
 							<button type='button' class='btn btn-default pull-right hidden borrow-button' id='borrow-button'>Borrow</button>
 						</div>
@@ -367,7 +367,7 @@
 					</div>
 					<span class='marksss inputfields'></span>													
 
-					@if(Auth::user()->type != "student")
+					@if(Auth::user()->type != "user")
 					<div class='acquisition-field inputfields'>
 					<h4>Acquisition</h4>
 					<div class='form-group acquisition-radio'>
@@ -624,7 +624,7 @@
 				</div>
 				<div class='row'>
 					<div class='col-md-12'>
-						<h4 class='text-center'>Image Upload</h4>
+						<h4 class='image-confirm-upload text-center'>Image Upload</h4>
 						<div class='image-preview'></div>
 					</div>
 				</div>																			  	

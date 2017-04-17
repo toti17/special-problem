@@ -9,19 +9,16 @@
                 <div id="non-up-register" class="col-md-6 pill-register">NON UP</div>
             </div>
             <div class="panel-body">
-                <form class="form-horizontal" role="form" method="POST" action="{{ url('/student/register') }}">
+                <form class="form-horizontal" id="users-form" role="form" method="POST" action="{{ url('/student/register') }}">
                     {{ csrf_field() }}
                     <div class="form-group">
                         <label for="firstname" class="col-md-5 control-label">First Name</label>
 
                         <div class="col-md-6">
                             <input id="firstname" type="text" class="form-control" name="firstname" value="{{ old('firstname') }}" placeholder='Harry James' required autofocus>
-
-                            @if ($errors->has('firstname'))
-                                <span class="help-block">
+                                <span class="firstname-help help-block hidden">
                                     <strong>{{ $errors->first('firstname') }}</strong>
                                 </span>
-                            @endif
                         </div>
                     </div>
 
@@ -30,12 +27,9 @@
 
                         <div class="col-md-6">
                             <input id="middlename" type="text" class="form-control" name="middlename" placeholder="Severus" value="{{ old('middlename') }}" required autofocus>
-
-                            @if ($errors->has('middlename'))
-                                <span class="help-block">
+                                <span class="middlename-help help-block hidden">
                                     <strong>{{ $errors->first('middlename') }}</strong>
                                 </span>
-                            @endif
                         </div>
                     </div>
 
@@ -44,12 +38,9 @@
 
                         <div class="col-md-6">
                             <input id="lastname" type="text" class="form-control" name="lastname" placeholder="Potter" value="{{ old('lastname') }}" required autofocus>
-
-                            @if ($errors->has('lastname'))
-                                <span class="help-block">
+                                <span class="lastname-help help-block hidden">
                                     <strong>{{ $errors->first('lastname') }}</strong>
                                 </span>
-                            @endif
                         </div>
                     </div>                                                
 
@@ -58,16 +49,14 @@
 
                         <div class="col-md-6">
                             <input id="username" type="number" class="form-control" name="username" placeholder="199012345" value="{{ old('username') }}" required autofocus>
-                            @if ($errors->has('username'))
-                                <span class="help-block">
+                                <span class="username-help help-block hidden">
                                     <strong>{{ $errors->first('username') }}</strong>
                                 </span>
-                            @endif                            
-                            @if(session('error'))
-                                <span class="help-block">
-                                    <strong>{{ session('error') }}</strong>
-                                </span>
-                            @endif
+                                @if(session('error'))
+                                    <span class="help-block">
+                                        <strong>{{ session('error') }}</strong>
+                                    </span>
+                                @endif                                                     
                         </div>
                     </div>
 
@@ -76,16 +65,14 @@
 
                         <div class="col-md-6">
                             <input id="email" type="email" class="form-control" name="email" placeholder="harrypotter@worldofmagic.com" value="{{ old('email') }}" required autofocus>
-                            @if ($errors->has('email'))
-                                <span class="help-block">
+                                <span class="email-help help-block hidden">
                                     <strong>{{ $errors->first('email') }}</strong>
                                 </span>
-                            @endif                            
-                            @if(session('email'))
-                                <span class="help-block">
-                                    <strong>{{ session('email') }}</strong>
-                                </span>
-                            @endif
+                                @if ($errors->has('email'))
+                                    <span class="help-block">
+                                        <strong>{{ $errors->first('email') }}</strong>
+                                    </span>
+                                @endif                                
                         </div>
                     </div>
 
@@ -95,14 +82,11 @@
 
                         <div class="col-md-6">
                             <input id="institution" class="institution form-control" type="text" name="institution" placeholder="ISAT-U" value="University of the Philippines Visayas" readonly="readonly">
-                            <input id="type" type="hidden" class="form-control" name="type" value="student">
+                            <input id="type" type="hidden" class="form-control" name="type" value="user">
                             <input id="status" type="hidden" class="form-control" name="status" value="confirmed">
-
-                            @if ($errors->has('institution'))
-                                <span class="help-block">
+                                <span class="institution-help help-block hidden">
                                     <strong>{{ $errors->first('institution') }}</strong>
                                 </span>
-                            @endif
                         </div>
                     </div>                    
                         
@@ -111,12 +95,9 @@
 
                         <div class="col-md-6">
                             <input id="password" type="password" class="form-control" name="password" required>
-
-                            @if ($errors->has('password'))
-                                <span class="help-block">
+                                <span class="password-help help-block hidden">
                                     <strong>{{ $errors->first('password') }}</strong>
                                 </span>
-                            @endif
                         </div>
                     </div>
 
@@ -125,20 +106,45 @@
 
                         <div class="col-md-6">
                             <input id="password-confirm" type="password" class="form-control" name="password_confirmation" required>
+                                <span class="confirm-password-help help-block hidden">
+                                    <strong>{{ $errors->first('password') }}</strong>
+                                </span>                            
                         </div>
                     </div>
 
                     <div class="form-group">
                         <div class="col-md-8 col-md-offset-3">
-                            <button type="submit" class="btn btn-primary register-btn">
+                            <button class="btn btn-primary register-button">
                                 Register
                             </button>
                             <button id="reset" type="button" class="btn btn-danger reset-btn">
                                 Reset
-                            </button>                            
+                            </button>
                         </div>
                     </div>        
                 </form>           
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class='modal fade' id='confirm-user-modal' role='dialog' data-keyboard='false' data-backdrop='static'>
+    <div class='modal-dialog'>
+        <div class='modal-content'>
+            <div class='modal-header'>
+                <h3>Confirm Details</h3>
+            </div>
+            <div class="modal-body">
+                <p>First Name: <span id='con-firstname'></span></p>
+                <p>Middle Name: <span id='con-middlename'></span></p>
+                <p>Last Name: <span id='con-lastname'></span></p>
+                <p>Student Number: <span id='con-studentNumber'></span></p>
+                <p>Email: <span id='con-email'></span></p>
+                <p>Institution: <span id='con-institution'></span></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" data-dismiss="modal" class="btn btn-default" id='cancel-user-close'>Cancel</button>
+                <button type="button" class="btn btn-success confirm-modal" id='add-user-confirm'>Submit</button>
             </div>
         </div>
     </div>

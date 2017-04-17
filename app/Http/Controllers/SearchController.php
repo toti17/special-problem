@@ -215,7 +215,7 @@ class SearchController extends Controller
 		else if($type == 'Username'){
 			$user = DB::table('users')->where([
 				['username', 'LIKE', '%' . $term . '%'],
-				['type', 'student'],
+				['type', 'user'],
 				['institution', '!=', 'University of the Philippines Visayas']
 			])->get();
 			return $user;

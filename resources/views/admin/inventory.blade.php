@@ -60,7 +60,7 @@
 
 		</tbody>
 	</table>
-	<div class='search-pagination'>
+	<div class='search-pagination inventory-search-pagination'>
 		<ul id="pagination-demo" class="pagination-sm"></ul>
 	</div>	
 

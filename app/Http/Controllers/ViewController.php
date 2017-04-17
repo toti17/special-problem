@@ -120,7 +120,7 @@ class ViewController extends Controller
                     'unconfirmed_count' => $unconfirmed_count
                 ]);
             }
-            else if(Auth::user()->type == "student"){
+            else if(Auth::user()->type == "user"){
                 $borrowed = DB::table('borrowed')->where('username', Auth::user()->username)
                 ->where(function ($query) {
                     $query->where('status', 'borrowed')
@@ -135,7 +135,7 @@ class ViewController extends Controller
     }
 
     public function retrieveUsers(){
-        $users = DB::table('users')->where('institution', '!=', 'University of the Philippines Visayas')->orderBy('username', 'asc')->get();
+        $users = DB::table('users')->where('institution', '!=', 'University of the Philippines Visayas')->orderBy('status', 'desc')->get();
         return $users;
     }
 

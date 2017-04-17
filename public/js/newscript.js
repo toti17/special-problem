@@ -65,7 +65,7 @@ $(document).ready(function (){
 			$("#up-register").removeClass("up-color");
 		}
 		$("#institution").val("");
-		$('.help-block').remove();
+		$('.help-block').addClass('hidden');
 		$("#institution").removeAttr("readonly");
 		$("#institution").css({"cursor": "text"});
 		$("#status").val("unconfirmed");
@@ -83,17 +83,17 @@ $(document).ready(function (){
 		if($('#role option:selected').val() == "UP"){
 			$(".studentnumber-div").removeClass('hidden');
 			$(".institution-div").addClass('hidden')
-			$('#label-username').text("Student Number");
+			$('#label-username').text("Student/Faculty Number");
 			$('#institution').val("University of the Philippines Visayas");
 			$('#status').val("confirmed");
-			$('#type').val('student');
+			$('#type').val('user');
 		}
 		else if($('#role option:selected').val() == "NON-UP"){
 			$(".studentnumber-div").removeClass('hidden');
 			$(".institution-div").removeClass('hidden');
 			$('#label-username').text("Student Number");
 			$('#institution').val("");
-			$('#type').val('student');
+			$('#type').val('user');
 			$('#status').val("unconfirmed");
 		}
 		else if($('#role option:selected').val() == "STAFF"){
@@ -110,11 +110,189 @@ $(document).ready(function (){
 	// for removing autocomplete color
 	result="";
 
+	function isValidEmailAddress(emailAddress) {
+	    var pattern = new RegExp(/^(("[\w-+\s]+")|([\w-+]+(?:\.[\w-+]+)*)|("[\w-+\s]+")([\w-+]+(?:\.[\w-+]+)*))(@((?:[\w-+]+\.)*\w[\w-+]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@\[?((25[0-5]\.|2[0-4][\d]\.|1[\d]{2}\.|[\d]{1,2}\.))((25[0-5]|2[0-4][\d]|1[\d]{2}|[\d]{1,2})\.){2}(25[0-5]|2[0-4][\d]|1[\d]{2}|[\d]{1,2})\]?$)/i);
+	    return pattern.test(emailAddress);
+	};
+
+	$('.register-button').click(function(event){
+		errorCounter = 0;
+		firstname = $('#firstname').val();
+		middlename = $('#middlename').val();
+		lastname = $('#lastname').val();
+		username = $('#username').val();
+		email = $('#email').val();
+		institution = $('#institution').val();
+		type = $('#type').val();
+		password = $('#password').val();
+		confirmPassword = $('#password-confirm').val();
+
+		if(firstname.length == 0){
+			$('.firstname-help').removeClass('hidden');
+			$('.firstname-help strong').text('The first name field is required.');
+			errorCounter++;
+		}
+		else if(firstname.length > 50){
+			$('.firstname-help').removeClass('hidden');
+			$('.firstname-help strong').text('The first name field should not exceed more than 50 characters.');
+			errorCounter++;
+		}
+		else{
+			$('.firstname-help').addClass('hidden');
+		}
+
+		if(middlename.length == 0){
+			$('.middlename-help').removeClass('hidden');
+			$('.middlename-help strong').text('The middle name field is required.');
+			errorCounter++;
+		}
+		else if(middlename.length >50){
+			$('.middlename-help').removeClass('hidden');
+			$('.middlename-help strong').text('The middle name name field should not exceed more than 50 characters.');
+			errorCounter++;
+		}
+		else{
+			$('.middlename-help').addClass('hidden');
+		}
+
+		if(lastname.length == 0){
+			$('.lastname-help').removeClass('hidden');
+			$('.lastname-help strong').text('The last name field is required.');
+			errorCounter++;
+		}
+		else if(lastname.length >50){
+			$('.lastname-help').removeClass('hidden');
+			$('.lastname-help strong').text('The last name field should not exceed more than 50 characters.');
+			errorCounter++;			
+		}
+		else{
+			$('.lastname-help').addClass('hidden');
+		}
+
+		if(username.length == 0){
+			$('.username-help').removeClass('hidden');
+			$('.username-help strong').text('The user name field is required.');
+			errorCounter++;
+		}
+		else if(username % 1 != 0 || username < 0){
+			$('.username-help').removeClass('hidden');
+			$('.username-help strong').text('Invalid format. Please input the correct format e.g. (201312345).');
+			errorCounter++;
+		}		
+		else if(username.length > 9 || username.length < 6){
+			$('.username-help').removeClass('hidden');
+			$('.username-help strong').text('The user name field should be equal to 9 numbers.');
+			errorCounter++;			
+		}
+		else{
+			$('.username-help').addClass('hidden');
+		}
+
+		if(email.length == 0){
+			$('.email-help').removeClass('hidden');
+			$('.email-help strong').text('The email field is required.');
+			errorCounter++;				
+		}
+		else if(email.length > 50){
+			$('.email-help').removeClass('hidden');
+			$('.email-help strong').text('The email field should not exceed more than 50 characters.');
+			errorCounter++;			
+		}
+		else if(!isValidEmailAddress(email)){
+			$('.email-help').removeClass('hidden');
+			$('.email-help strong').text('Invalid format. Please input the correct format. e.g. (up@gmail.com).');
+			errorCounter++;
+		}
+		else{
+			$('.email-help').addClass('hidden');
+		}
+
+		if($('#non-up-register').text() != 'UP' || $('#role option:selected').val() == "UP"){
+			if(institution.length == 0){
+				$('.institution-help').removeClass('hidden');
+				$('.institution-help strong').text('The institution field is required.');
+				errorCounter++;
+			}
+			else if(institution.length >50){
+				$('.institution-help').removeClass('hidden');
+				$('.institution-help strong').text('The institution field should not exceed more than 50 characters.');
+				errorCounter++;			
+			}
+			else{
+				$('.institution-help').addClass('hidden');
+			}
+		}
+		if($('#usertype').val() == 'admin'){
+			if($('#role').val() === null){
+				$('.type-help strong').text('The type field is required.');
+				$('.type-help').removeClass('hidden');
+			}
+			else{
+				$('.type-help').addClass('hidden');
+			}
+		}
+
+		if(password.length == 0){
+			$('.password-help').removeClass('hidden');
+			$('.password-help strong').text('The password field is required. Please input 6 characters.');
+			errorCounter++;
+		}	
+		else if(password.length > 6 || password.length <6){
+			$('.password-help').removeClass('hidden');
+			$('.password-help strong').text('The password field should be equal to 6 characters.');
+			errorCounter++;			
+		}
+		else{
+			$('.password-help').addClass('hidden');
+			if(password != confirmPassword){
+				$('.confirm-password-help').removeClass('hidden');
+				$('.confirm-password-help strong').text('The password does not match. Please input the correct password.');
+				errorCounter++;
+			}
+			else{
+				$('.confirm-password-help').addClass('hidden');
+			}
+		}
+
+		if(errorCounter == 0){
+			event.preventDefault();
+			if($('#usertype').val() == 'admin'){
+				$('#con-type').text($('#role').val());
+			}
+			$('#con-firstname').text($('#firstname').val());
+			$('#con-middlename').text($('#middlename').val());
+			$('#con-lastname').text($('#lastname').val());
+			$('#con-studentNumber').text($('#username').val());
+			$('#con-email').text($('#email').val());
+			$('#con-institution').text($('#institution').val());
+			$('#users-form').removeAttr('action');
+			$('#confirm-user-modal').modal('show');
+		}
+		else{
+			event.preventDefault();
+		}
+	});
+
+	$('#add-user-confirm').click(function(){
+		$(this).val('Submitting...');
+		$('#cancel-user-close').prop('disabled', true);
+		$(this).prop('disabled', true);
+			if($('#usertype').val() == 'admin'){
+				$('#user-form').submit();
+			}
+			else{
+				$('#users-form').submit();
+			}	
+	});
+
+
+
+
 	$("#reset").on("click", function(){
 		$('.studentnumber-div').addClass('hidden');
 		$('.institution-div').addClass('hidden');
 		$("input:text").val("");
-		$(".help-block").html("");
+		$(".help-block").addClass('hidden');
 		$(".form-control").css({"border-color": "#ccc"});
 		$(".form-control").css({"background-color": "white !important"});
 		$(".control-label").css({"color": "black"});
@@ -167,6 +345,9 @@ $(document).ready(function (){
 	// end of sidebar script
 
 	// confirm accounts script
+
+	$('.users-table').tablesorter();
+
 	var usernameArray = [];
 	var fullnameArray = [];
 	var institutionArray = [];
@@ -181,7 +362,15 @@ $(document).ready(function (){
 	}
 
 	function displayUsers(){
+		$('body').css('cursor', 'wait');
 		retrieveUsers().done(function(data){
+			$('body').css('cursor', 'default');
+			$('.staff-search-div').removeClass('hidden');
+			$('#no-confirmed-users').toggle(false);
+			$(".student-number-panel").addClass('hidden');
+			$('.student-form').addClass('hidden');
+			$('#user-form').addClass('hidden');
+			$('.confirm-account-div').removeClass('hidden');			
 			results = data;
 	            var totalPages = Object.keys(data).length;
 	            var minPage = 5;
@@ -203,6 +392,7 @@ $(document).ready(function (){
 	                	startPage: 1,
 	                	totalPages: totalPages,
 				onPageClick: function(event, page){
+					$('.users-table').trigger('update');
 					for(i=0;i<Object.keys(data).length;i++){
 						usernameArray.push(data[i].username);
 						fullnameArray.push(data[i].firstname + ' ' + data[i].middlename + ' ' + data[i].lastname);
@@ -248,12 +438,6 @@ $(document).ready(function (){
 	}
 
 	$('#confirm-account-button').click(function(){
-		$('.staff-search-div').removeClass('hidden');
-		$('#no-confirmed-users').toggle(false);
-		$(".student-number-panel").addClass('hidden');
-		$('.student-form').addClass('hidden');
-		$('#user-form').addClass('hidden');
-		$('.confirm-account-div').removeClass('hidden');
 		displayUsers();
 	});
 

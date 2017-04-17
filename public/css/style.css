@@ -59,6 +59,17 @@ th{
 	border-color: #a94442;
 }
 
+/*login*/
+
+.register-button{
+	float: right;
+}
+
+.sign-in-panel{
+	margin-top: 9%;
+}
+
+/*end of login*/
 
 /*header*/
 
@@ -578,6 +589,10 @@ th{
 	cursor: pointer;
 }
 
+.inventory-search-pagination{
+	top: 220px;
+}
+
 /*end of inventory page*/
 
 /*home page*/
@@ -702,5 +717,11 @@ th{
 	margin-left: 5%;
 	margin-top: 30%;
 	text-align: center;
+}
+
+@media only screen and (max-width: 768px) {
+
+	
+
 }
 /*end of about page*/

@@ -21,7 +21,7 @@ class CreateUsersTable extends Migration
             $table->string('middlename');
             $table->string('lastname');
             $table->string('institution');
-            $table->enum('type', ['admin', 'staff', 'student']);
+            $table->enum('type', ['admin', 'staff', 'student', 'employee']);
             $table->enum('status', ['confirmed', 'unconfirmed']);
             $table->rememberToken();
             $table->timestamps();

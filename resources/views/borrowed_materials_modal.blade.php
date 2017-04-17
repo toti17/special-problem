@@ -11,7 +11,7 @@
 			<div class='modal-body'>
 				<table class='table table-hover table-striped tables'>
 					<thead>
-						@if(Auth::user()->type == "student")
+						@if(Auth::user()->type == "user")
 						<th>Title</th>
 						<th>Status</th>
 						<th>Action</th>

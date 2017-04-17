@@ -24,7 +24,7 @@
 					@if(Auth::user()->type == "admin" || Auth::user()->type == "staff")
 					<button type='button' class='btn btn-default pull-right hidden edit-button' id='edit-button'>Edit</button>
 					<button type='button' class='btn btn-default pull-right cancel-edit hidden edit-button'>Cancel Edit</button>
-					@elseif(Auth::user()->type == 'student')
+					@elseif(Auth::user()->type == 'user')
 					<div class='tool-tip' data-toggle="tooltip" data-placement="top">
 						<button type='button' class='btn btn-default pull-right hidden borrow-button' id='borrow-button'>Borrow</button>
 					</div>
@@ -292,7 +292,7 @@
 						</span>													
 					</div>
 					</div>
-					@if(Auth::user()->type != "student")
+					@if(Auth::user()->type != "user")
 					<div class='acquisition-field'>
 					<h4>Acquisition</h4>
 					<div class='form-group acquisition-radio'>
@@ -390,7 +390,7 @@
 				</div>
 				<div class='modal-footer'>
 					<div class='material-buttons'>
-						<button type='button' class="btn btn-default view-button-close @if (Auth::user()->type == 'student') pull-right @else pull-left @endif " aria-label='Close'>Close</button>
+						<button type='button' class="btn btn-default view-button-close @if (Auth::user()->type == 'user') pull-right @else pull-left @endif " aria-label='Close'>Close</button>
 						<button type='reset' id='material-reset' class='btn btn-danger'>Reset</button>
 						<button type='submit' id='material-submit' class='btn btn-success'>Add</button>
 					</div>
