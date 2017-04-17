@@ -60,7 +60,9 @@
 				</div>
 			</div>			
 		</div>
-		<table class="table table-condensed table-hover wait materials-table tablesorter">
+
+		<span class='material-table'>
+		<table class="table table-condensed table-hover wait tablesorter">
 			<thead>
 				<tr>
 					<th class='text-left acq-th hidden'>Accession Number&nbsp;&nbsp;<i class="fa fa-sort" aria-hidden="true"></i></th>				
@@ -76,6 +78,7 @@
 
 			</tbody>
 		</table>
+		<span>
 		<div class='search-pagination student-search-pagination' @if(Auth::user()->status == 'unconfirmed') style='margin-top: 60px' @endif>
 			<ul id="pagination-demo" class="pagination-sm"></ul>
 		</div>	

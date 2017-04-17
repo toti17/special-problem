@@ -2549,6 +2549,7 @@ $(document).ready(function (){
 		for(i=index;i<max;i++){
 			if($('#user-type').val() == 'user'){
 				actionButton = '';
+				$('.action-th').addClass('hidden');			
 			}
 			else{
 				actionButton = "<td class='text-right action-buttons'>" + 
