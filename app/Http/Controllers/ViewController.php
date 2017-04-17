@@ -241,7 +241,9 @@ class ViewController extends Controller
             $name = $acqNumber->picture->name;
             $extension = $acqNumber->picture->extension;            
             $pic_name = $name . '.' . $extension;
-            $picture = Storage::url($pic_name);
+            $picture = '/inventory/' . $pic_name;
+            // $picture = Storage::url($pic_name);
+            // $picture = Storage::disk('local')->exists('file.jpg');
         }
 
         return response()->json([

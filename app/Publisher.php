@@ -17,7 +17,7 @@ class Publisher extends Model
     }
     public function publisher_name()
     {
-        return $this->belongsTo(Publisher_name::class);
+        return $this->belongsTo(Publisher_Name::class);
     }
     public function address()
     {

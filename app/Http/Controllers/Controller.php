@@ -101,7 +101,7 @@ class Controller extends BaseController
         if($picture){
             $ext = $picture->extension();
             $extension = $acqNumber . '.' . $ext;
-            $picture->storeAs('public/', $extension, 'local');
+            $picture->storeAs('inventory/', $extension);
             $inventory_picture = new InventoryPictures;
             $inventory_picture->acqNumber = $acqNumber;
             $inventory_picture->name = $acqNumber;
@@ -238,7 +238,7 @@ class Controller extends BaseController
            $extension = $acqNumber->picture->extension;
            $name = $pic_name . '.' . $extension;
            if($picname != $name){
-             Storage::delete('/public/' . $pic_name . '.' . $extension);
+             Storage::delete('/inventory/' . $pic_name . '.' . $extension);
              $acqNumber->picture->delete();          
            }
          }
@@ -247,7 +247,7 @@ class Controller extends BaseController
         if($acqNumber->picture != ''){
            $pic_name = $acqNumber->picture->name;
            $extension = $acqNumber->picture->extension;
-           Storage::delete('/public/' . $pic_name . '.' . $extension);
+           Storage::delete('/inventory/' . $pic_name . '.' . $extension);
            $acqNumber->picture->delete();
         }
       }

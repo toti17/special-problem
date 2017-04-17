@@ -76,7 +76,7 @@
 
 			</tbody>
 		</table>
-		<div class='search-pagination student-search-pagination'>
+		<div class='search-pagination student-search-pagination' @if(Auth::user()->status == 'unconfirmed') style='margin-top: 60px' @endif>
 			<ul id="pagination-demo" class="pagination-sm"></ul>
 		</div>	
 
