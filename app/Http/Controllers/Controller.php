@@ -30,6 +30,8 @@ use \App\Multimedia;
 use \App\Director;
 use \App\Producer;
 use \App\User;
+use \App\Location;
+use \App\MaterialPicture;
 
 use \App\Inventory;
 use \App\Inventory_Type;
@@ -45,9 +47,23 @@ use \App\InventoryDonor;
 use \App\InventoryPurchasedDetails;
 use \App\InventoryPictures;
 
+use \App\MaterialCopy;
+
 class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
+
+   public function getAcqCount($id){
+    $material = new Material;
+    $inventory = new Inventory;
+    $material_copy = new MaterialCopy;
+
+    $material_count = $material::where('acqNumber', $id)->get()->count();
+    $inventory_count = $inventory::where('acqNumber', $id)->get()->count();
+    $material_copy_count = $material_copy::where('copy_acqNumber', $id)->get()->count();
+
+    return $material_count + $inventory_count + $material_copy_count;
+   }
 
    public function getAddressCount($address_id){
       $purchase_detail = new Purchase_Detail;
@@ -96,7 +112,7 @@ class Controller extends BaseController
         $amount = $request->amount;
         $address = $request->address;
         $purchased_date = $request->input('purchased-date');
-        $picture = $request->pic;
+        $picture = $request->pic;   
 
         if($picture){
             $ext = $picture->extension();
@@ -112,6 +128,10 @@ class Controller extends BaseController
         $inventory = new Inventory;
         $inventory->acqNumber = $acqNumber;
         $inventory->object = $object;
+
+        $location = Location::firstorNew(['location_name' => $request->location]);
+        $location->save();
+        $inventory->location_id = $location->getKey();
 
         if($english_names[0] != ''){
           for($i=0;$i<sizeof($english_names);$i++){
@@ -222,6 +242,7 @@ class Controller extends BaseController
       $material = new Invent_Material;
       $color = new Color;
       $decoration = new Decoration;
+      $location = new Location;
       $mark = new Mark;
       $donor = new Donor;
       $inventory_donor = new InventoryDonor;
@@ -232,7 +253,13 @@ class Controller extends BaseController
       $publisher = new Publisher;
       $address = new Address;
       $acqNumber->measurement->delete();
-      if($edit == true){
+
+      $location_count = $location::where('id', $acqNumber->location_id)->get()->count();
+      if($location_count == 1){
+        $location::destroy($acqNumber->location_id);
+      }
+
+      if($edit == 'true'){
         if($acqNumber->picture != ''){
            $pic_name = $acqNumber->picture->name;
            $extension = $acqNumber->picture->extension;
@@ -329,14 +356,25 @@ class Controller extends BaseController
       }
       $acqNumber->delete();
    }
-    public function addMaterial(Request $request){
+    public function addMaterial(Request $request, $edit){
+        $numbers = $request->numbers;
         $category = $request->input('category');
         $category = trim($category);
         $material = Material::firstorNew(['acqNumber' => trim($request->input('acqNumber'))]);
+        $copy_count = (int)$request->copy;
+        $material->copy_count = $copy_count;
         $material_type = new MaterialType;
         $type = $material_type::where('type', '=', $category)->first();
         $material->material_type_id = $type->getKey();
         $material->title = trim($request->input('title'));
+        if(strlen($request->description) != 0){
+          $material->description = $request->description;
+        }
+
+        $location = Location::firstorNew(['location_name' => $request->location]);
+        $location->save();
+        $material->location_id = $location->getKey();
+
         if($category != 'Photographs' && $category != 'Compact Discs' 
         && $category != 'Digital Versatile Discs' && $category != 'Video Home Systems' && $category != 'Cassette Tapes'){
             $authors = explode(',', $request->input('authors'));
@@ -419,14 +457,22 @@ class Controller extends BaseController
             $photo->acqNumber = $material->getKey();
             $photo->year = trim($request->input('year'));
             $category = trim($request->input('description'));
-            if($category == ''){
-            }
-            else{
-                $photo->description = $category;
-            }
             $photo->size = trim($request->input('size'));
             $photo->size_type = trim($request->input('size-type'));
             $photo->save();
+
+            $picture = $request->pic;
+
+            if($picture){
+                $ext = $picture->extension();
+                $extension = $request->acqNumber . '.' . $ext;
+                $picture->storeAs('material/', $extension);
+                $material_picture = new MaterialPicture;
+                $material_picture->photo_id = $photo->getKey();
+                $material_picture->name = $request->acqNumber;
+                $material_picture->extension = $ext;
+                $material_picture->save();
+            }
         }
         else if($category == 'Compact Discs' || $category == 'Digital Versatile Discs' || $category == 'Video Home Systems' || $category == 'Cassette Tapes'){
             $multimedia = new Multimedia;
@@ -454,14 +500,49 @@ class Controller extends BaseController
                 }
             }            
         }
-        $title = trim($request->input('title'));
 
+        if($edit == 'false'){
+          if($copy_count > 0){
+            $accession = explode('-', $request->acqNumber);
+            $num_length = strlen($accession[1]);
+            for($i=0;$i<$copy_count;$i++){
+              $accession = $accession[0] . '-' . ((int)$accession[1] + 1);
+              $unique = true;
+              $num = 1;
+              while($unique){
+                $total_count = $this->getAcqCount($accession);
+                if($total_count == 0){
+                  $accession = explode('-', $accession);
+                  $tempLength = strlen($accession[1]);
+                  $newNum = str_pad($accession[1], (($num_length-$tempLength)+1), '0', STR_PAD_LEFT);
+                  $accession = $accession[0] . '-' .  $newNum;
+                  $unique = false;
+                  $material_copy = new MaterialCopy;
+                  $material_copy->copy_acqNumber = $accession;
+                  $material_copy->acqNumber = $material->getKey();
+                  $material_copy->save();
+                  $accession = explode('-', $accession);
+                }
+                else{
+                  $accession = explode('-', $accession);
+                  $accession = $accession[0] . '-' . ((int)$accession[1] + $num);
+                }
+              }
+            }
+          }
+        }
+        else{
+          // $total_copies_count = MaterialCopy::where('acqNumber', $request)
+        }
+
+
+        $title = trim($request->input('title'));
         $user = User::find(Auth::user()->username);
         $user->modify()->attach($request->acqNumber);
 
         return back()->with('status', $title . ' added successfully!');
     }
-   public function deleteMaterial(Material $acqNumber){
+   public function deleteMaterial(Material $acqNumber, $edit, $picname, $newAcqNumber, Request $request){
       $purchase_detail = new Purchase_Detail;
       $publisher = new Publisher;
       $address = new Address;
@@ -469,6 +550,7 @@ class Controller extends BaseController
       $tag = new Tags;
       $donor = new Donor;
       $donor_name = new Donor_Name;
+      $location = new Location;
       $inventory_donor = new InventoryDonor;
       $thesis =new Thesis;
       $course = new Course;
@@ -478,9 +560,75 @@ class Controller extends BaseController
       $producer = new Producer;
       $category = $acqNumber->material_type->type;
 
-      $borrowed_count = DB::table('borrowed')->select('acqNumber')->where('acqNumber', $acqNumber->acqNumber)->get()->count();
-      if($borrowed_count>0){
-         $acqNumber->borrow()->detach();
+      if($edit == 'true'){
+        if($acqNumber->photo != ''){
+           $pic_name = $acqNumber->photo->material_picture->name;
+           $extension = $acqNumber->photo->material_picture->extension;
+           $name = $pic_name . '.' . $extension;
+           if($picname != $name){
+             Storage::delete('/material/' . $pic_name . '.' . $extension);
+             $acqNumber->photo->material_picture->delete();          
+           }
+         }
+         if($acqNumber->acqNumber != $newAcqNumber){
+            DB::table('material_copies')->where('acqNumber', $acqNumber->acqNumber)->update(['acqNumber' => $newAcqNumber]);
+            DB::table('borrowed')->where('acqNumber', $acqNumber->acqNumber)->update(['acqNumber' => $newAcqNumber]);
+         }
+         if((int)$request->copy < (int)$acqNumber->copy_count){
+            $copy_acqNumber = DB::table('material_copies')->select('copy_acqNumber')->get();
+            foreach($copy_acqNumber as $copy){
+              $copy_count = DB::table('borrowed')->where('acqNumber', $copy->copy_acqNumber)->get()->count();
+              if($copy_count == 0){
+                DB::table('material_copies')->where('copy_acqNumber', $copy->copy_acqNumber)->delete();
+              }
+            }
+         }
+         else if((int)$request->copy < (int)$acqNumber->copy_count){
+            $accession = explode('-', $acqNumber->material_copy->copy_acqNumber);
+            $num_length = strlen($accession[1]);
+            for($i=0;$i<$request->copy;$i++){
+              $accession = $accession[0] . '-' . ((int)$accession[1] + 1);
+              $unique = true;
+              $num = 1;
+              while($unique){
+                $total_count = $this->getAcqCount($accession);
+                if($total_count == 0){
+                  $accession = explode('-', $accession);
+                  $tempLength = strlen($accession[1]);
+                  $newNum = str_pad($accession[1], (($num_length-$tempLength)+1), '0', STR_PAD_LEFT);
+                  $accession = $accession[0] . '-' .  $newNum;
+                  $unique = false;
+                  $material_copy = new MaterialCopy;
+                  $material_copy->copy_acqNumber = $accession;
+                  $material_copy->acqNumber = $material->getKey();
+                  $material_copy->save();
+                  $accession = explode('-', $accession);
+                }
+                else{
+                  $accession = explode('-', $accession);
+                  $accession = $accession[0] . '-' . ((int)$accession[1] + $num);
+                }
+              }
+            }          
+         }
+      }
+      else{
+        if($acqNumber->photo != ''){
+           $pic_name = $acqNumber->photo->material_picture->name;
+           $extension = $acqNumber->photo->material_picture->extension;
+           Storage::delete('/material/' . $pic_name . '.' . $extension);
+           $acqNumber->photo->material_picture->delete();
+        }
+        $borrowed_count = DB::table('borrowed')->select('acqNumber')->where('acqNumber', $acqNumber->acqNumber)->get()->count();
+        if($borrowed_count>0){
+           $acqNumber->borrow()->detach();
+        }
+        DB::table('material_copies')->where('acqNumber', $acqNumber->acqNumber)->delete();
+      }
+
+      $location_count = $location::where('id', $acqNumber->location_id)->get()->count();
+      if($location_count == 1){
+        $location::destroy($acqNumber->location_id);
       }
 
       if($acqNumber->donor_id != ''){

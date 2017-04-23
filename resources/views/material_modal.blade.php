@@ -6,7 +6,8 @@
 			      <div>{{ $error }}</div>
 			  @endforeach
 			@endif
-			<form class="material-form" role="form" method="POST" action="{{ url('/add/material') }}">
+			<form class="material-form" role="form" method="POST" action="{{ url('/add/material') }}" enctype='multipart/form-data'>
+				
 				{{ csrf_field() }}
 				<input type='hidden' value="{{Auth::user()->type}}" id='user-type'>
 				<div class='modal-header'>
@@ -25,14 +26,15 @@
 					<button type='button' class='btn btn-default pull-right hidden edit-button' id='edit-button'>Edit</button>
 					<button type='button' class='btn btn-default pull-right cancel-edit hidden edit-button'>Cancel Edit</button>
 					@elseif(Auth::user()->type == 'user')
-					<div class='tool-tip' data-toggle="tooltip" data-placement="top">
-						<button type='button' class='btn btn-default pull-right hidden borrow-button' id='borrow-button'>Borrow</button>
+					<div class='borrow-button-div tool-tip' data-toggle="tooltip" data-placement="top">
+						<button type='button' class='btn btn-default pull-right hidden borrow-button' id='borrow-button' @if(Auth::user()->status == 'unconfirmed') disabled @endif 
+						>Borrow</button>
 					</div>
 					@endif
 					</div>
 					<div class="form-group">
 						<div class="input-group">
-							<span class="input-group-addon label-title">Category</span>
+							<span class="input-group-addon label-title">Category*</span>
 							<select id='category' class='form-control' name='category'>
 								<optgroup label='Vertical Files'>
 									<option value='' selected disabled hidden>Choose Category</option>
@@ -68,7 +70,7 @@
 						</span>
 
 						<div class='input-group'>
-							<span class="input-group-addon label-title">Accession Number</span>
+							<span class="input-group-addon label-title">Accession Number*</span>
 							<input type='text' id='acqNumber' class='form-control' placeholder='B12345' name='acqNumber' value="{{ old('acqNumber') }}" />
 						</div>
 
@@ -78,32 +80,58 @@
 						</span>
 
 						<div class='input-group'>
-							<span class='input-group-addon label-title'>Title</span>
+							<span class='input-group-addon label-title'>Title*</span>
 							<input type='text' id='title' class='form-control' placeholder='The Life of Rizal' name='title' value="{{ old('title') }}" />
 						</div>
 
 						<span class="title-help help-block {{$errors->has('title') ? '' :  'hidden' }}">
 							<strong>@if ($errors->has('acqNumber')) {{ $errors->first('acqNumber') }} @endif</strong>
 						</span>
+
+						<div class="input-group">
+							<span class='input-group-addon label-title'>Location*</span>
+							<input type='text' id='location' class='form-control' placeholder='Book shelf' name='location' value="{{ old('location') }}" />
+						</div>
+						<span class="location-help help-block hidden">
+							<strong></strong>
+						</span>	
+
+						<div class="input-group">
+							<span class='input-group-addon label-title'>Number of Copies</span>
+							<input type='number' id='copy' class='form-control' placeholder='1' name='copy' value="{{ old('copy') }}" />
+						</div>
+						<span class="copy-help help-block hidden">
+							<strong></strong>
+						</span>										
+
+						<div class='input-group'>
+							<span class='input-group-addon label-title' id='description-field'>Description</span>
+							<textarea id='description' class='form-control' placeholder='A mountain view.' name='description' rows='4' value="{{ old('description') }}"></textarea>
+						</div>
+						<span class="description-help help-block {{$errors->has('description') ? '' :  'hidden' }}">
+							<strong>@if ($errors->has('description')) {{ $errors->first('description') }} @endif</strong>
+						</span>						
+
 						<div class='thesis hidden'>
 							<div class='input-group'>
-								<span class='input-group-addon label-title'>School</span>
+								<span class='input-group-addon label-title'>School*</span>
 								<input type='text' id='school' class='form-control' placeholder='Assumption' name='school' value="{{ old('school') }}" />
 							</div>
 							<span class="school-help help-block hidden">
 								<strong></strong>
 							</span>							
 							<div class='input-group'>
-								<span class='input-group-addon label-title'>Course</span>
+								<span class='input-group-addon label-title'>Course*</span>
 								<input type='text' id='course' class='form-control' placeholder='Computer Science' name='course' value="{{ old('course') }}" />
 							</div>
 							<span class="course-help help-block hidden">
 								<strong></strong>
 							</span>
 						</div>
+
 						<div class='photograph hidden'>
 							<div class='input-group'>
-								<span class='input-group-addon label-title'>Size</span>
+								<span class='input-group-addon label-title'>Size*</span>
 								<input type='text' id='size' class='form-control' placeholder='100' name='size' value="{{ old('size') }}" />
 								<div class='input-group-btn'>
 									<button type='button' class='btn btn-default dropdown-toggle size-type' data-toggle='dropdown'>
@@ -127,23 +155,17 @@
 								<strong></strong>
 							</span>							
 							<div class='input-group'>
-								<span class='input-group-addon label-title'>Year</span>
+								<span class='input-group-addon label-title'>Year*</span>
 								<input type='number' id='year' class='form-control' placeholder='2017' name='year' value="{{ old('year') }}" />
 							</div>
 							<span class="year-help help-block {{$errors->has('year') ? '' :  'hidden' }}">
 								<strong>@if ($errors->has('year')) {{ $errors->first('year') }} @endif</strong>
-							</span>			
-							<div class='input-group'>
-								<span class='input-group-addon label-title'>Description</span>
-								<textarea id='description' class='form-control' placeholder='A mountain view.' name='description' rows='4' value="{{ old('description') }}"></textarea>
-							</div>
-							<span class="description-help help-block {{$errors->has('description') ? '' :  'hidden' }}">
-								<strong>@if ($errors->has('description')) {{ $errors->first('description') }} @endif</strong>
 							</span>							
 						</div>
+						
 						<div class='multimedia hidden'>
 							<div class='input-group'>
-								<span class='input-group-addon label-title'>Duration</span>
+								<span class='input-group-addon label-title'>Duration*</span>
 								<input type='number' id='hours' class='form-control' placeholder='30' name='hours' value="{{ old('hours') }}" />
 								<span class='input-group-addon'>hour/s</span>	
 								<input type='number' id='minutes' class='form-control' placeholder='30' name='minutes' value="{{ old('minutes') }}" />
@@ -151,18 +173,18 @@
 								<input type='number' id='seconds' class='form-control' placeholder='30' name='seconds' value="{{ old('seconds') }}" />
 								<span class='input-group-addon'>second/s</span>					
 							</div>
-						<span class="duration-help help-block hidden">
-							<strong></strong>
-						</span>
-						<span class="hour-help help-block hidden">
-							<strong></strong>
-						</span>
-						<span class="minute-help help-block hidden">
-							<strong></strong>
-						</span>
-						<span class="second-help help-block hidden">
-							<strong></strong>
-						</span>																																					
+							<span class="duration-help help-block hidden">
+								<strong></strong>
+							</span>
+							<span class="hour-help help-block hidden">
+								<strong></strong>
+							</span>
+							<span class="minute-help help-block hidden">
+								<strong></strong>
+							</span>
+							<span class="second-help help-block hidden">
+								<strong></strong>
+							</span>																																					
 						</div>
 					</div>
 
@@ -177,7 +199,7 @@
 					<div class="form-group co-author">
 						<span class='firstnames'>
 						<div class='input-group'>
-							<span class='input-group-addon label-title'>First Name</span>
+							<span class='input-group-addon label-title'>First Name*</span>
 							<input type='text' id='author-firstname' class='form-control' placeholder='Ihra' name='author-firstname' />
 						</div>
 
@@ -187,7 +209,7 @@
 						</span>
 						<span class='middlenames'>
 						<div class='input-group'>
-							<span class='input-group-addon label-title'>Middle Name</span>
+							<span class='input-group-addon label-title'>Middle Name*</span>
 							<input type='text' id='author-middlename' class='form-control' placeholder='Alonso' name='author-middlename' />
 						</div>
 
@@ -197,7 +219,7 @@
 						</span>
 						<span class='lastnames'>
 						<div class='input-group'>
-							<span class='input-group-addon label-title'>Last Name</span>
+							<span class='input-group-addon label-title'>Last Name*</span>
 							<input type='text' id='author-lastname' class='form-control' placeholder='Realonda' name='author-lastname' />
 						</div>	
 						<span class="author-lastname-help0 help-block hidden">
@@ -270,21 +292,21 @@
 					</div>
 					<div class="form-group published-div {{ old('publish-status') == 'published' ? '' : 'hidden' }}">
 						<div class='input-group'>
-							<span class='input-group-addon label-title'>Publisher</span>
+							<span class='input-group-addon label-title'>Publisher*</span>
 							<input type='text' id='publisher' class='form-control' placeholder='Ubisoft' name='publisher' value="{{ old('publisher') }}" />						
 						</div>
 						<span class="pub-help help-block hidden">
 							<strong></strong>
 						</span>						
 						<div class='input-group'>
-							<span class='input-group-addon label-title'>Year</span>
+							<span class='input-group-addon label-title'>Year*</span>
 							<input type='number' id='published-year' class='form-control' placeholder='2003' name='published-year' value="{{ old('published-year') }}" />						
 						</div>
 						<span class="year-help help-block hidden">
 							<strong></strong>
 						</span>					
 						<div class='input-group'>
-							<span class='input-group-addon label-title'>Place</span>
+							<span class='input-group-addon label-title'>Place*</span>
 							<input type='text' id='place' class='form-control' placeholder='Iloilo, Philippines' name='place' value="{{ old('place') }}" />						
 						</div>
 						<span class="place-help help-block hidden">
@@ -294,21 +316,21 @@
 					</div>
 					@if(Auth::user()->type != "user")
 					<div class='acquisition-field'>
-					<h4>Acquisition</h4>
-					<div class='form-group acquisition-radio'>
-						<div class='input-group'>
-							<label class='radio-inline'>
-								<input type='radio' class='acquisition-mode donated' name='acquisition-mode' value="{{ old('acquisition-mode') }}" />Donated
-							</label>
-							<label class='radio-inline'>
-								<input type='radio' class='acquisition-mode purchased' name='acquisition-mode' value="{{ old('acquisition-mode') }}" />Purchased
-							</label>
-						</div>
+						<h4>Acquisition</h4>
+						<div class='form-group acquisition-radio'>				
+							<div class='input-group'>
+								<label class='radio-inline'>
+									<input type='radio' class='acquisition-mode donated' name='acquisition-mode' value="{{ old('acquisition-mode') }}" />Donated
+								</label>
+								<label class='radio-inline'>
+									<input type='radio' class='acquisition-mode purchased' name='acquisition-mode' value="{{ old('acquisition-mode') }}" />Purchased
+								</label>
+							</div>
 
-						<span class="acquisition-mode-help help-block hidden">
-							<strong></strong>
-						</span>						
-					</div>
+							<span class="acquisition-mode-help help-block hidden">
+								<strong></strong>
+							</span>	
+						</div>
 					</div>
 					<table class='table table-bordered table-striped tables table-donors hidden'>
 						<thead>
@@ -327,28 +349,28 @@
 					<div class='form-group donated-div hidden'>
 						<h4>Donor Details</h4>
 						<div class='input-group'>
-							<span class='input-group-addon label-title'>First Name</span>
+							<span class='input-group-addon label-title'>First Name*</span>
 							<input type='text' id='donor-firstname' class='form-control' placeholder='Francis' name='donor-firstname' value="{{ old('donor-firstname') }}" />						
 						</div>
 						<span class="donor-first-name-help help-block hidden">
 							<strong></strong>
 						</span>					
 						<div class='input-group'>
-							<span class='input-group-addon label-title'>Middle Name</span>
+							<span class='input-group-addon label-title'>Middle Name*</span>
 							<input type='text' id='donor-middlename' class='form-control' placeholder='Wundt' name='donor-middlename' value="{{ old('donor-middlename') }}" />						
 						</div>
 						<span class="donor-middle-name-help help-block hidden">
 							<strong></strong>
 						</span>					
 						<div class='input-group'>
-							<span class='input-group-addon label-title'>Last Name</span>
+							<span class='input-group-addon label-title'>Last Name*</span>
 							<input type='text' id='donor-lastname' class='form-control' placeholder='Wertheimer' name='donor-lastname' value="{{ old('donor-lastname') }}" />						
 						</div>	
 						<span class="donor-last-name-help help-block hidden">
 							<strong></strong>
 						</span>					
 						<div class='input-group'>
-							<span class='input-group-addon label-title'>Year</span>
+							<span class='input-group-addon label-title'>Year*</span>
 							<input type='number' id='donated-year' class='form-control' placeholder='2003' name='donated-year' value="{{ old('donated-year') }}" />
 						</div>
 						<span class="donor-year-help help-block hidden">
@@ -359,7 +381,7 @@
 					<div class='form-group purchased-div hidden'>
 						<h4>Purchased Details</h4>
 						<div class='input-group'>
-							<span class='input-group-addon label-title'>Amount</span>
+							<span class='input-group-addon label-title'>Amount*</span>
 							<input type='text' id='amount' class='form-control' placeholder='1000' name='amount' value="{{ old('amount') }}" />	
 							<span class='input-group-addon'>&#8369;</span>				
 						</div>
@@ -372,25 +394,40 @@
 							<strong></strong>
 						</span>					
 						<div class='input-group'>
-							<span class='input-group-addon label-title'>Year</span>
+							<span class='input-group-addon label-title'>Year*</span>
 							<input type='number' id='purchased-year' class='form-control' placeholder='2010' name='purchased-year' value="{{ old('purchased-year') }}" />						
 						</div>	
 						<span class="purchased-year-help help-block hidden">
 							<strong></strong>
 						</span>					
 						<div class='input-group'>
-							<span class='input-group-addon label-title'>Address</span>
+							<span class='input-group-addon label-title'>Address*</span>
 							<input type='text' id='address' class='form-control' placeholder='National Book Store' name='address' value="{{ old('address') }}" />						
 						</div>	
 						<span class="purchased-address-help help-block hidden">
 							<strong></strong>
 						</span>							
 					</div>
+
+					<h4 id='image-header' class='hidden'>Image Upload</h4>
+					<div class='form-group image-group hidden'>
+						<div class="input-group">
+                					<label class="input-group-btn">
+                    					<span class="btn btn-success">Browse&hellip; <input type="file" name='pic' id='image-upload' style="display: none;"/></span>
+                    					<input type='hidden' name='picname' id='picname'/>
+                					</label>
+                					<input type="text" class="form-control file-name" value='Click the browse button to select pictures...' readonly>
+                					<label class="input-group-btn">
+                    					<span class="btn btn-danger remove-picture">Remove</span>
+                					</label>                				
+            				</div>
+					</div>
+					<div class='image-preview hidden'></div>					
 					@endif
 				</div>
 				<div class='modal-footer'>
 					<div class='material-buttons'>
-						<button type='button' class="btn btn-default view-button-close @if (Auth::user()->type == 'user') pull-right @else pull-left @endif " aria-label='Close'>Close</button>
+						<button type='button' class="btn btn-default material-close @if (Auth::user()->type == 'user') pull-right @else pull-left @endif " aria-label='Close'>Close</button>
 						<button type='reset' id='material-reset' class='btn btn-danger'>Reset</button>
 						<button type='submit' id='material-submit' class='btn btn-success'>Add</button>
 					</div>
@@ -464,6 +501,9 @@
 						<p>Category: <span class='con-category'></span></p>
 						<p>Accession Number: <span class='con-acq'></span></p>
 						<p>Title: <span class='con-title'></span></p>
+						<p>Location: <span class='con-location'></span></p>
+						<p>Copy : <span class='con-count hidden'></span></p>
+						<p class='description-div hidden'>Description: <span class='con-description'></span></p>
 						<span class='con-thesis hidden'>
 							<p>School: <span class='con-school'></span></p>
 							<p>Course: <span class='con-course'></span></p>
@@ -471,7 +511,6 @@
 						<span class='con-photographs hidden'>
 							<p>Size: <span class='con-pic-size'></span></p>
 							<p>Year Taken: <span class='con-pic-year'></span></p>
-							<p>Description: <span class='con-pic-description'></span></p>
 						</span>
 						<span class='con-multimedia hidden'>
 							<p>Duration: <span class='con-duration'></span></p>
@@ -486,7 +525,6 @@
 						<p>Full Name: <span class='con-prod-fullname'></span></p>
 					</div>
 				</div>
-				<hr/>
 				<div class='row'>
 					<div class='col-md-6'>
 						<h4 class='text-center'>Publish Details</h4>
@@ -510,13 +548,18 @@
 						</span>
 					</div>							
 				</div>
-				<hr/>
 				<div class='row'>
 					<div class='col-md-6 con-tags hidden'>
 						<h4 class='text-center'>Tags</h4>
 						<p>Tags: <span class='con-tag'></span></p>				
 					</div>
-				</div>																		  	
+				</div>
+				<div class='row image-div hidden'>
+					<div class='col-md-12'>
+						<h4 class='image-confirm-upload text-center'>Image Upload</h4>
+						<div class='image-preview'></div>
+					</div>
+				</div>																							  	
 			</div>
 			<div class="modal-footer">
 				<button type="button" data-dismiss="modal" class="btn btn-default" id='confirm-cancel'>Cancel</button>

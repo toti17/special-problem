@@ -12,6 +12,7 @@
 				<table class='table table-hover table-striped tables'>
 					<thead>
 						@if(Auth::user()->type == "user")
+						<th>Accession Number</th>
 						<th>Title</th>
 						<th>Status</th>
 						<th>Action</th>

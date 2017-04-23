@@ -7,7 +7,7 @@
             <div class="panel panel-default center-block">
                 <div class="panel-heading sign-in-heading">
                     <div class='col-md-4 user-login user-active up-color'>
-                        STUDENT
+                        USER
                     </div>
                     <div class='col-md-4 user-login staff-label'>
                         STAFF
@@ -25,9 +25,9 @@
                             <div class="col-md-6">
                                 <input id="username" type="text" class="form-control" name="username" value="{{ old('username') }}" required autofocus>
 
-                                @if(session('status'))
+                                @if ($errors->has('username'))
                                     <span class="help-block">
-                                        <strong>{{ session('status') }}</strong>
+                                        <strong>{{ $errors->first('username') }}</strong>
                                     </span>
                                 @endif
                             </div>

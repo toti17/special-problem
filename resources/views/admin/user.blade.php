@@ -83,7 +83,7 @@
                 <th class='institution-th'>Institution&nbsp;&nbsp;<i class="fa fa-sort" aria-hidden="true"></th>
                 <th>Status</th>                       
             </tr>
-            <tr id='no-confirmed-users'>
+            <tr id='no-confirmed-users' class='hidden'>
                 <td>No users...</td>
             </tr>
         </thead>
@@ -98,7 +98,7 @@
 @if(session('status'))
 <div class="col-md-6 col-md-offset-3  alert alert-success user-panel">
    {{ session('status') }}
-    <button type="button" class="close" aria-label="Close" data-dismiss='alert'>
+    <button type="button" class="user-close close" aria-label="Close" data-dismiss='alert'>
         <span aria-hidden="true">&times;</span>
     </button>
 </div>
@@ -143,10 +143,9 @@
     <div class="form-group{{ $errors->has('type') ? ' has-error' : '' }}">
          <label for="type" class="col-md-3 control-label">Type</label>
         <div class="col-md-6">
-            <input type='hidden' id='type' name='type'/>
+            <input type='hidden' id='type' name='type' value='user'/>
             <select id="role" class="form-control" name="role" required>
-                <option selected disabled value="">Select type</option>
-                <option>UP</option>
+                <option selected>UP</option>
                 <option>NON-UP</option>
                 <option>STAFF</option>
             </select>
@@ -156,7 +155,7 @@
         </div>
     </div>
 
-    <div class="form-group{{ $errors->has('username') ? ' has-error' : '' }} studentnumber-div hidden">
+    <div class="form-group{{ $errors->has('username') ? ' has-error' : '' }} studentnumber-div">
         <label id="label-username" for="username" class="col-md-3 control-label @if(session('error')) error-label @endif ">Student Number</label>
 
         <div class="col-md-6">
@@ -164,9 +163,9 @@
             <span class="username-help help-block hidden">
                 <strong></strong>
             </span>
-            @if(session('error'))
+            @if ($errors->has('username'))
                 <span class="error-block">
-                    <strong>{{ session('error') }}</strong>
+                    <strong>{{ $errors->first('username') }}</strong>
                 </span>
             @endif
         </div>
@@ -179,9 +178,9 @@
             <span class="email-help help-block hidden">
                 <strong>{{ $errors->first('email') }}</strong>
             </span>                           
-            @if(session('email'))
+            @if ($errors->has('email'))
                 <span class="help-block">
-                    <strong>{{ session('email') }}</strong>
+                    <strong>{{ $errors->first('email') }}</strong>
                 </span>
             @endif
         </div>

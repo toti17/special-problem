@@ -18,6 +18,10 @@ class Inventory extends Model
     {
         return $this->belongsTo(Owner::class, 'owner_id');
     }
+    public function location()
+    {
+        return $this->belongsTo(Location::class);
+    }
     public function measurement()
     {
         return $this->hasOne(Measurement::class, 'acqNumber');

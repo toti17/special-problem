@@ -105,7 +105,7 @@ return [
 
     'custom' => [
         'username' => [
-            'unique' => 'The student/faculty number has already been taken.',
+            'unique' => 'The username has already been taken.',
         ],
     ],    
 

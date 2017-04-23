@@ -65,7 +65,7 @@
 				<ul class='dropdown-menu borrowed-dropdown hidden'>
 					<li><a href="#">Username</a></li>
 					<li><a href="#">Accession Number</a></li>
-					<li><a href="#">Date and Time</a></li>							
+					<li><a href="#">Date and Time</a></li>
 				</ul>
 			</div>
 		</div>			
@@ -85,13 +85,27 @@
 			</label>  			
 		</div>
 	</div>
+	<div class='text-center borrowed-results-div hidden'><p>Sort Results By</p>
+		<div class='btn-group' data-toggle='buttons'>
+			<label class="btn btn-default active" id="sort-all-materials">
+			 	<input type="radio" name="sort-borrowed-options" autocomplete="off" checked> All Materials
+  			</label>
+			<label class="btn btn-default" id="sort-borrowed-materials">
+				<input type="radio" name="sort-borrowed-options" autocomplete="off"> Borrowed
+			</label>
+			<label class="btn btn-default" id="sort-pending-materials">
+				<input type="radio" name="sort-borrowed-options" autocomplete="off"> Pending
+			</label>  			
+		</div>
+	</div>	
 </div>
 
-<div class='col-md-10 col-md-offset-1 confirm-material-table hidden'>
+<div class='col-md-12 confirm-material-table hidden'>
 <table class='table table-hover table-striped wait'>
 	<thead>
 		<th>Username</th>
 		<th>Accession Number</th>
+		<th>Title</th>
 		<th>Date and Time</th>
 		<th>Action</th>
 		<tr id='no-borrowed-materials'>
@@ -106,7 +120,7 @@
 	</div>	
 </div>
 
-<div class='col-md-9 col-md-offset-1 material-table'>
+<div class='col-md-12 material-table'>
 	<table class="table table-condensed table-hover wait materials-table tablesorter">
 		<thead>
 			<tr>
@@ -123,11 +137,6 @@
 
 		</tbody>
 	</table>
-	<div class='row'>
-		<div class='search-pagination'>
-			<ul id="pagination-demo" class="pagination-sm"></ul>
-		</div>	
-	</div>
 
 	<table class="table table-condensed table-hover wait tablesorter authors-table hidden">
 		<thead>
@@ -139,6 +148,12 @@
 
 		</tbody>
 	</table>
+
+	<div class='row'>
+		<div class='search-pagination'>
+			<ul id="pagination-demo" class="pagination-sm"></ul>
+		</div>	
+	</div>	
 </div>
 
 @if($errors->any())

@@ -12,7 +12,14 @@
 */
 Auth::routes();
 
-Route::get('/', 'ViewController@dashboard');
+Route::get('/', function(){
+	if(Auth::check()){
+		return redirect('dashboard/home');
+	}
+	else{
+		return view('index');
+	}
+});
 
 Route::post('/student/register', 'RegisterController@register');
 
@@ -26,7 +33,7 @@ Route::group(['middleware' => ['login.check']], function () {
 
 	Route::post('/add/studentnumber', 'AddStudentNumberController@add');
 
-	Route::post('/add/material', 'Controller@addMaterial');
+	Route::post('/add/material/{edit}', 'Controller@addMaterial');
 
 	Route::post('/add/inventory', 'Controller@addInventory');
 
@@ -58,7 +65,7 @@ Route::group(['middleware' => ['login.check']], function () {
 
 	Route::post('/dashboard/material/staffDelete/{acqNumber}/{username}', 'BorrowController@staffDelete');
 
-	Route::get('dashboard/borrow/{acqNumber}', 'BorrowController@borrow');
+	Route::get('dashboard/borrow/{acqNumber}/{title}', 'BorrowController@borrow');
 
 	Route::get('/home', 'ViewController@dashboard');
 
@@ -102,16 +109,14 @@ Route::group(['middleware' => ['login.check']], function () {
 
 	Route::get('/dashboard/retrievePublisher', 'SearchController@retrievePublisher');
 
-	Route::get('/dashboard/retrieveBorrowedUsers', 'SearchController@retrieveBorrowedUsers');
+	Route::get('/dashboard/retrieveBorrowedUsers/{sortType}', 'SearchController@retrieveBorrowedUsers');
 
 	Route::post('/dashboard/addViewCount/{acqNumber}', 'SearchController@addViewCount');
 
 	Route::post('/dashboard/addBorrowCount/{acqNumber}', 'SearchController@addBorrowCount');
 
-	Route::post('/dashboard/deleteBorrowCount/{acqNumber}', 'SearchController@deleteBorrowCount');
-
 	Route::post('/edit/material/{acqNumber}', 'EditController@edit');
 
-	Route::delete('dashboard/material/delete/{acqNumber}', 'Controller@deleteMaterial');
+	Route::delete('dashboard/material/delete/{acqNumber}/{edit}/{picname}/{newAcqNumber}/{request}', 'Controller@deleteMaterial');
 
 });

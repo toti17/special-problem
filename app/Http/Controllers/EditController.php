@@ -43,15 +43,16 @@ use \App\InventoryPictures;
 class EditController extends Controller
 {
    public function editInventory(Request $request, Inventory $acqNumber){
-        $edit = true;
-        $this->deleteInventory($acqNumber, $edit, $request->picname);
+        $this->deleteInventory($acqNumber, 'true', $request->picname);
         $this->addInventory($request);
         return back()->with('status', $request->object . ' edited successfully!');
    }
 
     public function edit(Request $request, Material $acqNumber){
-        $this->deleteMaterial($acqNumber);
-        $this->addMaterial($request);
-        return back()->with('status', $request->title . ' edited successfully!');          
+              // return DB::table('material_copies')->select('copy_acqNumber')
+      //   ->orderBy(DB::raw('LPAD(lower(copy_acqNumber), 10,0)', 'DESC'))->first();
+        $this->deleteMaterial($acqNumber, 'true', $request->picname, $request->acqNumber, $request);
+        $this->addMaterial($request, true);
+        return back()->with('status', $request->title . ' edited successfully!');      
     }
 }

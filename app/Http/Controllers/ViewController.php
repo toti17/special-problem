@@ -67,19 +67,76 @@ class ViewController extends Controller
                 $vertical_count = Material::where('material_type_id', 1)->orWhere('material_type_id', 2)
                 ->orWhere('material_type_id', 3)->orWhere('material_type_id',4)->get()->count();
 
+                $vertical_files = Material::where('material_type_id', 1)->orWhere('material_type_id', 2)
+                ->orWhere('material_type_id', 3)->orWhere('material_type_id',4)->get();
+
+                $vertical_copy_count = 0;
+                foreach($vertical_files as $vertical){
+                    $vertical_copy_count += count($vertical->material_copy);
+                }
+
+                $vertical_count += $vertical_copy_count;
+
                 $book_count = Material::where('material_type_id', 4)->orWhere('material_type_id', 5)->get()->count();
 
-                $thesis = Material::where('material_type_id', 6)->get()->count();
+                $book = Material::where('material_type_id', 4)->orWhere('material_type_id', 5)->get();
 
-                $periodical = Material::where('material_type_id', 7)->orWhere('material_type_id', 8)->orWhere('material_type_id', 9)
+                $book_copy_count = 0;
+                foreach($book as $boo){
+                    $book_copy_count += count($boo->material_copy);
+                }
+
+                $book_count += $book_copy_count;
+
+                $thesis_count = Material::where('material_type_id', 6)->get()->count();
+
+                $thesis = Material::where('material_type_id', 6)->get();
+
+                $thesis_copy_count = 0;
+                foreach($thesis as $the){
+                    $thesis_copy_count += count($the->material_copy);
+                }
+
+                $thesis_count += $thesis_copy_count;
+
+                $periodical_count = Material::where('material_type_id', 7)->orWhere('material_type_id', 8)->orWhere('material_type_id', 9)
                 ->orWhere('material_type_id', 10)->get()->count();
 
-                $picture = Material::where('material_type_id', 11)->get()->count();
+                $periodical = Material::where('material_type_id', 7)->orWhere('material_type_id', 8)->orWhere('material_type_id', 9)
+                ->orWhere('material_type_id', 10)->get();
 
-                $multimedia = Material::where('material_type_id', 12)->orWhere('material_type_id', 13)->orWhere('material_type_id', 14)
+                $periodical_copy_count = 0;
+                foreach($periodical as $period){
+                    $periodical_copy_count += count($period->material_copy);
+                }
+
+                $periodical_count += $periodical_copy_count;
+
+                $picture_count = Material::where('material_type_id', 11)->get()->count();
+
+                $picture = Material::where('material_type_id', 11)->get();
+
+                $picture_copy_count = 0;
+                foreach($picture as $pic){
+                    $picture_copy_count += count($pic->material_copy);
+                }
+
+                $picture_count += $picture_copy_count;
+
+                $multimedia_count = Material::where('material_type_id', 12)->orWhere('material_type_id', 13)->orWhere('material_type_id', 14)
                 ->orWhere('material_type_id', 15)->get()->count();
 
-                $material_count = $vertical_count + $book_count + $thesis + $periodical + $picture + $multimedia;
+                $multimedia = Material::where('material_type_id', 12)->orWhere('material_type_id', 13)->orWhere('material_type_id', 14)
+                ->orWhere('material_type_id', 15)->get();
+
+                $multimedia_copy_count = 0;
+                foreach($multimedia as $mult){
+                    $multimedia_copy_count += count($mult->material_copy);
+                }
+
+                $multimedia_count += $multimedia_copy_count;
+
+                $material_count = $vertical_count + $book_count + $thesis_count + $periodical_count + $picture_count + $multimedia_count;
 
                 $artifact_count = Inventory::where('inventory_type_id', 5)->get()->count();
 
@@ -104,10 +161,10 @@ class ViewController extends Controller
                 [
                     'vertical_count' => $vertical_count,
                     'book_count' => $book_count,
-                    'thesis_count' => $thesis,
-                    'periodical_count' => $periodical,
-                    'picture_count' => $picture,
-                    'multimedia_count' => $multimedia,
+                    'thesis_count' => $thesis_count,
+                    'periodical_count' => $periodical_count,
+                    'picture_count' => $picture_count,
+                    'multimedia_count' => $multimedia_count,
                     'material_count' => $material_count,
                     'artifact_count' => $artifact_count,
                     'textile_count' => $textile_count,
@@ -173,6 +230,7 @@ class ViewController extends Controller
         $accession = $acqNumber;
         $object = $acqNumber->object;
         $donor_id = $acqNumber->donor_id;
+        $location = $acqNumber->location->location_name;
         $donor_firstname = '';
         $donor_middlename = '';
         $donor_lastname = '';
@@ -182,6 +240,7 @@ class ViewController extends Controller
         $purchased_date = '';
         $picture = '';
         $pic_name = '';
+
 
         $englishNameArray = [];
         for($i=0;$i<sizeof($acqNumber->english_name);$i++){
@@ -242,8 +301,6 @@ class ViewController extends Controller
             $extension = $acqNumber->picture->extension;            
             $pic_name = $name . '.' . $extension;
             $picture = '/inventory/' . $pic_name;
-            // $picture = Storage::url($pic_name);
-            // $picture = Storage::disk('local')->exists('file.jpg');
         }
 
         return response()->json([
@@ -257,6 +314,7 @@ class ViewController extends Controller
             'owner_lastname' => $owner_last_name,
             'owner_nickname' => $owner_nickname,
             'locality' => $address,
+            'location' => $location,
             'unit' => $unit,
             'length' => $length,
             'width' => $width,
@@ -278,10 +336,12 @@ class ViewController extends Controller
     }
 
     public function viewMaterial(Material $acqNumber){
+        $pic_name = '';
         $authors = [];
         $directors =[];
         $producers = [];
         $tags =[];
+        $picture = '';
         for($i=0;$i<sizeof($acqNumber->author);$i++){
             array_push($authors, $acqNumber->author[$i]->firstname);
             array_push($authors, $acqNumber->author[$i]->middlename);
@@ -312,10 +372,16 @@ class ViewController extends Controller
             $size = $acqNumber->photo->size;
             $type = $acqNumber->photo->size_type;
             $year = $acqNumber->photo->year;
-            $description = $acqNumber->photo->description;
             $firstname = $acqNumber->photo->photographer->firstname;
             $middlename = $acqNumber->photo->photographer->middlename;
             $lastname = $acqNumber->photo->photographer->lastname;
+
+            if($acqNumber->photo->material_picture != ''){
+                $name = $acqNumber->photo->material_picture->name;
+                $extension = $acqNumber->photo->material_picture->extension;            
+                $pic_name = $name . '.' . $extension;
+                $picture = '/material/' . $pic_name;
+            }               
         }
         else{
             $size = '';
@@ -361,11 +427,14 @@ class ViewController extends Controller
             $donor_middlename = '';
             $donor_lastname = '';
             $donor_year = '';
-        }
+        }     
         return response()->json([
             'category' => $acqNumber->material_type->type,
             'acqNumber' => $acqNumber->acqNumber,
             'title' => $acqNumber->title,
+            'description' => $acqNumber->description,
+            'location' =>$acqNumber->location->location_name,
+            'copy' =>$acqNumber->copy_count,
             'authors' => $authors,
             'directors' => $directors,
             'producers' => $producers,
@@ -385,11 +454,12 @@ class ViewController extends Controller
             'photo_size' => $size,
             'photo_type' => $type,
             'photo_year' => $year,
-            'photo_description' => $description,
             'photo_firstname' => $firstname,
             'photo_middlename' => $middlename,
             'photo_lastname' => $lastname,
-            'duration' => $duration
+            'duration' => $duration,
+            'picture' => $picture,
+            'picname' => $pic_name,
         ]);
     }
 }

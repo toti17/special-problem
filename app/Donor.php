@@ -14,6 +14,10 @@ class Donor extends Model
     {
         return $this->hasMany(Material::class);
     }
+    public function copy_material()
+    {
+        return $this->hasMany(MaterialCopy::class);
+    }
     public function donor_name()
     {
         return $this->belongsTo(Donor_Name::class, 'donor_name_id');

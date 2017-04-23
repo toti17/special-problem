@@ -18,7 +18,8 @@ class CreatePurchasedDetailsTable extends Migration
             $table->string('amount');
             $table->integer('address_id');
             $table->integer('year');
-            $table->string('acqNumber');
+            $table->string('acqNumber')->nullable();
+            $table->string('copy_acqNumber')->nullable();
         });
     }
 

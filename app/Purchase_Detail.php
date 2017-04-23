@@ -15,7 +15,12 @@ class Purchase_Detail extends Model
 	{
 		return $this->belongsTo(Material::class, 'acqNumber');
 	}
-	public function address(){
+	public function copy_material()
+	{
+		return $this->belongsTo(CopyMaterial::class, 'copy_acqNumber');
+	}
+	public function address()
+	{
 		return $this->belongsTo(Address::class);
 	}
 }

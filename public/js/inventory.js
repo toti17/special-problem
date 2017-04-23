@@ -289,6 +289,7 @@ $(document).ready(function (){
 		lastName = $.trim($('#owner-lastname').val());
 		nickname = $.trim($('#owner-nickname').val());
 		locality = $.trim($('#local').val());
+		storage = $.trim($('#location').val());
 		length = $.trim($('#length').val());
 		width = $.trim($('#width').val());
 		condition = $.trim($('#condition').val());
@@ -358,6 +359,22 @@ $(document).ready(function (){
 		else{
 			$('.object-help').addClass('hidden');
 		}
+
+		if(storage == ''){
+			$('.location-help').removeClass('hidden');
+			$('.location-help strong').text('The location field is required.');
+			errorCounter++;
+		}
+		else if(object.length > 50){
+			$('.location-help').removeClass('hidden');
+			$('.location-help strong').text('The location field should not exceed 50 characters.');
+			errorCounter++;
+		}
+		else{
+			$('.location-help').addClass('hidden');
+		}
+
+		$('.con-location').text(storage);
 
 		$('.english-name-new').each(function(){
 			engName = $.trim($(this).children().children('input').val());
@@ -762,12 +779,12 @@ $(document).ready(function (){
 				}
 				else{
 					if($('.file-name').val() == 'Click the browse button to select pictures...'){
-						console.log('bb');
 						$('.image-confirm-upload').addClass('hidden');
+						$('.image-group').addClass('hidden');
 					}
 					else{
-						console.log('aa');
 						$('.image-confirm-upload').removeClass('hidden');
+						$('.image-group').removeClass('hidden');
 					}
 					hideModal();
 					$('#confirm-add-modal').modal('show');
@@ -808,11 +825,16 @@ $(document).ready(function (){
 	$('.owners-table').tablesorter();
 
 	function createPagination(data){
+		console.log(data.inventory.length);
 		$('.inventory-items').children().remove();
 		$('.owner-items').children().remove();
 		$('#no-inventories').addClass('hidden');
 		$('#no-donors').addClass('hidden');
 		var dataLength = 0;
+		if(data.inventory.length == 0){
+			$('.inventory-search').prop('disabled', true);
+			$('.inventory-search-type').prop('disabled', true);
+		}
 		if(data.owner != undefined){
 			$('.owners-table').removeClass('hidden');
 			dataLength = data.owner.length;
@@ -825,9 +847,8 @@ $(document).ready(function (){
 			$('.owners-table').removeClass('hidden');
 			dataLength = data.donor.length;
 		}
-		console.log(data);
 		var totalPages = dataLength;
-		var minPage = 5;
+		var minPage = 10;
 		var total = 0;
 		var max =0;
 		var index =0;
@@ -853,7 +874,7 @@ $(document).ready(function (){
 				total = page * minPage;
 				index = Math.abs(total-minPage);
 				max = dataLength - index;
-				if(max <= 5){
+				if(max <= minPage){
 					max = dataLength;
 				}
 				else{
@@ -1043,6 +1064,7 @@ $(document).ready(function (){
 		$('.td-category').html(data.category);
 		$('.td-acq').html(data.accession.acqNumber);
 		$('.td-obj').html(data.object);
+		$('.td-location').html(data.location);
 		$('.td-length').html(data.length);
 		$('.td-width').html(data.width);
 		if(data.unit == 'm'){
@@ -1069,6 +1091,14 @@ $(document).ready(function (){
 		}
 	}	
 
+	$('#category').click(function(){
+		if($(this).val() == 'Artifacts' || $(this).val() == 'Textiles' || $(this).val() == 'Farming Tools' || $(this).val() == 'Fishing Tools'){
+			$('.image-div').removeClass('hidden');
+			$('#image-header').removeClass('hidden');
+			$('.image-group').removeClass('hidden');
+			$('.image-preview').removeClass('hidden');			
+		}
+	})
 
 	var inventoryData = '';
 
@@ -1147,6 +1177,10 @@ $(document).ready(function (){
 	var editCounter = false;
 	var addCounter = false;
 	$('#add-inventory-button').click(function(){
+		$('.image-div').removeClass('hidden');
+		$('#image-header').removeClass('hidden');
+		$('.image-group').removeClass('hidden');
+		$('.image-preview').removeClass('hidden');		
 		addCounter = true;
 		editChange = false;
 		$('.modal-title').text('Add Inventory');
@@ -1330,6 +1364,7 @@ $(document).ready(function (){
 		$('#category').val(data.category);
 		$('#acqNumber').val(data.accession.acqNumber);
 		$('#object').val(data.object);
+		$('#location').val(data.location);
 		$('#owner-firstname').val(data.owner_firstname);
 		$('#owner-middlename').val(data.owner_middlename);
 		$('#owner-lastname').val(data.owner_lastname);

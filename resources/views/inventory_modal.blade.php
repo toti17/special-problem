@@ -36,6 +36,7 @@
 									<th>Category</th>
 									<th>Accession Number</th>
 									<th>Object</th>
+									<th>Location</th>
 								</tr>
 							</thead>
 							<tbody>
@@ -43,6 +44,7 @@
 									<td class='td-category'></td>
 									<td class='td-acq'></td>
 									<td class='td-obj'></td>
+									<td class='td-location'></td>
 								</tr>
 							</tbody>
 						</table>
@@ -81,6 +83,16 @@
 							<span class="object-help help-block {{$errors->has('object') ? '' :  'hidden' }}">
 								<strong>@if ($errors->has('object')) {{ $errors->first('object') }} @endif</strong>
 							</span>
+
+							<div class='input-group'>
+								<span class='input-group-addon label-title'>Location </span>
+								<input type='text' id='location' class='form-control' placeholder='Book shelf' name='location' value="{{ old('location') }}" />
+							</div>
+
+							<span class="location-help help-block hidden">
+								<strong></strong>
+							</span>
+												
 						</div>
 
 						<div class='englishName-table edit-table hidden'>
@@ -588,6 +600,7 @@
 						<h4 class='text-center'>Details</h4>
 						<p>Category: <span class='con-category'></span></p>
 						<p>Accession Number: <span class='con-acq'></span></p>
+						<p>Location: <span class='con-location'></span></p>
 						<p>English Names: <span class='con-eng'></span></p>
 						<p>Venacular Names: <span class='con-ven'></span></p>					
 					</div>

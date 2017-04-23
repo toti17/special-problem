@@ -18,7 +18,7 @@
                             <input id="firstname" type="text" class="form-control" name="firstname" value="{{ old('firstname') }}" placeholder='Harry James' required autofocus>
                                 <span class="firstname-help help-block hidden">
                                     <strong>{{ $errors->first('firstname') }}</strong>
-                                </span>
+                                </span>                                
                         </div>
                     </div>
 
@@ -49,7 +49,7 @@
 
                         <div class="col-md-6">
                             <input id="username" type="number" class="form-control" name="username" placeholder="199012345" value="{{ old('username') }}" required autofocus>
-                                <span class="username-help help-block hidden">
+                                <span class="username-help help-block {{ $errors->has('username') ? ' has-error' : 'hidden' }}">
                                     <strong>{{ $errors->first('username') }}</strong>
                                 </span>
                                 @if(session('error'))

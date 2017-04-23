@@ -8,7 +8,7 @@ class Material extends Model
 {
     protected $table = 'material';
     protected $primaryKey = 'acqNumber';
-    protected $fillable = ['acqNumber', 'title', 'status', 'material_type_id', 'publisher_id', 'donor_id'];
+    protected $fillable = ['acqNumber', 'title', 'status', 'material_type_id', 'publisher_id', 'donor_id', 'location_id', 'description', 'copy_count'];
     public $incrementing = false;
 
     public function borrow()
@@ -51,6 +51,10 @@ class Material extends Model
     {
         return $this->hasOne(Purchase_Detail::class, 'acqNumber');
     }
+    public function location()
+    {
+        return $this->belongsTo(Location::class);
+    }
     public function thesis()
     {
         return $this->hasOne(Thesis::class, 'acqNumber');
@@ -62,5 +66,9 @@ class Material extends Model
     public function multimedia()
     {
         return $this->hasOne(Multimedia::class, 'acqNumber');
+    }
+    public function material_copy()
+    {
+        return $this->hasMany(MaterialCopy::class, 'acqNumber');
     }
 }

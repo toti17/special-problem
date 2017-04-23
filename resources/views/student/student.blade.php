@@ -19,6 +19,7 @@
 	    </button>
 	</div>	
 	<input type='hidden' value="{{Auth::user()->type}}" id='user-type'>
+	<input type='hidden' value="{{Auth::user()->status}}" id='status-type'>
 	<div class="col-md-6 col-md-offset-3 main">
 		<div class='input-group student-div' @if(Auth::user()->status == 'unconfirmed') style='margin-top: 60px' @endif >
 			<div class='input-group'>
@@ -62,10 +63,9 @@
 		</div>
 
 		<span class='material-table'>
-		<table class="table table-condensed table-hover wait tablesorter">
+		<table class="table table-condensed table-hover materials-table wait tablesorter">
 			<thead>
 				<tr>
-					<th class='text-left acq-th hidden'>Accession Number&nbsp;&nbsp;<i class="fa fa-sort" aria-hidden="true"></i></th>				
 					<th class='text-left title-th'>Title&nbsp;&nbsp;<i class="fa fa-sort" aria-hidden="true"></i></th>
 					<th class='text-left type-th hidden'>Type&nbsp;&nbsp;<i class="fa fa-sort" aria-hidden="true"></i></th>	
 					<th class='text-right action-th'>Action</th>

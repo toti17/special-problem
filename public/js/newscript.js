@@ -75,21 +75,25 @@ $(document).ready(function (){
 	if($('.studentnumber-div').children().children().length == 2){
 		$('.studentnumber-div').removeClass('hidden');
 	}
-	if($('.institution-div').children().children().length == 3){
-		$('.institution-div').removeClass('hidden');
+	// if($('.institution-div').children().children().length == 3){
+	// 	$('.institution-div').removeClass('hidden');
+	// }
+
+	if($('#role').val() == 'UP'){
+		$('#institution').val("University of the Philippines Visayas");
+		$('#institution-div').addClass("hidden");
 	}
 
 	$('#role').change(function(){
 		if($('#role option:selected').val() == "UP"){
-			$(".studentnumber-div").removeClass('hidden');
 			$(".institution-div").addClass('hidden')
 			$('#label-username').text("Student/Faculty Number");
+			$('#institution').text("University of the Philippines Visayas");
 			$('#institution').val("University of the Philippines Visayas");
 			$('#status').val("confirmed");
 			$('#type').val('user');
 		}
 		else if($('#role option:selected').val() == "NON-UP"){
-			$(".studentnumber-div").removeClass('hidden');
 			$(".institution-div").removeClass('hidden');
 			$('#label-username').text("Student Number");
 			$('#institution').val("");
@@ -97,7 +101,6 @@ $(document).ready(function (){
 			$('#status').val("unconfirmed");
 		}
 		else if($('#role option:selected').val() == "STAFF"){
-			$(".studentnumber-div").removeClass('hidden');
 			$('#label-username').text("Employee Number");
 			$(".institution-div").addClass('hidden');
 			$('#institution').val("University of the Philippines Visayas");
@@ -117,13 +120,13 @@ $(document).ready(function (){
 
 	$('.register-button').click(function(event){
 		errorCounter = 0;
-		firstname = $('#firstname').val();
-		middlename = $('#middlename').val();
-		lastname = $('#lastname').val();
-		username = $('#username').val();
-		email = $('#email').val();
-		institution = $('#institution').val();
-		type = $('#type').val();
+		firstname = $.trim($('#firstname').val());
+		middlename = $.trim($('#middlename').val());
+		lastname = $.trim($('#lastname').val());
+		username = $.trim($('#username').val());
+		email = $.trim($('#email').val());
+		institution = $.trim($('#institution').val());
+		type = $.trim($('#type').val());
 		password = $('#password').val();
 		confirmPassword = $('#password-confirm').val();
 
@@ -335,6 +338,7 @@ $(document).ready(function (){
 	});
 
 	$('#student-button').click(function(){
+		$('.user-close').trigger('click');
 		$('.staff-search-div').addClass('hidden');
 		$('.student-form').removeClass('hidden');
 		$('#user-form').addClass('hidden');
@@ -366,14 +370,23 @@ $(document).ready(function (){
 		retrieveUsers().done(function(data){
 			$('body').css('cursor', 'default');
 			$('.staff-search-div').removeClass('hidden');
-			$('#no-confirmed-users').toggle(false);
 			$(".student-number-panel").addClass('hidden');
 			$('.student-form').addClass('hidden');
 			$('#user-form').addClass('hidden');
-			$('.confirm-account-div').removeClass('hidden');			
+			$('.confirm-account-div').removeClass('hidden');		
+			if(data.length == 0){
+				$('#no-confirmed-users').removeClass('hidden');
+				$('.search').prop('disabled', true);
+				$('.search-type').prop('disabled', true);
+			}
+			else{
+				$('#no-confirmed-users').addClass('hidden');
+				$('.search').prop('disabled', false);
+				$('.search-type').prop('disabled', false);				
+			}
 			results = data;
 	            var totalPages = Object.keys(data).length;
-	            var minPage = 5;
+	            var minPage = 10;
 	            var total = 0;
 	            var max = 0;
 	        	var index = 0;
@@ -401,7 +414,7 @@ $(document).ready(function (){
 					total = page * minPage;
 					index = Math.abs(total-minPage);
 					max = Object.keys(data).length - index;
-					if(max <= 5){
+					if(max <= minPage){
 						max = Object.keys(data).length;
 					}
 					else{
@@ -438,6 +451,7 @@ $(document).ready(function (){
 	}
 
 	$('#confirm-account-button').click(function(){
+		$('.user-close').trigger('click');
 		displayUsers();
 	});
 
