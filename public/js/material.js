@@ -66,8 +66,9 @@ $(document).ready(function (){
 		$('#material-submit').removeClass('hidden');
 		$('.donated-div').addClass('hidden');
 		$('.purchased-div').addClass('hidden');			
+		$('#title').prop('disabled', false);
+		$('#description').prop('disabled', false);		
 		$('input').each(function(){
-			$('#description').prop('disabled', false);
 			$(this).prop('disabled', false);
 			if($(this).attr('name') == '_token' || $(this).attr('name') == 'size-type'  || $(this).attr('type') == 'hidden'
 			|| $(this).attr('name') == 'duration-type' || $(this).attr('name') == 'material-acqNumber' || $(this).attr('name') == 'pic'
@@ -261,14 +262,20 @@ $(document).ready(function (){
 	var accessionCheck = null;
 
 	$('#material-submit').click(function(){
+		x = $(this);
 		var YearPattern = new RegExp(/^(\d{4})$/);
 		var acqPattern = new RegExp(/\-\d*$/);
 		var errorCounter = 0;
 		var category = selectValue;
-		if(category == ""){
+		if(category == "" || category == 'Choose Category'){
+			$('.select-help').addClass('error');
 			$('.select-help').removeClass('hidden');
 			$('.select-help strong').text('The category field is required.');
 			errorCounter++;
+		}
+		else{
+			$('.select-help').addClass('hidden');
+			$('.select-help').removeClass('error');
 		}
 
 
@@ -281,47 +288,52 @@ $(document).ready(function (){
 		console.log(acqPattern.test(acqNumber));
 
 		if(acqNumber == ""){
+			$('.acqNumber-help').addClass('error');
 			$('.acqNumber-help').removeClass('hidden');
 			$('.acqNumber-help strong').text('The acession number is required.');
 			errorCounter++;
 		}
 		else if(/\s/.test(acqNumber) == true){
+			$('.acqNumber-help').addClass('error');
 			$('.acqNumber-help').removeClass('hidden');
 			$('.acqNumber-help strong').text('Spaces are not allowed. Please input a valid accession number. (e.g. Book-001)');
 			errorCounter++;			
 		}
 		else if(acqPattern.test(acqNumber) == false){
+			$('.acqNumber-help').addClass('error');
 			$('.acqNumber-help').removeClass('hidden');
 			$('.acqNumber-help strong').text('Accession number must end with a dash followed by numbers. (e.g. Book-001)');
 			errorCounter++;			
 		}
-		else if(acqNumber.length > 50){
+		else if(acqNumber.length > 100){
+			$('.acqNumber-help').addClass('error');
 			$('.acqNumber-help').removeClass('hidden');
-			$('.acqNumber-help strong').text('The accession number should not exceed 50 characters.');
+			$('.acqNumber-help strong').text('The accession number should not exceed 100 characters.');
 			errorCounter++;
 		}
 		else{
+			$('.acqNumber-help').removeClass('error');
 			$('.acqNumber-help').addClass('hidden');
 		}
 
 		$('.con-acq').text(acqNumber);
 
-		// numbers = acqNumber.substring(acqNumber.lastIndexOf("-"));
-		// numbers = acqNumber.substring(1);	
-
 		var title = $('#title').val();
 		title = $.trim(title);
 		if(title == ""){
+			$('.title-help').addClass('error');
 			$('.title-help').removeClass('hidden');
 			$('.title-help strong').text('The title field is required.');
 			errorCounter++;
 		}
-		else if(title.length > 50){
+		else if(title.length > 2000){
+			$('.title-help').addClass('error');
 			$('.title-help').removeClass('hidden');
-			$('.title-help strong').text('The title field should not exceed 50 characters.');
+			$('.title-help strong').text('The title field should not exceed 2000 characters.');
 			errorCounter++;	
 		}
 		else{
+			$('.title-help').removeClass('error');
 			$('.title-help').addClass('hidden');
 		}
 
@@ -329,16 +341,19 @@ $(document).ready(function (){
 		location = $.trim(location);
 		$('#location').val(location);
 		if(location == ""){
+			$('.location-help').addClass('error');
 			$('.location-help').removeClass('hidden');
 			$('.location-help strong').text('The location field is required.');
 			errorCounter++;
 		}
-		else if(location.length > 50){
+		else if(location.length > 100){
+			$('.location-help').addClass('error');
 			$('.location-help').removeClass('hidden');
-			$('.location-help strong').text('The location field should not exceed 50 characters.');
+			$('.location-help strong').text('The location field should not exceed 100 characters.');
 			errorCounter++;	
 		}
 		else{
+			$('.location-help').removeClass('error');
 			$('.location-help').addClass('hidden');
 		}
 
@@ -346,20 +361,23 @@ $(document).ready(function (){
 
 		var copy = $('#copy').val();
 		if(copy < 0 || copy % 1 != 0){
+			$('.copy-help').addClass('error');
 			$('.copy-help').removeClass('hidden');
 			$('.copy-help strong').text('The copy field should have positive whole numbers.');
 			errorCounter++;
 		}
-		else{
+		else{$('.copy-help').removeClass('error');
 			$('.copy-help').addClass('hidden');
 		}
 
 		if(copy == 0){
+			$('.copy-help').removeClass('error');
 			$('.con-count').removeClass('hidden');
 			$('#copy').val(0);
 		}
 
 		if(copy > 0){
+			$('.copy-help').removeClass('error');
 			$('.con-count').removeClass('hidden');
 		}
 
@@ -369,20 +387,24 @@ $(document).ready(function (){
 		description = $.trim(description);
 		$('#description').val(description);
 
-		if(description.length > 50){
+		if(description.length > 3000){
+			$('.description-help').addClass('error');
 			$('.description-help').removeClass('hidden');
-			$('.description-help strong').text('The description field should not exceed 50 characters.');
+			$('.description-help strong').text('The description field should not exceed 3000 characters.');
 			errorCounter++;	
 		}
 		else{
+			$('.description-help').removeClass('error');
 			$('.description-help').addClass('hidden');
 		}
 
 		if(description.length != 0){
+			$('.description-help').addClass('error');
 			$('.description-div').removeClass('hidden');
 			$('.con-description').text(description);
 		}
 		else{
+			$('.description-help').removeClass('error');
 			$('.description-div').addClass('hidden');
 		}
 
@@ -394,16 +416,19 @@ $(document).ready(function (){
 				school = $.trim(school);
 
 				if(school == ''){
+					$('.school-help').addClass('error');
 					$('.school-help').removeClass('hidden');
 					$('.school-help strong').text('The school field is required.');
 					errorCounter++;
 				}
-				else if(school.length > 50){
+				else if(school.length > 100){
+					$('.school-help').addClass('error');
 					$('.school-help').removeClass('hidden');
-					$('.school-help strong').text('The school field should not exceed 50 characters.');
+					$('.school-help strong').text('The school field should not exceed 100 characters.');
 					errorCounter++;			
 				}
 				else{
+					$('.school-help').removeClass('error');
 					$('.school-help').addClass('hidden');
 				}
 
@@ -413,16 +438,19 @@ $(document).ready(function (){
 				course = $.trim(course);
 
 				if(course == ''){
+					$('.course-help').addClass('error');
 					$('.course-help').removeClass('hidden');
 					$('.course-help strong').text('The course field is required.');
 					errorCounter++;
 				}
-				else if(course.length > 50){
+				else if(course.length > 100){
+					$('.course-help').addClass('error');
 					$('.course-help').removeClass('hidden');
-					$('.course-help strong').text('The course field should not exceed 50 characters.');
+					$('.course-help strong').text('The course field should not exceed 100 characters.');
 					errorCounter++;			
 				}
 				else{
+					$('.course-help').removeClass('error');
 					$('.course-help').addClass('hidden');
 				}
 
@@ -463,43 +491,52 @@ $(document).ready(function (){
 			nameArray=[];
 			$('.prod').each(function(){
 				if($(this).children('.prod-firstnames').children().children('input').val() == ''){
+					$(this).children('.prod-firstnames').children('span').addClass('error');
 					$(this).children('.prod-firstnames').children('span').removeClass('hidden');
 					$(this).children('.prod-firstnames').children('span').children('strong').text('The first name of the producer is required.');
 					errorCounter++;
 				}
-				else if($(this).children('.prod-firstnames').children().children('input').val() >= 50){
+				else if($(this).children('.prod-firstnames').children().children('input').val() >= 100){
+					$(this).children('.prod-firstnames').children('span').addClass('error');
 					$(this).children('.prod-firstnames').children('span').removeClass('hidden');
-					$(this).children('.prod-firstnames').children('span').children('strong').text('The first name of the producer should not exceed 50 characters.');
+					$(this).children('.prod-firstnames').children('span').children('strong').text('The first name of the producer should not exceed 100 characters.');
 				}
 				else{
+					$(this).children('.prod-firstnames').children('span').removeClass('error');
 					$(this).children('.prod-firstnames').children('span').addClass('hidden');
 					nameArray.push($(this).children('.prod-firstnames').children().children('input').val());
 				}
 				if($(this).children('.prod-middlenames').children().children('input').val() == ''){
+					$(this).children('.prod-middlenames').children('span').addClass('error');
 					$(this).children('.prod-middlenames').children('span').removeClass('hidden');
 					$(this).children('.prod-middlenames').children('span').children('strong').text('The middle name of the producer is required.');
 					errorCounter++;				
 				}
-				else if($(this).children('.prod-middlenames').children().children('input').val() >= 50){
+				else if($(this).children('.prod-middlenames').children().children('input').val() >= 100){
+					$(this).children('.prod-middlenames').children('span').addClass('error');
 					$(this).children('.prod-middlenames').children('span').removeClass('hidden');
-					$(this).children('.prod-middlenames').children('span').children('strong').text('The middle name of the producer should not exceed 50 characters.');
+					$(this).children('.prod-middlenames').children('span').children('strong').text('The middle name of the producer should not exceed 100 characters.');
 					errorCounter++;
 				}
 				else{
+					$(this).children('.prod-middlenames').children('span').removeClass('error');
 					$(this).children('.prod-middlenames').children('span').addClass('hidden');
 					nameArray.push($(this).children('.prod-middlenames').children().children('input').val());
 				}
 				if($(this).children('.prod-lastnames').children().children('input').val() == ''){
+					$(this).children('.prod-lastnames').children('span').addClass('error');
 					$(this).children('.prod-lastnames').children('span').removeClass('hidden');
 					$(this).children('.prod-lastnames').children('span').children('strong').text('The last name of the producer is required.');
 					errorCounter++;				
 				}
-				else if($(this).children('.prod-lastnames').children().children('input').val() >= 50){
+				else if($(this).children('.prod-lastnames').children().children('input').val() >= 100){
+					$(this).children('.prod-lastnames').children('span').addClass('error');
 					$(this).children('.prod-lastnames').children('span').removeClass('hidden');
-					$(this).children('.prod-lastnames').children('span').children('strong').text('The last name of the producer should not exceed 50 characters.');
+					$(this).children('.prod-lastnames').children('span').children('strong').text('The last name of the producer should not exceed 100 characters.');
 					errorCounter++;
 				}
 				else{
+					$(this).children('.prod-lastnames').children('span').removeClass('error');
 					$(this).children('.prod-lastnames').children('span').addClass('hidden');
 					nameArray.push($(this).children('.prod-lastnames').children().children('input').val());
 				}			
@@ -526,11 +563,13 @@ $(document).ready(function (){
 			$('#producers').val(producerArray);
 
 			if(hour=='' && minute =='' && second == ''){
+				$('.duration-help').addClass('error');
 				$('.duration-help').removeClass('hidden');
 				$('.duration-help strong').text('The duration field is required.');
 				errorCounter++;			
 			}
 			else{
+				$('.duration-help').removeClass('error');
 				$('.duration-help').addClass('hidden');
 			}
 
@@ -538,16 +577,19 @@ $(document).ready(function (){
 				hour = 0;
 			}
 			else if(hourValue == false){
+				$('.hour-help').addClass('error');
 				$('.hour-help').removeClass('hidden');
 				$('.hour-help strong').text('The hour field is in incorrect format.');
 				errorCounter++;		
 			}
 			else if(hour.length >4){
+				$('.hour-help').addClass('error');
 				$('.hour-help').removeClass('hidden');
 				$('.hour-help strong').text('The hour field should not exceed 4 characters.');
 				errorCounter++;
 			}
 			else{
+				$('.hour-help').removeClass('error');
 				$('.hour-help').addClass('hidden');
 			}
 
@@ -556,16 +598,19 @@ $(document).ready(function (){
 				$('#minutes').val(minute);
 			}
 			else if(minuteValue == false){
+				$('.minute-help').addClass('error');
 				$('.minute-help').removeClass('hidden');
 				$('.minute-help strong').text('The minute field is in incorrect format.');
 				errorCounter++;			
 			}
 			else if(minute.length >4){
+				$('.minute-help').addClass('error');
 				$('.minute-help').removeClass('hidden');
 				$('.minute-help strong').text('The minute field should not exceed 4 characters.');
 				errorCounter++;			
 			}
 			else{
+				$('.minute-help').removeClass('error');
 				$('.minute-help').addClass('hidden');
 			}
 
@@ -574,16 +619,19 @@ $(document).ready(function (){
 				$('#seconds').val(second);
 			}
 			else if(secondValue == false){
+				$('.second-help').addClass('error');
 				$('.second-help').removeClass('hidden');
 				$('.second-help strong').text('The second field is in incorrect format.');
 				errorCounter++;			
 			}
 			else if(second.length >4){
+				$('.second-help').addClass('error');
 				$('.second-help').removeClass('hidden');
 				$('.second-help strong').text('The second field should not exceed 4 characters.');
 				errorCounter++;			
 			}
 			else{
+				$('.second-help').removeClass('error');
 				$('.second-help').addClass('hidden');
 			}		
 
@@ -617,16 +665,19 @@ $(document).ready(function (){
 			sizeValue = sizePattern.test(size);
 
 			if(sizeValue == false){
+				$('.size-help').addClass('error');
 				$('.size-help').removeClass('hidden');
 				$('.size-help strong').text('The format of size field is incorrect.');
 				errorCounter++;				
 			}
 			else if(sizeValue.length > 40){
+				$('.size-help').addClass('error');
 				$('.size-help').removeClass('hidden');
 				$('.size-help strong').text('The size field should not exceed 40 characters.');
 				errorCounter++;			
 			}
 			else{
+				$('.size-help').removeClass('error');
 				$('.size-help').addClass('hidden');
 			}
 
@@ -634,16 +685,19 @@ $(document).ready(function (){
 			photographYear = $.trim(photographYear);
 			photographYearValue = YearPattern.test(photographYear);
 			if(photographYear == ''){
+				$('.year-help').addClass('error');
 				$('.year-help').removeClass('hidden');
 				$('.year-help strong').text('The year field is required.');
 				errorCounter++;			
 			}
 			else if(photographYearValue == false){
+				$('.year-help').addClass('error');
 				$('.year-help').removeClass('hidden');
 				$('.year-help strong').text('The format of year field is incorrect.');
 				errorCounter++;
 			}
 			else{
+				$('.year-help').removeClass('error');
 				$('.year-help').addClass('hidden');
 			}
 			$('.con-pic-year').text(photographYear);
@@ -653,46 +707,54 @@ $(document).ready(function (){
 		}
 		$('.co-author').each(function(){
 				if($(this).children('.firstnames').children().children("input").val() == ""){
+					$(this).children('.firstnames').children('span').addClass('error');
 					$(this).children('.firstnames').children('span').removeClass('hidden');
 					$(this).children('.firstnames').children('span').children('strong').text('The first name of the ' + name  +' is required.');
 					errorCounter++;
 				}
-				else if($(this).children('.firstnames').children().children("input").val().length >=50){
+				else if($(this).children('.firstnames').children().children("input").val().length >=100){
+					$(this).children('.firstnames').children('span').addClass('error');
 					$(this).children('.firstnames').children('span').removeClass('hidden');
 					$(this).children('.firstnames').children('span').removeClass('hidden');
-					$(this).children('.firstnames').children('span').children('strong').text('The first name field should not exceed 50 characters.');
+					$(this).children('.firstnames').children('span').children('strong').text('The first name field should not exceed 100 characters.');
 					errorCounter++;								
 				}
 				else{
+					$(this).children('.firstnames').children('span').removeClass('error');
 					$(this).children('.firstnames').children('span').addClass('hidden');
 					nameArray.push($(this).children('.firstnames').children().children("input").val());
 				}
 				if($(this).children('.middlenames').children().children("input").val() == ""){
-					$(this).children('.middlenames').children('span').removeClass('hidden');
-					$(this).children('.middlenames').children('span').children('strong').text('The middle name of the ' + name  +' is required.');
-					errorCounter++;
+					$(this).children('.middlenames').children('span').addClass('error');
+					$(this).children('.middlenames').children().children("input").val(" ");
+					nameArray.push($(this).children('.middlenames').children().children("input").val());
 				}
-				else if($(this).children('.middlenames').children().children("input").val().length >=50){
+				else if($(this).children('.middlenames').children().children("input").val().length >=100){
+					$(this).children('.middlenames').children('span').addClass('error');
 					$(this).children('.middlenames').children('span').removeClass('hidden');
 					$(this).children('.middlenames').children('span').removeClass('hidden');
-					$(this).children('.middlenames').children('span').children('strong').text('The middle name field should not exceed 50 characters.');
+					$(this).children('.middlenames').children('span').children('strong').text('The middle name field should not exceed 100 characters.');
 					errorCounter++;			
 				}
 				else{
+					$(this).children('.middlenames').children('span').removeClass('error');
 					$(this).children('.middlenames').children('span').addClass('hidden');
 					nameArray.push($(this).children('.middlenames').children().children("input").val());
 				}
 				if($(this).children('.lastnames').children().children("input").val() == ""){
+					$(this).children('.lastnames').children('span').addClass('error');
 					$(this).children('.lastnames').children('span').removeClass('hidden');
 					$(this).children('.lastnames').children('span').children('strong').text('The last name of the ' + name  +' is required.');
 					errorCounter++;
 				}
-				else if($(this).children('.lastnames').children().children("input").val().length >=50){
+				else if($(this).children('.lastnames').children().children("input").val().length >=100){
+					$(this).children('.lastnames').children('span').addClass('error');
 					$(this).children('.lastnames').children('span').removeClass('hidden');
-					$(this).children('.lastnames').children('span').children('strong').text('The last name field should not exceed 50 characters.');
+					$(this).children('.lastnames').children('span').children('strong').text('The last name field should not exceed 100 characters.');
 					errorCounter++;
 				}
 				else{
+					$(this).children('.lastnames').children('span').removeClass('error');
 					$(this).children('.lastnames').children('span').addClass('hidden');
 					nameArray.push($(this).children('.lastnames').children().children("input").val());
 				}					
@@ -727,12 +789,14 @@ $(document).ready(function (){
 			else{
 				tagArray.push($(this).children().children('input').val());
 			}
-			if($(this).children().children('input').val().length >= 50){
+			if($(this).children().children('input').val().length >= 100){
 				$(this).children('span').removeClass('hidden');
-				$(this).children('span').children('strong').text('The tag field should not exceed 50 characters.');
+				$(this).children('span').addClass('error');
+				$(this).children('span').children('strong').text('The tag field should not exceed 100 characters.');
 				errorCounter++;
 			}
 			else{
+				$(this).children('span').removeClass('error');
 				$(this).children('span').addClass('hidden');
 			}
 		});
@@ -756,9 +820,11 @@ $(document).ready(function (){
 		if(pubStatus.length == 0){
 			$('.publish-status-help strong').text('The publish field is required.');
 			$('.publish-status-help').removeClass('hidden');
+			$('.publish-status-help').addClass('error');
 			errorCounter++;
 		}
 		else{
+			$('.publish-status-help').removeClass('error');
 			$('.publish-status-help').addClass('hidden');
 			if(pubStatus == 'Published'){
 				$('.published-span').removeClass('hidden');
@@ -766,14 +832,17 @@ $(document).ready(function (){
 				if($('#publisher').val() == ""){
 					$('.pub-help strong').text('The publisher field is required.');
 					$('.pub-help').removeClass('hidden');
+					$('.pub-help').addClass('error');
 					errorCounter++;
 				}
-				else if($('#publisher').val().length > 50){
-					$('.pub-help strong').text('The publisher field should not exceed 50 characters.');
+				else if($('#publisher').val().length > 100){
+					$('.pub-help').addClass('error');
+					$('.pub-help strong').text('The publisher field should not exceed 100 characters.');
 					$('.pub-help').removeClass('hidden');
 					errorCounter++;					
 				}
 				else{
+					$('.pub-help').removeClass('error');
 					$('.pub-help').addClass('hidden');
 				}
 
@@ -781,16 +850,19 @@ $(document).ready(function (){
 
 				publishedYearValue = YearPattern.test($('#published-year').val());
 				if($('#published-year').val() == ""){
+					$('.year-help').addClass('error');
 					$('.year-help strong').text('The year field is required.');
 					$('.year-help').removeClass('hidden');
 					errorCounter++;
 				}
 				else if(publishedYearValue == false){
+					$('.year-help').addClass('error');
 					$('.year-help strong').text('The year field should only be four digits.');
 					$('.year-help').removeClass('hidden');
 					errorCounter++					
 				}
 				else{
+					$('.year-help').removeClass('error');
 					$('.year-help').addClass('hidden');
 				}
 
@@ -799,9 +871,11 @@ $(document).ready(function (){
 				if($('#place').val() == ""){
 					$('.place-help strong').text('The place field is required.');
 					$('.place-help').removeClass('hidden');
+					$('.place-help').addClass('error');
 					errorCounter++;
 				}
 				else{
+					$('.place-help').removeClass('error');
 					$('.place-help').addClass('hidden');
 				}
 
@@ -820,9 +894,11 @@ $(document).ready(function (){
 		if(acquisitionMode.length == 0){
 			$('.acquisition-mode-help strong').text('The mode of acquisition field is required.');
 			$('.acquisition-mode-help').removeClass('hidden');
+			$('.acquisition-mode-help').addClass('error');
 			errorCounter++;
 		}
 		else{
+			$('.acquisition-mode-help').removeClass('error');
 			$('.acquisition-mode-help').addClass('hidden');
 			if(acquisitionMode == 'Donated'){
 				$('.confirm-purchased').addClass('hidden');
@@ -834,41 +910,50 @@ $(document).ready(function (){
 				if($('#donor-firstname').val() == ""){
 					$('.donor-first-name-help strong').text('The first name field is required.');
 					$('.donor-first-name-help').removeClass('hidden');
+					$('.donor-first-name-help').addClass('error');
 					errorCounter++;
 				}
-				else if($('#donor-firstname').val().length >50){
-					$('.donor-first-name-help strong').text('The first name field should not exceed 50 characters.');
+				else if($('#donor-firstname').val().length >100){
+					$('.donor-first-name-help').addClass('error');
+					$('.donor-first-name-help strong').text('The first name field should not exceed 100 characters.');
 					$('.donor-first-name-help').removeClass('hidden');
 					errorCounter++;					
 				}
 				else{
+					$('.donor-first-name-help').removeClass('error');
 					$('.donor-first-name-help').addClass('hidden');
 				}
 
 				if($('#donor-middlename').val() == ""){
+					$('.donor-middlename-name-help').addClass('error');
 					$('.donor-middle-name-help strong').text('The middle name field is required.');
 					$('.donor-middle-name-help').removeClass('hidden');
 					errorCounter++;		
 				}
-				else if($('#donor-middlename').val().length >50){
-					$('.donor-middle-name-help strong').text('The middle name field should not exceed 50 characters.');
+				else if($('#donor-middlename').val().length >100){
+					$('.donor-middlename-name-help').addClass('error');
+					$('.donor-middle-name-help strong').text('The middle name field should not exceed 100 characters.');
 					$('.donor-middle-name-help').removeClass('hidden');
 					errorCounter++;					
 				}				
 				else{
+					$('.donor-middlename-name-help').removeClass('error');
 					$('.donor-middle-name-help').addClass('hidden');
 				}
 				if($('#donor-lastname').val() == ""){
+					$('.donor-last-name-help').addClass('error');
 					$('.donor-last-name-help strong').text('The last name field is required.');
 					$('.donor-last-name-help').removeClass('hidden');
 					errorCounter++;
 				}
-				else if($('#donor-lastname').val().length >50){
-					$('.donor-last-name-help strong').text('The last name field should not exceed 50 characters.');
+				else if($('#donor-lastname').val().length >100){
+					$('.donor-last-name-help').addClass('error');
+					$('.donor-last-name-help strong').text('The last name field should not exceed 100 characters.');
 					$('.donor-last-name-help').removeClass('hidden');
 					errorCounter++;					
 				}					
 				else{
+					$('.donor-last-name-help').removeClass('error');
 					$('.donor-last-name-help').addClass('hidden');
 				}
 
@@ -878,14 +963,17 @@ $(document).ready(function (){
 				if($('#donated-year').val() == ""){
 					$('.donor-year-help strong').text('The year field is required.');
 					$('.donor-year-help').removeClass('hidden');
+					$('.donor-year-help').addClass('error');
 					errorCounter++;
 				}
 				else if(donatedYearValue == false){
+					$('.donor-year-help').addClass('error');
 					$('.donor-year-help strong').text('The year field should only be four digits.');
 					$('.donor-year-help').removeClass('hidden');
 					errorCounter++;					
 				}
 				else{
+					$('.donor-year-help').removeClass('error');
 					$('.donor-year-help').addClass('hidden');
 				}
 
@@ -903,19 +991,23 @@ $(document).ready(function (){
 				if($('#amount').val() ==""){
 					$('.amount-help strong').text('The amount field is required.');
 					$('.amount-help').removeClass('hidden');
+					$('.amount-help').addClass('error');
 					errorCounter++;				
 				}
 				else if(amountValue == false){
+					$('.amount-help').addClass('error');
 					$('.amount-help strong').text('Incorrect format for amount.');
 					$('.amount-help').removeClass('hidden');
 					errorCounter++;					
 				}
 				else  if(amountValue.length > 40){
+					$('.amount-help').addClass('error');
 					$('.amount-help strong').text('The amount field should not exceed 40 characters.');
 					$('.amount-help').removeClass('hidden');
 					errorCounter++;					
 				}
 				else{
+					$('.amount-help').removeClass('error');
 					$('.amount-help').addClass('hidden');
 				}
 
@@ -925,14 +1017,17 @@ $(document).ready(function (){
 				if($('#purchased-year').val() ==""){
 					$('.purchased-year-help strong').text('The year field is required.');
 					$('.purchased-year-help').removeClass('hidden');
+					$('.purchased-year-help').addClass('error');
 					errorCounter++;					
 				}
 				else if(purchasedYearValue == false){
+					$('.purchased-year-help').addClass('error');
 					$('.purchased-year-help strong').text('The year field should be 4 digits.');
 					$('.purchased-year-help').removeClass('hidden');
 					errorCounter++;					
 				}
 				else{
+					$('.purchased-year-help').removeClass('error');
 					$('.purchased-year-help').addClass('hidden');
 				}
 
@@ -941,9 +1036,11 @@ $(document).ready(function (){
 				if($('#address').val() ==""){
 					$('.purchased-address-help strong').text('The address field is required.');
 					$('.purchased-address-help').removeClass('hidden');
+					$('.purchased-address-help').addClass('error');
 					errorCounter++;					
 				}
 				else{
+					$('.purchased-address-help').removeClass('error');
 					$('.purchased-address-help').addClass('hidden');
 				}
 
@@ -963,8 +1060,10 @@ $(document).ready(function (){
 						accessionCheck = data.accessionNumber;
 						if(accessionCheck == 0){
 							$('.acqNumber-help').addClass('hidden');
+							$('.acqNumber-help').removeClass('error');
 						}
 						else{
+							$('.acqNumber-help').addClass('error');
 							$('.acqNumber-help').removeClass('hidden');
 							$('.acqNumber-help strong').text('The accession number ' + acqNumber + ' already exists.');					
 							errorCounter++;
@@ -973,6 +1072,9 @@ $(document).ready(function (){
 				});			
 			}
 			if(errorCounter == 0){
+				$('#material-submit').css('cursor', 'wait');
+				$('.modal-body').css('cursor', 'wait');
+				$('body').css('cursor', 'wait');
 				checkAcq().done(function(r){
 					$("body").css("cursor", "default");
 					if(r.accessionNumber != 0){
@@ -994,10 +1096,23 @@ $(document).ready(function (){
 				});	
 			}
 			else{
+				$('#material-modal').animate({
+				   scrollTop: ($('.error').offset().top)
+				},500);
+				$(".modal-body").effect( "shake", { direction: "left", times: 3, distance: 10}, 500 );
 				return false;
 			}
-			return false;				
+			return false;
+	});
 
+	if($('.success-status').hasClass('has-status') == true){
+		$('.success-status').fadeIn().delay(2000).fadeOut();
+	}
+
+	$('#confirm-add-modal').on('shown.bs.modal', function(){
+		$('#material-submit').css('cursor', 'default');
+		$('.modal-body').css('cursor', 'default');
+		$('body').css('cursor', 'default');
 	});
 
 	$('#confirm-cancel').click(function(){
@@ -1424,6 +1539,7 @@ $(document).ready(function (){
 				else{
 					$('.photograph').addClass('hidden');
 				}
+				$('#title').prop('disabled', true);
 				$('#description').prop('disabled', true);
 				$('input').each(function(){
 				if($(this).attr('name') == '_token' || $(this).attr('name') == 'material-acqNumber' || $(this).attr('value') == 'user' || $(this).attr('name') == 'picname' || $(this).attr('class') == 'form-control file-name'){
@@ -1451,8 +1567,17 @@ $(document).ready(function (){
 		$('.tag').addClass('hidden');
 		$('#edit-button').removeClass('hidden');
 		var material_id = $(this).find('input').val();
-		$("body").css("cursor", "wait");
+		x = $(this);
+		x.css('cursor', 'wait');
 		viewMaterial(material_id).done(function(data){	
+			x.css('cursor', 'default');
+			if(data.category == 'Thesis'){
+				$('#description-field').text('Abstract');
+			}
+			else{
+				console.log('asdfa');
+				$('#description-field').text('Description');
+			}
 			$('#picname').val(data.picname);
 			$('.file-name').val(data.picname);
 			console.log(data);
@@ -1518,6 +1643,7 @@ $(document).ready(function (){
 		editCounter = true;
 		num=1;
 		tagNum=1;
+		$('#title').prop('disabled', false);
 		$('#description').prop('disabled', false);
 		$('.cancel-edit').removeClass('hidden');
 		$('#edit-button').addClass('hidden');
@@ -1634,6 +1760,7 @@ $(document).ready(function (){
 			$('.author-photographer-director').text('Authors');
 		}
 		$('#add-producer-button').addClass('hidden');
+		$('#title').prop('disabled', true);
 		$('#description').prop('disabled', true);
 		$('.size-type').prop('disabled', true);
 		$('input').each(function(){
@@ -1729,6 +1856,7 @@ $(document).ready(function (){
 		x = $(this);
 		$("body").css("cursor", "wait");				
 		deleteMaterials($(this).val(), false).done(function(){
+			$('.delete-status').fadeIn().delay(2000).fadeOut();
 			$("body").css("cursor", "default");
 			$('.delete-status').removeClass('hidden');
 			$('.success-close').trigger('click');
@@ -1760,6 +1888,8 @@ $(document).ready(function (){
 	// staff search material script
 
 	$('.search-material-button').click(function(){
+		$('#pagination-demo').removeClass('hidden');
+		$('.borrowed-pagination').addClass('hidden');
 		$('.results-div').removeClass('hidden');
 		$('.borrowed-results-div').addClass('hidden');
 		$('.search').val('');
@@ -1844,6 +1974,7 @@ $(document).ready(function (){
 	}
 
 	$('.borrowed-button').click(function(){	
+		$(this).prop('disabled', true);
 		getBorrowedMaterials().done(function(){
 			if($('.borrowed-materials-tbody').children().length == 0){
 				$('#no-borrowed-materials').toggle(true);
@@ -1902,6 +2033,15 @@ $(document).ready(function (){
 	}
 
 	function createBorrowedUsersTable(index, max, data){
+		console.log(data.length);
+		if(data.length == 0){
+			$('#no-borrowed-materials').parent().children('tr:nth-child(1)').addClass('hidden');
+			$('#no-borrowed-materials').removeClass('hidden');
+		}
+		else{
+			$('#no-borrowed-materials').parent().children('tr:nth-child(1)').removeClass('hidden');
+			$('#no-borrowed-materials').addClass('hidden');
+		}
 		for(i=0;i<data.length;i++){
 			usernameArray.push(data[i].username);
 		}					
@@ -2009,6 +2149,8 @@ $(document).ready(function (){
 		$('.borrowed-dropdown').removeClass('hidden');
 		$('.material-table').addClass('hidden');
 		$('.confirm-material-table').removeClass('hidden');
+		$('#pagination-demo').addClass('hidden');
+		$('.borrowed-pagination').removeClass('hidden');
 	});
 
 	function removeBorrowed(value){
@@ -2032,16 +2174,27 @@ $(document).ready(function (){
 	}
 
 	$('body').on('click', '.student-remove-borrowed-button', function(){
+		$(this).prop('disabled', true);
 		fadeBorrowedModal();
+		$('.p-delete-invent').text("Please click the delete button to delete borrowed material '" + $(this).parent().parent().children('td:nth-child(2)').text() + "'.");
 		$(this).parent().parent().addClass($(this).val());
 		$('#borrowed-confirm-delete').val($(this).val());
 		$('#delete-confirm-modal').modal('show');
 	});
 
+	$('#delete-close').click(function(){
+		$('.student-remove-borrowed-button').prop('disabled', false);
+		showBorrowedModal();
+	})
+
 	$('#borrowed-confirm-delete').click(function(){
+		$(this).prop('disabled', true);
+		$('#delete-close').prop('disabled', true);
 		showBorrowedModal();
 		x = $(this).val();
 		removeBorrowed($(this).val()).done(function(r){
+			$('#delete-close').prop('disabled', false);
+			$('#borrowed-confirm-delete').prop('disabled', false);
 			$('.borrow-status').removeClass('alert-success').addClass('alert-danger');
 			$('.borrow-status').fadeIn().delay(2000).fadeOut();
 			$('.borrow-message').text("Material '" + id +"' deleted successfully.");			
@@ -2062,7 +2215,10 @@ $(document).ready(function (){
 			'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
 			},
 			type: 'post',
-			url: '/dashboard/addBorrowCount/' + acqNumber
+			url: '/dashboard/addBorrowCount/' + acqNumber,
+			success: function(data){
+				console.log(data);
+			}
 		})
 	}
 
@@ -2128,6 +2284,7 @@ $(document).ready(function (){
 	});
 
 	$('.borrowed-close').click(function(){
+		$(".borrowed-button").prop('disabled', false);
 		$('.borrowed-materials-tbody').children().remove();
 	});
 	// end of borrow materials script
@@ -2335,9 +2492,11 @@ $(document).ready(function (){
 				}
 				else if(searchType == 'borrowedUsername' || searchType == 'borrowedAccession' || searchType == 'dateTime'){
 					if(data.length == 0){
+						$('#no-borrowed-materials').parent().children('tr:nth-child(1)').addClass('hidden');
 						$('#no-borrowed-materials').removeClass('hidden');
 					}
 					else{
+						$('#no-borrowed-materials').parent().children('tr:nth-child(1)').removeClass('hidden');
 						$('#no-borrowed-materials').addClass('hidden');
 					}
 				}
@@ -3224,23 +3383,17 @@ $(document).ready(function (){
 	// 	var newCopy = $(document.createElement('div')).attr('class', 'form-group extra-copy');
 	// 	newCopy.after().html(
 	// 		"<div class='acquisition-field'>" +
-	// 			"<h4>Acquisition</h4>" +
+	// 			"<br/>" +
 	// 			"<div class='form-group acquisition-radio'>" +
 	// 				"<div class='input-group'>" +
 	// 					"<label class='radio-inline'>" +
-	// 						"<input type='radio' class='acquisition-mode donated' name='acquisition-mode' value='donated'/>Donated " +
+	// 						"<input type='radio' class='acquisition-mode donated' name='acquisition-mode" + copyNum  + "' value='donated'/>Donated " +
 	// 					"</label>" +
 	// 					"<label class='radio-inline'>" +
-	// 						"<input type='radio' class='acquisition-mode purchased' name='acquisition-mode' value='purchased'/>Purchased " +
+	// 						"<input type='radio' class='acquisition-mode purchased' name='acquisition-mode" + copyNum + "' value='purchased'/>Purchased " +
 	// 					"</label>" +						
 	// 				"</div>" +
 	// 				"<span class='acquisition-mode-help help-block hidden'><strong></strong></span>" +
-	// 				"<br/>" +
-	// 				"<div class='input-group'>" +
-	// 					"<span class='input-group-addon label-title'>Number of Copies</span>" +
-	// 					"<input type='number' id='copy' class='form-control' placeholder='1' name='copy'/>" +
-	// 				"</div>" +
-	// 				"<span class='copy-help help-block hidden'><strong></strong></span>" +
 	// 			"</div>" +
 	// 		"</div>"
 	// 	);

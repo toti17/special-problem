@@ -10,7 +10,7 @@
 </div>
 
 @if(session('studentnumberStatus'))
-<div class="col-md-6 col-md-offset-3  alert alert-success student-number-panel">
+<div class="col-xs-12 col-md-6 col-md-offset-3  alert alert-success student-number-panel">
    {{ session('studentnumberStatus') }}
     <button type="button" class="close" aria-label="Close" data-dismiss='alert'>
         <span aria-hidden="true">&times;</span>
@@ -18,14 +18,14 @@
 </div>
 @endif
 
-<div class="col-md-6 col-md-offset-3  alert alert-danger student-number-panel error-text hidden">
+<div class="col-xs-12 col-md-6 col-md-offset-3  alert alert-danger student-number-panel error-text hidden">
     <span id="error-text"></span>
     <button type="button" class="close" aria-label="Close" data-dismiss='alert'>
         <span aria-hidden="true">&times;</span>
     </button>
 </div>
 
-<div class="col-md-6 alert  alert-danger success-status user-status"><span class='success-message'></span>
+<div class="col-xs-12 col-md-6 alert  alert-danger success-status user-status"><span class='success-message'></span>
     <button type="button" class="close confirm-success" aria-label="Close">
         <span aria-hidden="true">&times;</span>
     </button>
@@ -47,7 +47,7 @@
     </div>
 </div>
 
-<div class="col-md-12 student-form @if(!(session('studentnumberStatus'))) hidden @endif ">
+<div class="col-xs-12 col-md-12 student-form @if(!(session('studentnumberStatus'))) hidden @endif ">
     <form class="form-horizontal" role="form" method="POST" action="{{ url('/add/studentnumber') }}">
         {{ csrf_field() }}
         <div class="form-group">
@@ -73,8 +73,9 @@
 </div>
 
 
-<div class='col-md-12 confirm-account-div @if(Auth::user()->type == "admin") hidden @else staff-confirm-account-div @endif' >
+<div class='col-xs-12 col-md-12 confirm-account-div @if(Auth::user()->type == "admin") hidden @else staff-confirm-account-div @endif' >
     <input class='user-type' type='hidden' value="{{$user}}" />
+    <div class='table-responsive'>
     <table class="table table-condensed users-table table-hover wait">
         <thead>
             <tr>
@@ -90,6 +91,7 @@
         <tbody class='confirmed-users'>
         </tbody> 
     </table>
+</div>
     <div class='search-pagination user-pagination-div'>
         <ul id="pagination-demo" class="pagination-sm"></ul>
     </div>

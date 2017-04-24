@@ -1,4 +1,10 @@
 $(document).ready(function (){
+	// shows navbar collapse for mobile
+
+	$(".navbar-nav").removeClass('hidden');
+
+	// end of shows navbar collapse for mobile
+
 	// proceed to confirm accounts if html is a pagination link	
     setTimeout(function() {
     	if($(location).attr('href').indexOf('dashboard/user') != -1){
@@ -135,9 +141,9 @@ $(document).ready(function (){
 			$('.firstname-help strong').text('The first name field is required.');
 			errorCounter++;
 		}
-		else if(firstname.length > 50){
+		else if(firstname.length > 100){
 			$('.firstname-help').removeClass('hidden');
-			$('.firstname-help strong').text('The first name field should not exceed more than 50 characters.');
+			$('.firstname-help strong').text('The first name field should not exceed more than 100 characters.');
 			errorCounter++;
 		}
 		else{
@@ -149,9 +155,9 @@ $(document).ready(function (){
 			$('.middlename-help strong').text('The middle name field is required.');
 			errorCounter++;
 		}
-		else if(middlename.length >50){
+		else if(middlename.length >100){
 			$('.middlename-help').removeClass('hidden');
-			$('.middlename-help strong').text('The middle name name field should not exceed more than 50 characters.');
+			$('.middlename-help strong').text('The middle name name field should not exceed more than 100 characters.');
 			errorCounter++;
 		}
 		else{
@@ -163,42 +169,65 @@ $(document).ready(function (){
 			$('.lastname-help strong').text('The last name field is required.');
 			errorCounter++;
 		}
-		else if(lastname.length >50){
+		else if(lastname.length >100){
 			$('.lastname-help').removeClass('hidden');
-			$('.lastname-help strong').text('The last name field should not exceed more than 50 characters.');
+			$('.lastname-help strong').text('The last name field should not exceed more than 100 characters.');
 			errorCounter++;			
 		}
 		else{
 			$('.lastname-help').addClass('hidden');
 		}
 
-		if(username.length == 0){
-			$('.username-help').removeClass('hidden');
-			$('.username-help strong').text('The user name field is required.');
-			errorCounter++;
-		}
-		else if(username % 1 != 0 || username < 0){
-			$('.username-help').removeClass('hidden');
-			$('.username-help strong').text('Invalid format. Please input the correct format e.g. (201312345).');
-			errorCounter++;
-		}		
-		else if(username.length > 9 || username.length < 6){
-			$('.username-help').removeClass('hidden');
-			$('.username-help strong').text('The user name field should be equal to 9 numbers.');
-			errorCounter++;			
+		if($('#non-up-register').hasClass('up-color') != true){
+			if(username.length == 0){
+				$('.username-help').removeClass('hidden');
+				$('.username-help strong').text('The user name field is required.');
+				errorCounter++;
+			}
+			else if(username % 1 != 0 || username < 0){
+				$('.username-help').removeClass('hidden');
+				$('.username-help strong').text('Invalid format. Please input the correct format e.g. (201312345).');
+				errorCounter++;
+			}
+			else if(username.length > 9 || username.length < 6){
+				$('.username-help').removeClass('hidden');
+				$('.username-help strong').text('The user name field should be equal to 9 numbers.');
+				errorCounter++;			
+			}
+			else{
+				$('.username-help').addClass('hidden');
+			}			
 		}
 		else{
-			$('.username-help').addClass('hidden');
+			if(username.length == 0){
+				$('.username-help').removeClass('hidden');
+				$('.username-help strong').text('The user name field is required.');
+				errorCounter++;
+			}
+			else if(username % 1 != 0 || username < 0){
+				$('.username-help').removeClass('hidden');
+				$('.username-help strong').text('Invalid format. Please input the correct format e.g. (201312345).');
+				errorCounter++;
+			}
+			else if(username.length > 15 || username.length < 6){
+				$('.username-help').removeClass('hidden');
+				$('.username-help strong').text('The user name field should be greater than 6 but less than 15 numbers.');
+				errorCounter++;			
+			}
+			else{
+				$('.username-help').addClass('hidden');
+			}			
 		}
+
 
 		if(email.length == 0){
 			$('.email-help').removeClass('hidden');
 			$('.email-help strong').text('The email field is required.');
 			errorCounter++;				
 		}
-		else if(email.length > 50){
+		else if(email.length > 100){
 			$('.email-help').removeClass('hidden');
-			$('.email-help strong').text('The email field should not exceed more than 50 characters.');
+			$('.email-help strong').text('The email field should not exceed more than 100 characters.');
 			errorCounter++;			
 		}
 		else if(!isValidEmailAddress(email)){
@@ -216,9 +245,9 @@ $(document).ready(function (){
 				$('.institution-help strong').text('The institution field is required.');
 				errorCounter++;
 			}
-			else if(institution.length >50){
+			else if(institution.length >100){
 				$('.institution-help').removeClass('hidden');
-				$('.institution-help strong').text('The institution field should not exceed more than 50 characters.');
+				$('.institution-help strong').text('The institution field should not exceed more than 100 characters.');
 				errorCounter++;			
 			}
 			else{
@@ -240,9 +269,9 @@ $(document).ready(function (){
 			$('.password-help strong').text('The password field is required. Please input 6 characters.');
 			errorCounter++;
 		}	
-		else if(password.length > 6 || password.length <6){
+		else if(password.length <6){
 			$('.password-help').removeClass('hidden');
-			$('.password-help strong').text('The password field should be equal to 6 characters.');
+			$('.password-help strong').text('The password field should be greater than or equal to 6 characters.');
 			errorCounter++;			
 		}
 		else{
@@ -568,5 +597,28 @@ $(document).ready(function (){
 	});
 
 	// end of facebook link
+
+	if($('#user-type').val() == 'staff' || $('#user-type').val() == 'admin' || $('.user-type').val() == 'staff' || $('.user-type').val() == 'admin'){
+		if ($(window).width() < 768) {
+			$('.navbar-nav').removeClass('hidden');
+			$('.navbar-nav li').removeClass('hidden');
+		}
+		else if($(window).width() >= 768){
+		  $('.navbar-nav li').addClass('hidden');
+		}
+	}
+
+	$(window).on('resize', function(){
+		var win = $(this);
+		if($('#user-type').val() == 'staff' || $('#user-type').val() == 'admin' || $('.user-type').val() == 'staff' || $('.user-type').val() == 'admin'){
+			if (win.width() < 768) {
+				$('.navbar-nav').removeClass('hidden');
+				$('.navbar-nav li').removeClass('hidden');
+			}
+			else if(win.width() >= 768){
+			  $('.navbar-nav li').addClass('hidden');
+			}			
+		}
+	});
 
 });

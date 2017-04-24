@@ -350,12 +350,23 @@ class SearchController extends Controller
 		if($material_count == 0){
 			$acqNumber = DB::table('material_copies')->where('copy_acqNumber', $acqNumber)->select('acqNumber')->get();
 			$acqNumber = Material::find($acqNumber[0]->acqNumber);
-			$acqNumber->increment('borrowed_count');
+			if($acqNumber->borrowed_count == ""){
+				$acqNumber->borrowed_count = 1;
+			}
+			else{
+				$acqNumber->increment('borrowed_count');				
+			}
 		}
 		else{
 			$acqNumber = Material::find($acqNumber);
-			$acqNumber->increment('borrowed_count');			
+			if($acqNumber->borrowed_count == ""){
+				$acqNumber->borrowed_count = 1;
+			}
+			else{
+				$acqNumber->increment('borrowed_count');				
+			}
 		}
+		$acqNumber->save();
 	}
 
 	public function retrieveMaterials($id, $type, $sortType){

@@ -13,7 +13,7 @@
 			@endif
 		</button>
 	</div>
-	<div class="col-md-6 alert  alert-success borrow-status"><span class='borrow-message'></span>
+	<div class="col-xs-12 col-md-6 alert  alert-success borrow-status"><span class='borrow-message'></span>
 	    <button type="button" class="close borrow-success" aria-label="Close" data-dismiss='alert'>
 	        <span aria-hidden="true">&times;</span>
 	    </button>

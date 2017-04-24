@@ -5,7 +5,7 @@
 	<button id="add-inventory-button" type="button" class="btn btn-default" data-toggle='modal' data-target='#inventory-modal'>Add Inventory</button>
 </div>
 
-<div class="col-md-6 alert  alert-success success-status @if(session('status'))  @else hidden @endif">
+<div class="col-md-6 alert  alert-success success-status @if(session('status')) has-inventory-status @endif">
 @if(session('status'))
 
    {{ session('status') }}
@@ -43,7 +43,7 @@
 	</div>
 	<span class='author-info hidden'><i>Click the name to view the list of inventories he/she has owned or donated.</i></span>
 </div>
-<div class='col-md-9 col-md-offset-1 inventory-div'>
+<div class='table-responsive col-md-9 col-md-offset-1 inventory-div'>
 	<table class="table table-condensed table-hover wait inventories-table tablesorter">
 		<thead>
 			<tr>
@@ -60,9 +60,6 @@
 
 		</tbody>
 	</table>
-	<div class='search-pagination inventory-search-pagination'>
-		<ul id="pagination-demo" class="pagination-sm"></ul>
-	</div>	
 
 	<table class="table table-condensed table-hover wait owners-table tablesorter hidden">
 		<thead>
@@ -77,6 +74,12 @@
 
 		</tbody>
 	</table>
+</div>
+
+<div class='col-xs-12 col-sm-12 col-md-12 col-lg-12'>
+	<div class='search-pagination inventory-search-pagination'>
+		<ul id="pagination-demo" class="pagination-sm"></ul>
+	</div>	
 </div>
 
 

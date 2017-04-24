@@ -325,52 +325,62 @@ $(document).ready(function (){
 
 		if($('#category').val() == null){
 			$('.select-help').removeClass('hidden');
+			$('.select-help').addClass('error');
 			$('.select-help strong').text('The category field is required.');
 			errorCounter++;
 		}
 		else{
+			$('.select-help').removeClass('error');
 			$('.select-help').addClass('hidden');
 		}
-
 		if(acq == ''){
+			$('.acqNumber-help').addClass('error');
 			$('.acqNumber-help').removeClass('hidden');
 			$('.acqNumber-help strong').text('The accession field is required.');
 			errorCounter++;
 		}
 		else if(acq.length > 50){
+			$('.acqNumber-help').addClass('error');
 			$('.acqNumber-help').removeClass('hidden');
 			$('.acqNumber-help strong').text('The accession field should not exceed 50 characters.');
 			errorCounter++;
 		}
 		else{
+			$('.acqNumber-help').removeClass('error');
 			$('.acqNumber-help').addClass('hidden');
 		}
 
 		if(object == ''){
+			$('.object-help').addClass('error');
 			$('.object-help').removeClass('hidden');
 			$('.object-help strong').text('The object field is required.');
 			errorCounter++;
 		}
 		else if(object.length > 50){
+			$('.object-help').addClass('error');
 			$('.object-help').removeClass('hidden');
 			$('.object-help strong').text('The object field should not exceed 50 characters.');
 			errorCounter++;
 		}
 		else{
+			$('.object-help').removeClass('error');
 			$('.object-help').addClass('hidden');
 		}
 
 		if(storage == ''){
+			$('.location-help').addClass('error');
 			$('.location-help').removeClass('hidden');
 			$('.location-help strong').text('The location field is required.');
 			errorCounter++;
 		}
 		else if(object.length > 50){
+			$('.location-help').addClass('error');
 			$('.location-help').removeClass('hidden');
 			$('.location-help strong').text('The location field should not exceed 50 characters.');
 			errorCounter++;
 		}
 		else{
+			$('.location-help').removeClass('error');
 			$('.location-help').addClass('hidden');
 		}
 
@@ -382,11 +392,13 @@ $(document).ready(function (){
 				engNameArray.push(engName);
 			}
 			else if(engName.length > 50){
+				$(this).children('span').addClass('error');
 				$(this).children('span').removeClass('hidden');
 				$(this).children('span').children('strong').text('The english name field should not exceed 50 characters.');
 				errorCounter++;
 			}
 			else{
+				$(this).children('span').removeClass('error');
 				$(this).children('span').addClass('hidden');
 			}
 			$('#engNames').val(engNameArray);
@@ -407,11 +419,13 @@ $(document).ready(function (){
 				venNameArray.push(venName);
 			}
 			else if(venName.length > 50){
+				$(this).children('span').addClass('error');
 				$(this).children('span').removeClass('hidden');
 				$(this).children('span').children('strong').text('The venacular name field should not exceed 50 characters.');
 				errorCounter++;
 			}
 			else{
+				$(this).children('span').removeClass('error');
 				$(this).children('span').addClass('hidden');
 			}
 			$('#venNames').val(venNameArray);
@@ -426,133 +440,162 @@ $(document).ready(function (){
 		$('.con-ven').text(venNames);		
 
 		if(firstName == ''){
+			$('.owner-firstname-help').addClass('error');
 			$('.owner-firstname-help').removeClass('hidden');
 			$('.owner-firstname-help strong').text('The first name field is required.');
 			errorCounter++;
 		}
 		else if(firstName.length > 50){
+			$('.owner-firstname-help').addClass('error');
 			$('.owner-firstname-help').removeClass('hidden');
 			$('.owner-firstname-help strong').text('The first name field should not exceed 50 characters.');
 			errorCounter++;
 		}
 		else{
+			$('.owner-firstname-help').removeClass('error');
 			$('.owner-firstname-help').addClass('hidden');
 		}
 
 		if(middleName == ''){
+			$('.owner-middlename-help').addClass('error');
 			$('.owner-middlename-help').removeClass('hidden');
 			$('.owner-middlename-help strong').text('The middle name field is required.');
 			errorCounter++;
 		}
 		else if(middleName.length > 50){
+			$('.owner-middlename-help').addClass('error');
 			$('.owner-middlename-help').removeClass('hidden');
 			$('.owner-middlename-help strong').text('The middle name field should not exceed 50 characters.');
 			errorCounter++;
 		}
 		else{
+			$('.owner-middlename-help').removeClass('error');
 			$('.owner-middlename-help').addClass('hidden');
 		}
 
 		if(lastName == ''){
+			$('.owner-lastname-help').addClass('error');
 			$('.owner-lastname-help').removeClass('hidden');
 			$('.owner-lastname-help strong').text('The last name field is required.');
 			errorCounter++;
 		}
 		else if(lastName.length > 50){
+			$('.owner-lastname-help').addClass('error');
+			$('.owner-lastname-help').removeClass('hidden');
 			$('.owner-lastname-help').removeClass('hidden');
 			$('.owner-lastname-help strong').text('The last name field should not exceed 50 characters.');
 			errorCounter++;
 		}
 		else{
+			$('.owner-lastname-help').removeClass('error');
 			$('.owner-lastname-help').addClass('hidden');
 		}
 
 		if(nickname == ''){
+			$('.owner-nickname-help').addClass('error');
 			$('.owner-nickname-help').removeClass('hidden');
 			$('.owner-nickname-help strong').text('The nickname field is required.');
 			errorCounter++;
 		}
 		else if(nickname.length > 50){
+			$('.owner-nickname-help').addClass('error');
 			$('.owner-nickname-help').removeClass('hidden');
 			$('.owner-nickname-help strong').text('The nickname field should not exceed 50 characters.');
 			errorCounter++;
 		}
 		else{
+			$('.owner-nickname-help').removeClass('error');
 			$('.owner-nickname-help').addClass('hidden');
 		}
 
 		if(locality == ''){
+			$('.local-help').addClass('error');
 			$('.local-help').removeClass('hidden');
 			$('.local-help strong').text('The locality field is required.');
 			errorCounter++;
 		}
 		else if(lastName.length > 50){
+			$('.local-help').addClass('error');
 			$('.local-help').removeClass('hidden');
 			$('.local-help strong').text('The locality field should not exceed 50 characters.');
 			errorCounter++;
 		}
 		else{
+			$('.local-help').removeClass('error');
 			$('.local-help').addClass('hidden');
 		}
 
 		if(measureStatus.length == 0){
+			$('.measure-status-help').addClass('error');
 			$('.measure-status-help').removeClass('hidden');
 			$('.measure-status-help strong').text('The unit field is required.');
 			errorCounter++;
 		}
 		else{
+			$('.measure-status-help').removeClass('error');
 			$('.measure-status-help').addClass('hidden');
 		}
 
 		if(length == ''){
+			$('.length-help').addClass('error');
 			$('.length-help').removeClass('hidden');
 			$('.length-help strong').text('The length field is required.');
 			errorCounter++;
 		}
 		else if(length.length > 50){
+			$('.length-help').addClass('error');
 			$('.length-help').removeClass('hidden');
 			$('.length-help strong').text('The length field should not exceed 50 characters.');
 			errorCounter++;
 		}
 		else if(length <= 0){
+			$('.length-help').addClass('error');
 			$('.length-help').removeClass('hidden');
 			$('.length-help strong').text('The length field should have a positive number.');
 			errorCounter++;
 		}
 		else{
+			$('.length-help').removeClass('error');
 			$('.length-help').addClass('hidden');
 		}
 
 		if(width == ''){
+			$('.width-help').addClass('error');
 			$('.width-help').removeClass('hidden');
 			$('.width-help strong').text('The width field is required.');
 			errorCounter++;
 		}
 		else if(width.length > 50){
+			$('.width-help').addClass('error');
 			$('.width-help').removeClass('hidden');
 			$('.width-help strong').text('The width field should not exceed 50 characters.');
 			errorCounter++;
 		}
 		else if(width <= 0){
+			$('.width-help').addClass('error');
 			$('.width-help').removeClass('hidden');
 			$('.width-help strong').text('The width field should have a positive number.');
 			errorCounter++;	
 		}		
 		else{
+			$('.width-help').removeClass('error');
 			$('.width-help').addClass('hidden');
 		}
 
 		if(condition == ''){
+			$('.condition-help').addClass('error');
 			$('.condition-help').removeClass('hidden');
 			$('.condition-help strong').text('The condition field is required.');
 			errorCounter++;
 		}
 		else if(condition.length > 50){
+			$('.condition-help').addClass('error');
 			$('.condition-help').removeClass('hidden');
 			$('.condition-help strong').text('The condition field should not exceed 50 characters.');
 			errorCounter++;
 		}
 		else{
+			$('.condition-help').removeClass('error');
 			$('.condition-help').addClass('hidden');
 		}		
 
@@ -563,11 +606,13 @@ $(document).ready(function (){
 				matArray.push(material);
 			}
 			else if(material.length > 50){
+				$(this).children('span').addClass('error');
 				$(this).children('span').removeClass('hidden');
 				$(this).children('span').children('strong').text('The material field should not exceed 50 characters.');
 				errorCounter++;
 			}
 			else{
+				$(this).children('span').removeClass('error');
 				$(this).children('span').addClass('hidden');
 			}
 			$('#materials').val(matArray);
@@ -589,10 +634,12 @@ $(document).ready(function (){
 			}
 			else if(color.length > 50){
 				$(this).children('span').removeClass('hidden');
+				$(this).children('span').addClass('error');
 				$(this).children('span').children('strong').text('The color field should not exceed 50 characters.');
 				errorCounter++;
 			}
 			else{
+				$(this).children('span').removeClass('error');
 				$(this).children('span').addClass('hidden');
 			}
 			$('#colors').val(colorArray);
@@ -614,10 +661,12 @@ $(document).ready(function (){
 			}
 			else if(decoration.length > 50){
 				$(this).children('span').removeClass('hidden');
+				$(this).children('span').addClass('error');
 				$(this).children('span').children('strong').text('The decoration field should not exceed 50 characters.');
 				errorCounter++;
 			}
 			else{
+				$(this).children('span').removeClass('error');
 				$(this).children('span').addClass('hidden');
 			}
 			$('#decorations').val(decorArray);
@@ -638,11 +687,13 @@ $(document).ready(function (){
 				markArray.push(mark);
 			}
 			else if(mark.length > 50){
+				$(this).children('span').addClass('error');
 				$(this).children('span').removeClass('hidden');
 				$(this).children('span').children('strong').text('The special marks field should not exceed 50 characters.');
 				errorCounter++;
 			}
 			else{
+				$(this).children('span').removeClass('error');
 				$(this).children('span').addClass('hidden');
 			}
 			$('#marks').val(markArray);
@@ -657,11 +708,13 @@ $(document).ready(function (){
 		$('.con-mark').text(marks);
 
 		if(acquisitionStatus.length == 0){
+			$('.inventory-acquisition-mode-help').addClass('error');
 			$('.inventory-acquisition-mode-help').removeClass('hidden');
 			$('.inventory-acquisition-mode-help strong').text('The acquisition field is required.');
 			errorCounter++;
 		}
 		else{
+			$('.inventory-acquisition-mode-help').removeClass('error');
 			$('.inventory-acquisition-mode-help').addClass('hidden');
 		}
 
@@ -669,40 +722,49 @@ $(document).ready(function (){
 			if($('#donor-firstname').val() == ""){
 				$('.donor-first-name-help strong').text('The first name field is required.');
 				$('.donor-first-name-help').removeClass('hidden');
+				$('.donor-first-name-help').addClass('error');
 				errorCounter++;
 			}
 			else if($('#donor-firstname').val().length >50){
 				$('.donor-first-name-help strong').text('The first name field should not exceed 50 characters.');
 				$('.donor-first-name-help').removeClass('hidden');
+				$('.donor-first-name-help').addClass('error');
 				errorCounter++;					
 			}
 			else{
+				$('.donor-first-name-help').removeClass('error');
 				$('.donor-first-name-help').addClass('hidden');
 			}
 			if($('#donor-middlename').val() == ""){
 				$('.donor-middle-name-help strong').text('The middle name field is required.');
 				$('.donor-middle-name-help').removeClass('hidden');
+				$('.donor-middle-name-help').addClass('error');
 				errorCounter++;
 			}
 			else if($('#donor-middlename').val().length >50){
 				$('.donor-middle-name-help strong').text('The middle name field should not exceed 50 characters.');
 				$('.donor-middle-name-help').removeClass('hidden');
+				$('.donor-middle-name-help').addClass('error');
 				errorCounter++;					
 			}				
 			else{
+				$('.donor-middle-name-help').removeClass('error');
 				$('.donor-middle-name-help').addClass('hidden');
 			}
 			if($('#donor-lastname').val() == ""){
 				$('.donor-last-name-help strong').text('The last name field is required.');
 				$('.donor-last-name-help').removeClass('hidden');
+				$('.donor-last-name-help').addClass('error');
 				errorCounter++;
 			}
 			else if($('#donor-lastname').val().length >50){
 				$('.donor-last-name-help strong').text('The last name field should not exceed 50 characters.');
 				$('.donor-last-name-help').removeClass('hidden');
+				$('.donor-last-name-help').addClass('error');
 				errorCounter++;					
 			}					
 			else{
+				$('.donor-last-name-help').removeClass('error');
 				$('.donor-last-name-help').addClass('hidden');
 			}
 
@@ -711,9 +773,11 @@ $(document).ready(function (){
 			if(dateTest == false){
 				$('.donor-date-help strong').text('The date field is invalid.');
 				$('.donor-date-help').removeClass('hidden');
+				$('.donor-date-help').addClass('error');
 				errorCounter++;					
 			}
 			else{
+				$('.donor-date-help').removeClass('error');
 				$('.donor-date-help').addClass('hidden');
 			}
 
@@ -721,7 +785,7 @@ $(document).ready(function (){
 			$('.confirm-purchased').addClass('hidden');
 			$('.confirm-donors').removeClass('hidden');
 			$('.con-donor').text(donor_fullname);
-			$('.con-date-donated').text(donatedDate);;
+			$('.con-date-donated').text(donatedDate);
 		}
 
 		else if(acquisitionStatus == 'Purchased'){
@@ -730,28 +794,34 @@ $(document).ready(function (){
 			if($('#amount').val() ==""){
 				$('.amount-help strong').text('The amount field is required.');
 				$('.amount-help').removeClass('hidden');
+				$('.amount-help').addClass('error');
 				errorCounter++;				
 			}
 			else if(amountValue == false){
+				$('.amount-help').addClass('error');
 				$('.amount-help strong').text('Incorrect format for amount.');
 				$('.amount-help').removeClass('hidden');
 				errorCounter++;					
 			}
 			else  if(amountValue.length > 40){
+				$('.amount-help').addClass('error');
 				$('.amount-help strong').text('The amount field should not exceed 40 characters.');
 				$('.amount-help').removeClass('hidden');
 				errorCounter++;					
 			}
 			else{
+				$('.amount-help').removeClass('error');
 				$('.amount-help').addClass('hidden');
 			}
 
 			if($('#address').val() ==""){
 				$('.purchased-address-help strong').text('The address field is required.');
 				$('.purchased-address-help').removeClass('hidden');
+				$('.purchased-address-help').addClass('error');
 				errorCounter++;					
 			}
 			else{
+				$('.purchased-address-help').removeClass('error');
 				$('.purchased-address-help').addClass('hidden');
 			}
 
@@ -760,9 +830,11 @@ $(document).ready(function (){
 			if(dateTest == false){
 				$('.purchased-date-help strong').text('The date field is invalid.');
 				$('.purchased-date-help').removeClass('hidden');
+				$('.purchased-date-help').addClass('error');
 				errorCounter++;					
 			}
 			else{
+				$('.purchased-date-help').removeClass('error');
 				$('.purchased-date-help').addClass('hidden');
 			}
 			$('.confirm-donors').addClass('hidden');
@@ -792,6 +864,10 @@ $(document).ready(function (){
 			});			
 		}
 		else{
+			$('#inventory-modal').animate({
+			    scrollTop: ($('.error').offset().top)
+			},500);
+			$(".modal-body").effect( "shake", { direction: "left", times: 3, distance: 10}, 500 );	
 			return false;
 			event.preventDefault();
 		}
@@ -1336,6 +1412,10 @@ $(document).ready(function (){
 		});	
 	}
 
+	if($('.success-status').hasClass('has-inventory-status') == true){
+		$('.success-status').fadeIn().delay(2000).fadeOut();
+	}
+
 	$('#inventory-confirm-delete').click(function(){
 		x = $(this);
 		x.text('Deleting...');
@@ -1343,6 +1423,7 @@ $(document).ready(function (){
 		$('#delete-close').prop('disabled', true);
 		$('body').css('cursor', 'wait');	
 		deleteInventory(x.val(), false).done(function(){
+			$('.delete-status').fadeIn().delay(2000).fadeOut();
 			x.text('Delete');
 			$('body').css('cursor', 'default');
 			x.prop('disabled', false);

@@ -15,7 +15,7 @@
 				<div class='carousel-inner' role='listbox'>
 					
 					<div class='item active'><div class="overlay"></div>
-						<img class='carousel-img img img-responsive' src='/images/bookshelf.jpg' alt='books'/>
+						<img class='carousel-img img img-responsive' src='/images/bookshelf.jpg' alt='books'/>				
 					</div>
 					<div class='item'><div class="overlay"></div>
 						<img class='carousel-img img img-responsive' src='/images/newspaper1.jpg' alt='books'/>
@@ -42,19 +42,19 @@
 		</div>
 		<div class='row'>
 			<div class='col-md-10 col-md-offset-1 info'>
-			<h2 class='text-center'>
-				A pioneering institution of the University of the Philippines Visayas, the Center for West Visayan Studes started as the Visayan Studies Program in 1975.
+			<h2 class='text-center info-header'>
+				A pioneering institution of the University of the Philippines Visayas, the Center for West Visayan Studies started as the Visayan Studies Program in 1975.
 			</h2>
-			<div class='info-desc'><em>"Answered the call to <b>preserve</b> and <b>disseminate</b> information on the rich historico-cultural legacy of the region."</em></div>
+			<div class='info-desc'><em>"It answered the call to <b>preserve</b> and <b>disseminate</b> information on the rich historico-cultural legacy of the region."</em></div>
 			</div>
 		</div>
 		<div class='row'>
-			<div class='col-md-12 footer-background'>
-				<div class='col-md-4 col-md-offset-2 footer'>
-					<label>University of the Philippines Visayas</label><br/>
-					<label>Iloilo, Iloilo City</label>
+			<div class='col-xs-12 col-md-12 footer-background'>
+				<div class='col-xs-6 col-md-6 footer'>
+					<label class='footer-p-size'>University of the Philippines Visayas</label><br/>
+					<label class='footer-p-size'>Iloilo, Iloilo City</label>
 				</div>
-				<div class='col-md-6 social-footer'>
+				<div class='col-xs-6 col-md-6 social-footer'>
 					<a id='facebook-link' class='btn btn-social-icon btn-facebook pull-right'>
 						<span class='fa fa-facebook'></span>
 					</a>

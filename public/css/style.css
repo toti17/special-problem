@@ -67,6 +67,7 @@ th{
 
 .sign-in-panel{
 	margin-top: 9%;
+	margin-bottom: 10%;
 }
 
 /*end of login*/
@@ -119,12 +120,13 @@ th{
 }
 
 .navbar-nav{
-	width: 100%;	
+	width: 100%;
+	padding-right: 30px;
 }
 
 .navbar-nav li{
 	margin-left: -1px;
-	height: 50px;
+	/*height: 50px;*/
 	z-index: 99;
 	transition: background-color, 0.5s;
 }
@@ -423,8 +425,10 @@ th{
 }
 
 .success-status, .delete-status, .borrow-status{
+	display: none;
 	position: absolute;	
 	right: 0;
+	z-index: 999;
 }
 
 .borrow-status, .delete-borrowed-status, .confirm-borrowed-status, .unconfirm-borrowed-status{
@@ -617,24 +621,21 @@ th{
 	padding-top: 122px;
 }
 
-.carousel-img{
-	width: 55%;
-	  display: block;
-	  margin-left: auto;
-	  margin-right: auto;	
+.carousel{
+	width: 100%;
+	height: 600px;
 }
 
-.overlay{
-	background-color: black;
-	opacity: 0.4;
-	position: absolute;
-	top: 0;
-	/*left: 22%;*/
-	/*width: 56%;*/
+.img-responsive, .thumbnail > img, .thumbnail a > img, .carousel-iner > .item > img, .carousel-inner > .item > a > img{
+	height: 600px !important;
+	max-width: 100% !important;
+}
+
+.carousel-inner div img{
 	width: 100%;
-	height: 100%;
-	z-index: 10;
-	pointer-events: none;
+	max-height: 100%;
+	object-position: center;
+	object-fit: cover;
 }
 
 .footer-background{
@@ -649,47 +650,35 @@ th{
 	padding-top: 15px;
 }
 
-@media (min-width: 768px) and (max-width: 979px){
-	.overlay{
-		width:50%;
-		height:50%;
-	}    
- }
-
-@media (max-width: 767px){
-	.overlay{
-		width:50%;
-		height:50%;
-	}
-}
-@media (max-width: 480px){
-	.overlay{
-	width:50%;
-	height:50%;
-	}
-}
-
 .info{
-	padding-top: 150px;
-	padding-bottom: 150px;
+	padding-top: 50px;
+	padding-bottom: 50px;
+}
+
+.info-header{
+	font-size: 4vw;
 }
 
 .info-desc{
 	margin-top: 60px;
-	margin-left: 20px;
 	text-align: center;
-	font-size: 22px;
+	font-size: 4vw;
 }
+
+.footer-p-size{
+	font-size: 10px;
+}
+
+
 /*end of index page*/
 
 /*about page*/
 
-.about-photo{
-	padding-left: 0px;
-}
 .about-div{
 	padding-top: 2%;
 }
+
+
 
 .about-info-size{
 	font-size: 18px;
@@ -705,10 +694,10 @@ th{
 
 .about-admin{
 	padding-top: 10%;
+	overflow: hidden;
 }
 
 .admin-pic{
-	margin-left: 17%;
 	transform:          rotate(90deg);
 	-ms-transform:      rotate(90deg);
 	-moz-transform:     rotate(90deg);
@@ -717,14 +706,208 @@ th{
 }
 
 .staff-header{
-	margin-left: 5%;
-	margin-top: 30%;
 	text-align: center;
 }
 
-@media only screen and (max-width: 768px) {
 
-	
+@media only screen and (min-width: 70px){
+	.navbar-nav{
+		margin: auto;
+		padding-right: 0px;
+	}
 
+	.navbar-nav li a{
+		line-height: 29px;
+		margin-top: auto;
+	}
+	.header-inline{
+		display: none;
+	}
+	.cwvs-logo{
+		display: none;
+	}
+	.login{
+		width: 100%;
+		float: left !important;
+	}
+	.navbar-nav li{
+		width: 100%;
+	}
+	.navbar-nav li a{
+		line-height: normal;
+		text-align: center;
+	}
+	.carousel{
+		width: 100%;
+		height: 300px;
+	}
+
+	.img-responsive, .thumbnail > img, .thumbnail a > img, .carousel-iner > .item > img, .carousel-inner > .item > a > img{
+		height: 300px !important;
+		max-width: 100% !important;
+	}
+
+	.admin-pic{
+		margin-top: 15%;
+	}
+
+	.about-photo img{
+		margin: 0px auto;
+	}
+	.register-panel{
+		width: 100%;
+	}	
+	#sort-materials, #sort-most-viewed, #sort-most-borrowed, #student-button, 
+	#user-button, #confirm-account-button, #add-material-button, .search-material-button,
+	.confirm-materials-button, #sort-all-materials, #sort-borrowed-materials, #sort-pending-materials, #add-inventory-button{
+		width: 100%;
+		border-radius: 2px;
+	}
+	.confirm-div{
+		text-align: center;
+	}
+	.sidebar{
+		display: none;
+	}
+	.borrow-status, .success-status, .delete-status{
+		position: fixed;
+		top: 0;
+		z-index: 9999;
+		right: 0;
+		width: 100%;
+		border-radius: 0px;
+	}
+	.confirm-buttons{
+		width: auto;
+	}
+	.label-title{
+		width: 56% !important;
+	}	
+}
+
+@media only screen and (min-width: 209px) {
+	.cwvs-logo{
+		display: inline;
+	}
+}
+
+@media only screen and (min-width: 380px) {
+	.confirm-div{
+		text-align: left;
+	}	
+}
+
+@media only screen and (min-width: 460px) {
+	#student-button, #user-button, #confirm-account-button, #add-material-button, .search-material-button,
+	.confirm-materials-button, #sort-materials, #sort-most-viewed, #sort-most-borrowed, #add-inventory-button{
+		width: auto;
+	}	
+	.header-inline{
+		display: inline;
+		font-size: 7px;
+	}
+	.register-panel{
+		width: 50%;
+	}	
+}
+
+
+@media only screen and (min-width: 520px) {
+
+	.header-inline{
+		font-size: 9px;
+	}
+}
+
+@media only screen and (min-width: 585px) {
+	.label-title{
+		width: 28% !important;
+	}
+}
+
+@media only screen and (min-width: 590px) {
+
+	.header-inline{
+		font-size: 11px;
+	}
+
+}
+
+@media only screen and (min-width: 768px) {
+	.remove-borrowed-button, .unconfirm-borrowed-button, .confirm-borrowed-button,
+	#sort-all-materials, #sort-borrowed-materials, #sort-pending-materials{
+		width: 100%;
+		margin-top: 2px;
+	}
+	.confirm-buttons{
+		width: 37%;
+	}	
+	.borrow-status, .success-status, .delete-status{
+		width: 25%;
+		position: absolute;
+		top: 31px;
+		right: 37px;
+		border-radius: 2px;
+	}
+	.success-status{
+		top: 0;
+	}
+	.sidebar{
+		display: block;
+	}	
+	.navbar-nav{
+		margin: 7.5px 15px;
+		padding-right: 30px;
+	}
+	.navbar-nav li{
+		width: auto;
+	}
+	.navbar-nav li a{
+		line-height: auto;
+		margin-top: 0px;
+	}	
+	.about-photo img{
+		margin: auto;
+	}	
+	.carousel{
+		height: 530px;
+	}
+
+	.img-responsive, .thumbnail > img, .thumbnail a > img, .carousel-iner > .item > img, .carousel-inner > .item > a > img{
+		height: 530px !important;
+	}
+	.about-photo{
+		height: auto !important;
+	}
+	.header-inline{
+		font-size: 15px;
+	}
+	.login{
+		width: auto;
+		float: right !important;
+	}
+	.navbar-nav li a{
+		line-height: 0px;
+		text-align: left;
+	}
+}
+
+@media only screen and (min-width: 992px) {
+	.staff-header{
+		padding-right: 10%;
+		padding-top: 10%;
+	}
+}
+@media only screen and (min-width: 1082px) {
+	.confirm-buttons{
+		width: auto;
+	}	
+}
+
+@media only screen and (min-width: 1311px) {
+	.remove-borrowed-button, .unconfirm-borrowed-button, .confirm-borrowed-button{
+		width: auto;
+		margin-top: auto;
+	}
 }
 /*end of about page*/

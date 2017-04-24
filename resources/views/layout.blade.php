@@ -35,10 +35,9 @@
 		<h7 class="header-inline header-color">
 		        CENTER FOR WEST VISAYAN STUDIES ARCHIVE & INVENTORY SYSTEM
 		</h7>
-	    <img class="up-logo" src="/images/cwvslogo.jpg"/>
+	    <img class="up-logo cwvs-logo" src="/images/cwvslogo.jpg"/>
 	</header>
 	<nav class="navbar navbar-inverse custom-navbar">
-	    <div class="container-fluid">
 	        <div class="navbar-header">
 	            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#cwvs-navbar">
 	                <span class="icon-bar"></span>
@@ -47,22 +46,47 @@
 	            </button>
 	        </div>
 	        <nav class="collapse navbar-collapse" id="cwvs-navbar">
-	            <ul class="nav navbar-nav">
-	                @if(Auth::check())	              	
+	            <ul class="nav navbar-nav hidden">
+	                @if(Auth::check())
+				@if(Auth::user()->type == "admin" || Auth::user()->type == "staff")
+				<li>
+					<a href="{{ url('/dashboard/home')}}">Home</a>
+				</li>
+				<li>
+					<a href="{{ url('/dashboard/user')}}">User</a>
+				</li>						
+				<li>
+					<a href="{{ url('/dashboard/material')}}">Material</a>
+				</li>
+				<li>
+					<a href="{{ url('/dashboard/inventory')}}">Inventory</a>
+				</li>				
+				<li>
+		                  <a href="{{ url('/logout') }}"
+		                      onclick="event.preventDefault();
+		                               document.getElementById('logout-form').submit();">
+		                      Logout
+		                  </a>
+
+		                  <form id="logout-form" action="{{ url('/logout') }}" method="POST" style="display: none;">
+		                      {{ csrf_field() }}
+		                  </form>
+				</li>
+				@endif	                         	
 	                @else
-	                <li class=:"pull-left">
+	                <li>
 	                	<a href="{{'/'}}">Home</a>
 	                </li>
 	                <li>
 	                	<a href="{{ url('/about')}}">About</a>
 	                </li>
-	                <li class="pull-right">
+	                <li class="pull-right login">
 	                	<a href="{{ url('/login') }}">Sign in</a>
-	                </li>     	                
-	                <li class="pull-right">
+	                </li>    
+	                <li class="pull-right login">
 				<a href="{{ url('/student/register') }}">Sign up</a>
 	                </li>
-	                @endif
+	                @endif		                
 	                @if(Auth::check())	
 	                @if(Auth::user()->type == "user")
 				<li class='pull-right'>
@@ -80,8 +104,7 @@
 				@endif         
 	            </ul>
 	        </nav>
-	    </div>
 	</nav>
-	    	@yield('content')
+	    	@yield('content')	    	
 	</body>
 </html>

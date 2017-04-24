@@ -29,7 +29,7 @@
 						</div>
 						@endif
 					</div>
-					<div class='details-div edit-table hidden'>
+					<div class='table-responsive details-div edit-table hidden'>
 						<table class='table table-bordered table-striped tables table-details'>
 							<thead>
 								<tr>
@@ -95,7 +95,7 @@
 												
 						</div>
 
-						<div class='englishName-table edit-table hidden'>
+						<div class='table-responsive englishName-table edit-table hidden'>
 							<h4>English Names</h4>
 							<table class='table table-bordered table-striped tables'>
 								<tbody class='table-englishName deleteRows'>
@@ -121,7 +121,7 @@
 						</div>
 						<span class='english-name inputfields'></span>
 
-						<div class='venName-table edit-table hidden'>
+						<div class='table-responsive venName-table edit-table hidden'>
 							<h4>Venacular Names</h4>
 							<table class='table table-bordered table-striped tables'>
 								<tbody class='table-venName deleteRows'>
@@ -151,16 +151,18 @@
 
 					<h4 class='owner-header'>Owner</h4>
 
-					<table class='table table-bordered table-striped tables owner-table edit-table hidden'>
-						<thead>
-							<th>Full Name</th>
-							<th>Nickname</th>
-							<th>Locality</th>
-						</thead>
-						<tbody class='table-owner deleteRows'>
+					<div class='table-responsive'>
+						<table class='table table-bordered table-striped tables owner-table edit-table hidden'>
+							<thead>
+								<th>Full Name</th>
+								<th>Nickname</th>
+								<th>Locality</th>
+							</thead>
+							<tbody class='table-owner deleteRows'>
 
-						</tbody>
-					</table>
+							</tbody>
+						</table>
+					</div>
 
 					<div class="form-group owner inputfields">
 						<span class='firstnames'>
@@ -215,7 +217,7 @@
 					</div>			
 
 					<h4>Physical Description</h4>
-					<div class='measure-div edit-table hidden'>
+					<div class='table-responsive measure-div edit-table hidden'>
 						<table class='table table-bordered table-striped tables table-measure'>
 							<thead>
 								<tr>
@@ -275,7 +277,7 @@
 						<strong>@if ($errors->has('condition')) {{ $errors->first('condition') }} @endif</strong>
 					</span>
 
-					<div class='materials-table edit-table hidden'>
+					<div class='table-responsive materials-table edit-table hidden'>
 						<h4>Materials</h4>
 						<table class='table table-bordered table-striped tables'>
 							<tbody class='table-materials deleteRows'>
@@ -301,7 +303,7 @@
 					</div>
 					<span class='materials inputfields'></span>																				
 
-					<div class='colors-table edit-table hidden'>
+					<div class='table-responsive colors-table edit-table hidden'>
 						<h4>Colors</h4>
 						<table class='table table-bordered table-striped tables'>
 							<tbody class='table-colors deleteRows'>
@@ -327,7 +329,7 @@
 					</div>
 					<span class='colorss inputfields'></span>
 
-					<div class='decorations-table edit-table hidden'>
+					<div class='table-responsive decorations-table edit-table hidden'>
 						<h4>Decorations</h4>
 						<table class='table table-bordered table-striped tables'>
 							<tbody class='table-decorations deleteRows'>
@@ -353,7 +355,7 @@
 					</div>
 					<span class='decorationsss inputfields'></span>
 
-					<div class='marks-table edit-table hidden'>
+					<div class='table-responsive marks-table edit-table hidden'>
 						<h4>Marks</h4>
 						<table class='table table-bordered table-striped tables'>
 							<tbody class='table-marks deleteRows'>
@@ -397,7 +399,7 @@
 						</span>						
 					</div>
 					</div>
-					<div class='donors-div hidden'>
+					<div class='table-responsive donors-div hidden'>
 						<h4>Donor Details</h4>
 						<table class='table table-bordered table-striped tables table-donors'>
 							<thead>
@@ -446,7 +448,7 @@
 						</span>																		
 					</div>
 
-					<div class='purchases-div hidden'>
+					<div class='table-responsive purchases-div hidden'>
 						<h4>Purchased Details</h4>
 						<table class='table table-bordered table-striped tables table-purchases'>
 							<thead>

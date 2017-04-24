@@ -6,13 +6,13 @@
         <div class='register-panel center-block sign-in-panel'>
             <div class="panel panel-default center-block">
                 <div class="panel-heading sign-in-heading">
-                    <div class='col-md-4 user-login user-active up-color'>
+                    <div class='col-xs-4 col-md-4 user-login user-active up-color'>
                         USER
                     </div>
-                    <div class='col-md-4 user-login staff-label'>
+                    <div class='col-xs-4 col-md-4 user-login staff-label'>
                         STAFF
                     </div>
-                    <div class='col-md-4 user-login'>
+                    <div class='col-xs-4 col-md-4 user-login'>
                         ADMIN
                     </div>                                       
                 </div>

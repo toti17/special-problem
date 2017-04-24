@@ -2,10 +2,10 @@
 @section('content')
 
 <div class="index-container">
-	<div class="col-md-6 about-photo">
+	<div class="col-xs-12 col-md-6 about-photo">
 		<img class='img img-responsive' src='/images/maincampus.jpg'/>
 	</div>
-	<div class='col-md-5 about-div'>
+	<div class='col-xs-12 col-md-5 about-div'>
 		<br/>
 		<h3><b>Background</b></h3>
 		<p class='about-info-size'>
@@ -20,7 +20,7 @@
 		gender, indigenous knowledge, cultural transimission, migration, environment, and sustainable development.
 		</p>
 	</div>
-	<div class='col-md-12 mission-vision-objective'>
+	<div class='col-xs-12 col-md-12 mission-vision-objective'>
 		<div class='col-md-6 text-center'>
 			<h2><b>MISSION</b></h2>
 			<blockquote class='block-right'>
@@ -40,7 +40,7 @@
 			</blockquote>				
 		</div>	
 	</div>
-	<div class='col-md-12 about-admin'>
+	<div class='col-xs-12 col-md-12 about-admin'>
 		<div class='col-md-6'>
 			<div class='staff-header'>
 				<h2><b>STAFF</b></h2>
@@ -51,7 +51,18 @@
 			</div>
 		</div>
 		<div class='col-md-6'>
-			<img class='img img-responsive admin-pic' src='/images/admin.JPG'/>
+			<img class='img img-responsive admin-pic center-block' src='/images/admin.JPG'/>
+		</div>
+	</div>
+	<div class='col-xs-12 col-md-12 footer-background'>
+		<div class='col-xs-6 col-md-6 footer'>
+			<label class='footer-p-size'>University of the Philippines Visayas</label><br/>
+			<label class='footer-p-size'>Iloilo, Iloilo City</label>
+		</div>
+		<div class='col-xs-6 col-md-6 social-footer'>
+			<a id='facebook-link' class='btn btn-social-icon btn-facebook pull-right'>
+				<span class='fa fa-facebook'></span>
+			</a>
 		</div>
 	</div>
 </div>

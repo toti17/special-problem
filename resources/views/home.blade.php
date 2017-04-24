@@ -5,6 +5,8 @@
 	<h4>Hello, {{Auth::user()->firstname}} {{Auth::user()->middlename}} {{Auth::user()->lastname}}</h4>
 </div>
 
+<input type='hidden' value="{{Auth::user()->type}}" id='user-type'>
+
 <div class='col-lg-12'>
 	<div class='col-lg-6 home-table-div'>
 		<table class='table'>

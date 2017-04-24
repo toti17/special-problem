@@ -22,15 +22,15 @@ class RegisterController extends Controller
 
     public function register(Request $request)
     {
-    	$this->validate($request, [
+        $this->validate($request, [
             'firstname' => 'required|max:255',
             'middlename' => 'required|max:255',
             'lastname' => 'required|max:255',
-            'username' => 'required|max:9|unique:users',
+            'username' => 'required|unique:users',
             'email' => 'required|max:50|unique:users,email',
             'institution' => '|max:100',
             'password' => 'required|min:6|confirmed',    		
-    	]);
+        ]);
 
         $school = $request->input('institution');
         $studentNumber = StudentNumber::where('student_number', '=', $request->input('username'))->first();

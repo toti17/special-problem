@@ -7,7 +7,7 @@
 	<button class='btn btn-default confirm-materials-button'>Borrowed Materials</button>
 </div>
 
-<div class="col-md-6 alert  alert-success success-status @if(session('status'))  @else hidden @endif">
+<div class="col-md-6 alert  alert-success success-status @if(session('status')) has-status @endif">
 @if(session('status'))
 
    {{ session('status') }}
@@ -17,7 +17,7 @@
     </button>
 </div>
 
-<div class="col-md-6 alert  alert-danger delete-status hidden"> 
+<div class="col-md-6 alert  alert-danger delete-status"> 
     <button type="button" class="close delete-success" aria-label="Close" data-dismiss='alert'>
         <span aria-hidden="true">&times;</span>
     </button>
@@ -100,27 +100,29 @@
 	</div>	
 </div>
 
-<div class='col-md-12 confirm-material-table hidden'>
-<table class='table table-hover table-striped wait'>
-	<thead>
-		<th>Username</th>
-		<th>Accession Number</th>
-		<th>Title</th>
-		<th>Date and Time</th>
-		<th>Action</th>
-		<tr id='no-borrowed-materials'>
-			<td>No borrowed materials...</td>
-		</tr>		
-	</thead>
-	<tbody class='borrowed-materials-tbody'>
-	</tbody>
-</table>
+<div class='table-responsive col-md-12 confirm-material-table hidden'>
+	<table class='table table-hover table-striped wait'>
+		<thead>
+			<th>Username</th>
+			<th>Accession Number</th>
+			<th>Title</th>
+			<th>Date and Time</th>
+			<th>Action</th>
+			<tr id='no-borrowed-materials'>
+				<td>No borrowed materials...</td>
+			</tr>		
+		</thead>
+		<tbody class='borrowed-materials-tbody'>
+		</tbody>
+	</table>
+</div>
+<div class='col-xs-12 col-md-12 col-lg-12'>
 	<div class='search-pagination borrowed-pagination'>
 		<ul id="borrowed-pagination" class="pagination-sm"></ul>
 	</div>	
 </div>
 
-<div class='col-md-12 material-table'>
+<div class='table-responsive col-md-12 material-table'>
 	<table class="table table-condensed table-hover wait materials-table tablesorter">
 		<thead>
 			<tr>
@@ -148,13 +150,13 @@
 
 		</tbody>
 	</table>
-
-	<div class='row'>
-		<div class='search-pagination'>
-			<ul id="pagination-demo" class="pagination-sm"></ul>
-		</div>	
-	</div>	
 </div>
+
+<div class='col-xs-12 col-md-12 col-lg-12'>
+	<div class='search-pagination'>
+		<ul id="pagination-demo" class="pagination-sm"></ul>
+	</div>	
+</div>	
 
 @if($errors->any())
 <script>

@@ -81,7 +81,7 @@
 
 						<div class='input-group'>
 							<span class='input-group-addon label-title'>Title*</span>
-							<input type='text' id='title' class='form-control' placeholder='The Life of Rizal' name='title' value="{{ old('title') }}" />
+							<textarea type='text' id='title' class='form-control' placeholder='The Life of Rizal' name='title' value="{{ old('title') }}"></textarea>
 						</div>
 
 						<span class="title-help help-block {{$errors->has('title') ? '' :  'hidden' }}">
@@ -190,11 +190,13 @@
 
 					<h4 class='author-photographer-director'>Authors</h4>
 
-					<table class='table table-bordered table-striped tables author-table'>
-						<tbody class='table-authors'>
+					<div class='table-responsive'>
+						<table class='table table-bordered table-striped tables author-table'>
+							<tbody class='table-authors'>
 
-						</tbody>		
-					</table>
+							</tbody>		
+						</table>
+					</div>
 
 					<div class="form-group co-author">
 						<span class='firstnames'>
@@ -209,7 +211,7 @@
 						</span>
 						<span class='middlenames'>
 						<div class='input-group'>
-							<span class='input-group-addon label-title'>Middle Name*</span>
+							<span class='input-group-addon label-title'>Middle Name</span>
 							<input type='text' id='author-middlename' class='form-control' placeholder='Alonso' name='author-middlename' />
 						</div>
 
@@ -239,20 +241,24 @@
 						</div>
 						<input type='hidden' name='producers' id='producers'/>
 						<h4>Producers</h4>
-						<table class='table table-bordered table-striped tables producer-table'>
-							<tbody class='table-producers'>
-								
-							</tbody>
-						</table>						
+						<div class='table-responsive'>
+							<table class='table table-bordered table-striped tables producer-table'>
+								<tbody class='table-producers'>
+									
+								</tbody>
+							</table>
+						</div>
 						<div class='prod-head'></div>
 					</div>
 					<h4 class='tags-header'>Tags</h4>
 					
-					<table class='table table-bordered table-striped tables'>
-						<tbody class='table-tags'>
-							
-						</tbody>
-					</table>					
+					<div class='table-responsive'>
+						<table class='table table-bordered table-striped tables'>
+							<tbody class='table-tags'>
+								
+							</tbody>
+						</table>
+					</div>					
 					
 					<div class='form-group'>
 						<div class='tag'>
@@ -325,27 +331,29 @@
 								<label class='radio-inline'>
 									<input type='radio' class='acquisition-mode purchased' name='acquisition-mode' value="{{ old('acquisition-mode') }}" />Purchased
 								</label>
-							</div>
+							</div>						
 
 							<span class="acquisition-mode-help help-block hidden">
 								<strong></strong>
-							</span>	
+							</span>
 						</div>
 					</div>
-					<table class='table table-bordered table-striped tables table-donors hidden'>
-						<thead>
-							<tr>
-								<th>Donor</th>
-								<th>Year donated</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr>
-								<td class='td-donor'></td>
-								<td class='td-year'></td>
-							</tr>
-						</tbody>
-					</table>
+					<div class='table-responsive'>
+						<table class='table table-bordered table-striped tables table-donors hidden'>
+							<thead>
+								<tr>
+									<th>Donor</th>
+									<th>Year donated</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td class='td-donor'></td>
+									<td class='td-year'></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
 					<div class='form-group donated-div hidden'>
 						<h4>Donor Details</h4>
 						<div class='input-group'>
@@ -408,6 +416,10 @@
 							<strong></strong>
 						</span>							
 					</div>
+
+<!-- 					<div class='form-group add-copy'>
+						<button type='button' class='btn btn-success co-author-button' id='add-copy-button'>Add Copy</button>
+					</div>			 -->		
 
 					<h4 id='image-header' class='hidden'>Image Upload</h4>
 					<div class='form-group image-group hidden'>

@@ -380,7 +380,7 @@ class Controller extends BaseController
             $authors = explode(',', $request->input('authors'));
             for($i=0;$i<sizeof($authors); $i+=3){
                 $author = new Author;
-                $author = Author::firstorNew(['firstname' => trim($authors[$i]), 'middlename' => trim($authors[$i + 1]), 'lastname' => trim($authors[$i + 2])]);
+                $author = Author::firstorNew(['firstname' => trim($authors[$i]), 'middlename' => $authors[$i + 1], 'lastname' => trim($authors[$i + 2])]);
                 $author->save();
                 $material->author()->attach($author->author_id);
             }
@@ -532,7 +532,7 @@ class Controller extends BaseController
           }
         }
         else{
-          // $total_copies_count = MaterialCopy::where('acqNumber', $request)
+          return 'hahaha';
         }
 
 
@@ -583,10 +583,13 @@ class Controller extends BaseController
               }
             }
          }
-         else if((int)$request->copy < (int)$acqNumber->copy_count){
-            $accession = explode('-', $acqNumber->material_copy->copy_acqNumber);
+         else if((int)$request->copy > (int)$acqNumber->copy_count){
+            $accession = DB::table('material_copies')->select('copy_acqNumber')
+              ->orderBy(DB::raw('LPAD(lower(copy_acqNumber), 10,0)', 'DESC'))->first();      
+            $accession = explode('-', $accession->copy_acqNumber);
+            $current_count = DB::table('material_copies')->where('acqNumber', $acqNumber->acqNumber)->get()->count();
             $num_length = strlen($accession[1]);
-            for($i=0;$i<$request->copy;$i++){
+            for($i=0;$i<((int)$request->copy - (int)$current_count);$i++){
               $accession = $accession[0] . '-' . ((int)$accession[1] + 1);
               $unique = true;
               $num = 1;
@@ -600,7 +603,7 @@ class Controller extends BaseController
                   $unique = false;
                   $material_copy = new MaterialCopy;
                   $material_copy->copy_acqNumber = $accession;
-                  $material_copy->acqNumber = $material->getKey();
+                  $material_copy->acqNumber = $acqNumber->acqNumber;
                   $material_copy->save();
                   $accession = explode('-', $accession);
                 }
