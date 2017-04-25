@@ -350,6 +350,7 @@ th{
 }
 
 .student-number-panel{
+	display: none;
 	margin-bottom: 0px;
 	position: absolute;
 	top: 55px;
@@ -390,6 +391,7 @@ th{
 }
 
 .user-panel{
+	display: none;
 	position: absolute;
 	top: 54px;
 	right: 325px;
@@ -799,7 +801,8 @@ th{
 
 @media only screen and (min-width: 460px) {
 	#student-button, #user-button, #confirm-account-button, #add-material-button, .search-material-button,
-	.confirm-materials-button, #sort-materials, #sort-most-viewed, #sort-most-borrowed, #add-inventory-button{
+	.confirm-materials-button, #sort-materials, #sort-most-viewed, #sort-most-borrowed, #add-inventory-button,
+	#sort-all-materials, #sort-borrowed-materials, #sort-pending-materials{
 		width: auto;
 	}	
 	.header-inline{
@@ -834,8 +837,7 @@ th{
 }
 
 @media only screen and (min-width: 768px) {
-	.remove-borrowed-button, .unconfirm-borrowed-button, .confirm-borrowed-button,
-	#sort-all-materials, #sort-borrowed-materials, #sort-pending-materials{
+	.remove-borrowed-button, .unconfirm-borrowed-button, .confirm-borrowed-button{
 		width: 100%;
 		margin-top: 2px;
 	}
@@ -844,13 +846,17 @@ th{
 	}	
 	.borrow-status, .success-status, .delete-status{
 		width: 25%;
-		position: absolute;
-		top: 31px;
+		position: fixed;
+		/*top: 40px;*/
+		margin-top: 139px;
 		right: 37px;
 		border-radius: 2px;
 	}
 	.success-status{
 		top: 0;
+	}
+	.borrow-status{
+		margin-top: 10px;
 	}
 	.sidebar{
 		display: block;

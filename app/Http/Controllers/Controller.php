@@ -254,7 +254,7 @@ class Controller extends BaseController
       $address = new Address;
       $acqNumber->measurement->delete();
 
-      $location_count = $location::where('id', $acqNumber->location_id)->get()->count();
+      $location_count = Inventory::where('location_id', $acqNumber->location_id)->get()->count();
       if($location_count == 1){
         $location::destroy($acqNumber->location_id);
       }
@@ -531,9 +531,6 @@ class Controller extends BaseController
             }
           }
         }
-        else{
-          return 'hahaha';
-        }
 
 
         $title = trim($request->input('title'));
@@ -575,16 +572,50 @@ class Controller extends BaseController
             DB::table('borrowed')->where('acqNumber', $acqNumber->acqNumber)->update(['acqNumber' => $newAcqNumber]);
          }
          if((int)$request->copy < (int)$acqNumber->copy_count){
-            $copy_acqNumber = DB::table('material_copies')->select('copy_acqNumber')->get();
+            $copy_acqNumber = DB::table('material_copies')->where('acqNumber', $acqNumber->acqNumber)->select('copy_acqNumber')->get();
+            $i=1;
             foreach($copy_acqNumber as $copy){
               $copy_count = DB::table('borrowed')->where('acqNumber', $copy->copy_acqNumber)->get()->count();
               if($copy_count == 0){
                 DB::table('material_copies')->where('copy_acqNumber', $copy->copy_acqNumber)->delete();
               }
+              $i++;
+              if($i == (int)$request->copy){
+                break;
+              }
             }
          }
          else if((int)$request->copy > (int)$acqNumber->copy_count){
-            $accession = DB::table('material_copies')->select('copy_acqNumber')
+            if((int)$acqNumber->copy_count == 0){
+              $copy_count = (int)$request->copy;
+              $accession = explode('-', $acqNumber->acqNumber);
+              $num_length = strlen($accession[1]);              
+              for($i=0;$i<$copy_count;$i++){
+                $accession = $accession[0] . '-' . ((int)$accession[1] + 1);
+                $unique = true;
+                $num = 1;
+                while($unique){
+                  $total_count = $this->getAcqCount($accession);
+                  if($total_count == 0){
+                    $accession = explode('-', $accession);
+                    $tempLength = strlen($accession[1]);
+                    $newNum = str_pad($accession[1], (($num_length-$tempLength)+1), '0', STR_PAD_LEFT);
+                    $accession = $accession[0] . '-' .  $newNum;
+                    $unique = false;
+                    $material_copy = new MaterialCopy;
+                    $material_copy->copy_acqNumber = $accession;
+                    $material_copy->acqNumber = $acqNumber->acqNumber;
+                    $material_copy->save();
+                    $accession = explode('-', $accession);
+                  }
+                  else{
+                    $accession = explode('-', $accession);
+                    $accession = $accession[0] . '-' . ((int)$accession[1] + $num);
+                  }
+                }
+              }           
+            }
+            $accession = DB::table('material_copies')->where('acqNumber', $acqNumber->acqNumber)->select('copy_acqNumber')
               ->orderBy(DB::raw('LPAD(lower(copy_acqNumber), 10,0)', 'DESC'))->first();      
             $accession = explode('-', $accession->copy_acqNumber);
             $current_count = DB::table('material_copies')->where('acqNumber', $acqNumber->acqNumber)->get()->count();
@@ -629,7 +660,7 @@ class Controller extends BaseController
         DB::table('material_copies')->where('acqNumber', $acqNumber->acqNumber)->delete();
       }
 
-      $location_count = $location::where('id', $acqNumber->location_id)->get()->count();
+      $location_count = Material::where('location_id', $acqNumber->location_id)->get()->count();
       if($location_count == 1){
         $location::destroy($acqNumber->location_id);
       }

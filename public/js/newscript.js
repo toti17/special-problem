@@ -22,7 +22,8 @@ $(document).ready(function (){
 
 	// login script
 
-	$('.user-login').click(function(){
+	// $('.user-login').click(function(){
+	$(document).on('click', '.user-login',  function(){
 		$('.has-error').removeClass('has-error');
 		$('.help-block').remove();
 		$('.user-login').removeClass('user-active');
@@ -33,7 +34,7 @@ $(document).ready(function (){
 			$('.user-label').text('Admin Number:');
 			$('#role').val('admin');
 		}
-		else if($.trim($(this).text()) == 'STUDENT'){
+		else if($.trim($(this).text()) == 'USER'){
 			$('.user-label').text('Student Number:');
 			$('#role').val('student');
 		}
@@ -54,6 +55,14 @@ $(document).ready(function (){
 
 	// register script
 	
+	if($('.student-number-panel').hasClass('studentnumber-status') == true){
+		$('.student-number-panel').fadeIn().delay(2000).fadeOut();
+	}
+
+	if($('.user-panel').hasClass('user-success') == true){
+		$('.user-panel').fadeIn().delay(2000).fadeOut();
+	}	
+
 	$("#up-register").click(function(){
 		if(!($("#up-register").hasClass("up-color"))){
 			$("#up-register").addClass("up-color");

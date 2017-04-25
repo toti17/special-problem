@@ -1932,7 +1932,7 @@ $(document).ready(function (){
 		borrowAllow(id).done(function(){
 			$('.borrow-status').removeClass('alert-danger').addClass('alert-success');
 			$('.borrow-status').fadeIn().delay(2000).fadeOut();
-			$('.borrow-message').text("Material '" + id +"' is pending for borrowing.");
+			$('.borrow-message').text("Material '" + $('#title').val() +"' is pending for borrowing.");
 		});
 	});
 
@@ -2173,10 +2173,12 @@ $(document).ready(function (){
 		}, 400 );		
 	}
 
+	var borrowedTitle = '';
 	$('body').on('click', '.student-remove-borrowed-button', function(){
+		borrowedTitle = $(this).parent().parent().children('td:nth-child(2)').text();
 		$(this).prop('disabled', true);
 		fadeBorrowedModal();
-		$('.p-delete-invent').text("Please click the delete button to delete borrowed material '" + $(this).parent().parent().children('td:nth-child(2)').text() + "'.");
+		$('.p-delete-invent').text("Please click the delete button to delete borrowed material '" + borrowedTitle  + "'.");
 		$(this).parent().parent().addClass($(this).val());
 		$('#borrowed-confirm-delete').val($(this).val());
 		$('#delete-confirm-modal').modal('show');
@@ -2197,7 +2199,7 @@ $(document).ready(function (){
 			$('#borrowed-confirm-delete').prop('disabled', false);
 			$('.borrow-status').removeClass('alert-success').addClass('alert-danger');
 			$('.borrow-status').fadeIn().delay(2000).fadeOut();
-			$('.borrow-message').text("Material '" + id +"' deleted successfully.");			
+			$('.borrow-message').text("Material '" + borrowedTitle +"' deleted successfully.");			
 			$('.borrowed-materials-tbody').children('tr.' + x).remove();
 			$('#delete-confirm-modal').modal('hide');
 			if($('.borrowed-materials-tbody').children().length == 0){

@@ -44,9 +44,8 @@ class BorrowController extends Controller
             'materials' => $borrowed_materials
         ]);
     }
-    public function delete(Material $acqNumber){
-        $username = Auth::user();
-        $username->material()->detach($acqNumber->acqNumber);
+    public function delete($acqNumber){
+        DB::table('borrowed')->where('acqNumber', $acqNumber)->delete();
     }
     public function staffDelete(Material $acqNumber, $username){
         $username = User::find($username);

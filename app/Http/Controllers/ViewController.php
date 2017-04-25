@@ -65,10 +65,10 @@ class ViewController extends Controller
             if (Auth::user()->type == "admin" || Auth::user()->type == "staff"){
 
                 $vertical_count = Material::where('material_type_id', 1)->orWhere('material_type_id', 2)
-                ->orWhere('material_type_id', 3)->orWhere('material_type_id',4)->get()->count();
+                ->orWhere('material_type_id', 3)->get()->count();
 
                 $vertical_files = Material::where('material_type_id', 1)->orWhere('material_type_id', 2)
-                ->orWhere('material_type_id', 3)->orWhere('material_type_id',4)->get();
+                ->orWhere('material_type_id', 3)->get();
 
                 $vertical_copy_count = 0;
                 foreach($vertical_files as $vertical){

@@ -12,33 +12,18 @@
 
    {{ session('status') }}
 @endif   
-    <button type="button" class="close success-close" aria-label="Close" data-dismiss='alert'>
-        <span aria-hidden="true">&times;</span>
-    </button>
 </div>
 
 <div class="col-md-6 alert  alert-danger delete-status"> 
-    <button type="button" class="close delete-success" aria-label="Close" data-dismiss='alert'>
-        <span aria-hidden="true">&times;</span>
-    </button>
 </div>
 
 <div class="col-md-6 alert  alert-danger delete-borrowed-status"><span class='borrowed-message'></span>
-    <button type="button" class="close delete-borrowed-success" aria-label="Close" data-dismiss='alert'>
-        <span aria-hidden="true">&times;</span>
-    </button>
 </div>
 
 <div class="col-md-6 alert  alert-warning unconfirm-borrowed-status"><span class='unconfirm-message'></span>
-    <button type="button" class="close unconfirm-borrowed-success" aria-label="Close" data-dismiss='alert'>
-        <span aria-hidden="true">&times;</span>
-    </button>
 </div>
 
 <div class="col-md-6 alert  alert-success confirm-borrowed-status"><span class='confirm-message'></span>
-    <button type="button" class="close confirm-borrowed-success" aria-label="Close" data-dismiss='alert'>
-        <span aria-hidden="true">&times;</span>
-    </button>
 </div>
 
 <input type='hidden' value="{{Auth::user()->type}}" id='user-type'>

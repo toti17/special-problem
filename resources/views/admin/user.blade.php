@@ -10,11 +10,8 @@
 </div>
 
 @if(session('studentnumberStatus'))
-<div class="col-xs-12 col-md-6 col-md-offset-3  alert alert-success student-number-panel">
+<div class="col-xs-12 col-md-6 col-md-offset-3  alert alert-success student-number-panel @if(session('studentnumberStatus')) studentnumber-status @endif ">
    {{ session('studentnumberStatus') }}
-    <button type="button" class="close" aria-label="Close" data-dismiss='alert'>
-        <span aria-hidden="true">&times;</span>
-    </button>
 </div>
 @endif
 
@@ -98,11 +95,8 @@
 </div>
 
 @if(session('status'))
-<div class="col-md-6 col-md-offset-3  alert alert-success user-panel">
+<div class="col-md-6 col-md-offset-3  alert alert-success user-panel @if(session('status')) user-success @endif ">
    {{ session('status') }}
-    <button type="button" class="user-close close" aria-label="Close" data-dismiss='alert'>
-        <span aria-hidden="true">&times;</span>
-    </button>
 </div>
 @endif
 
