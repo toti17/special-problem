@@ -253,6 +253,10 @@ th{
 	height: 40px;
 }
 
+.up-register, .non-up-register{
+	cursor: pointer;
+}
+
 .pill-register{
 	padding: 10px;
 }
@@ -625,11 +629,11 @@ th{
 
 .carousel{
 	width: 100%;
-	height: 600px;
+	height: 300px;
 }
 
 .img-responsive, .thumbnail > img, .thumbnail a > img, .carousel-iner > .item > img, .carousel-inner > .item > a > img{
-	height: 600px !important;
+	height: 300px !important;
 	max-width: 100% !important;
 }
 
@@ -749,11 +753,14 @@ th{
 		max-width: 100% !important;
 	}
 
+
 	.admin-pic{
+		height: 500px !important;
 		margin-top: 15%;
 	}
 
 	.about-photo img{
+		height: 500px !important;
 		margin: 0px auto;
 	}
 	.register-panel{
@@ -847,7 +854,6 @@ th{
 	.borrow-status, .success-status, .delete-status{
 		width: 25%;
 		position: fixed;
-		/*top: 40px;*/
 		margin-top: 139px;
 		right: 37px;
 		border-radius: 2px;
@@ -874,13 +880,6 @@ th{
 	}	
 	.about-photo img{
 		margin: auto;
-	}	
-	.carousel{
-		height: 530px;
-	}
-
-	.img-responsive, .thumbnail > img, .thumbnail a > img, .carousel-iner > .item > img, .carousel-inner > .item > a > img{
-		height: 530px !important;
 	}
 	.about-photo{
 		height: auto !important;

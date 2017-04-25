@@ -17,15 +17,9 @@
 
 <div class="col-xs-12 col-md-6 col-md-offset-3  alert alert-danger student-number-panel error-text hidden">
     <span id="error-text"></span>
-    <button type="button" class="close" aria-label="Close" data-dismiss='alert'>
-        <span aria-hidden="true">&times;</span>
-    </button>
 </div>
 
 <div class="col-xs-12 col-md-6 alert  alert-danger success-status user-status"><span class='success-message'></span>
-    <button type="button" class="close confirm-success" aria-label="Close">
-        <span aria-hidden="true">&times;</span>
-    </button>
 </div>
 
 <div class='col-md-7 col-md-offset-2 @if(Auth::user()->type == "admin") staff-search-div hidden @else user-search-div @endif'>

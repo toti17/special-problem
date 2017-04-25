@@ -670,7 +670,7 @@ $(document).ready(function (){
 				$('.size-help strong').text('The format of size field is incorrect.');
 				errorCounter++;				
 			}
-			else if(sizeValue.length > 40){
+			else if(size > 40){
 				$('.size-help').addClass('error');
 				$('.size-help').removeClass('hidden');
 				$('.size-help strong').text('The size field should not exceed 40 characters.');
@@ -680,6 +680,8 @@ $(document).ready(function (){
 				$('.size-help').removeClass('error');
 				$('.size-help').addClass('hidden');
 			}
+
+			$('.con-pic-size').text(size);
 
 			var photographYear = $('#year').val();
 			photographYear = $.trim(photographYear);
@@ -1580,9 +1582,9 @@ $(document).ready(function (){
 			}
 			$('#picname').val(data.picname);
 			$('.file-name').val(data.picname);
-			console.log(data);
-			if($('#user-type').val() == 'user' && $('#status-type').val() != 'unconfirmed'){
+			if($('#user-type').val() == 'user' && $('#status-type').val() != 'unconfirmed' && data.publisher_name != ""){
 				checkBorrowed(material_id).done(function(r){
+					console.log(r);
 					if(r.acq_count == 1){
 						$('.tool-tip').tooltip('hide')
 						          .attr('data-original-title', 'You have already borrowed this material.')
@@ -1986,13 +1988,13 @@ $(document).ready(function (){
 		});
 	});
 
-	function deleteBorrowedMaterials(acqNumber, username){
+	function deleteBorrowedMaterials(acqNumber){
 		return $.ajax({
 			headers: {
 			'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
 			},			
 			type: 'post',
-			url: '/dashboard/material/staffDelete/' + acqNumber + '/' + username,
+			url: '/dashboard/material/staffDelete/' + acqNumber,
 			success: function(data){
 			}
 		});

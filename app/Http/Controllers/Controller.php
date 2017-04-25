@@ -361,14 +361,50 @@ class Controller extends BaseController
         $category = $request->input('category');
         $category = trim($category);
         $material = Material::firstorNew(['acqNumber' => trim($request->input('acqNumber'))]);
-        $copy_count = (int)$request->copy;
-        $material->copy_count = $copy_count;
         $material_type = new MaterialType;
         $type = $material_type::where('type', '=', $category)->first();
         $material->material_type_id = $type->getKey();
         $material->title = trim($request->input('title'));
+
         if(strlen($request->description) != 0){
           $material->description = $request->description;
+        }
+
+        if($edit == 'false'){
+          $copy_count = (int)$request->copy;
+          $material->copy_count = $copy_count;          
+          if($copy_count > 0){
+            $accession = explode('-', $request->acqNumber);
+            $num_length = strlen($accession[1]);
+            for($i=0;$i<$copy_count;$i++){
+              $accession = $accession[0] . '-' . ((int)$accession[1] + 1);
+              $unique = true;
+              $num = 1;
+              while($unique){
+                $total_count = $this->getAcqCount($accession);
+                if($total_count == 0){
+                  $accession = explode('-', $accession);
+                  $tempLength = strlen($accession[1]);
+                  $newNum = str_pad($accession[1], (($num_length-$tempLength)+1), '0', STR_PAD_LEFT);
+                  $accession = $accession[0] . '-' .  $newNum;
+                  $unique = false;
+                  $material_copy = new MaterialCopy;
+                  $material_copy->copy_acqNumber = $accession;
+                  $material_copy->acqNumber = $material->getKey();
+                  $material_copy->save();
+                  $accession = explode('-', $accession);
+                }
+                else{
+                  $accession = explode('-', $accession);
+                  $accession = $accession[0] . '-' . ((int)$accession[1] + $num);
+                }
+              }
+            }
+          }
+        }
+        else{
+          $copy_count = DB::table('material_copies')->where('acqNumber', $request->acqNumber)->get()->count();
+          $material->copy_count = $copy_count;
         }
 
         $location = Location::firstorNew(['location_name' => $request->location]);
@@ -501,37 +537,6 @@ class Controller extends BaseController
             }            
         }
 
-        if($edit == 'false'){
-          if($copy_count > 0){
-            $accession = explode('-', $request->acqNumber);
-            $num_length = strlen($accession[1]);
-            for($i=0;$i<$copy_count;$i++){
-              $accession = $accession[0] . '-' . ((int)$accession[1] + 1);
-              $unique = true;
-              $num = 1;
-              while($unique){
-                $total_count = $this->getAcqCount($accession);
-                if($total_count == 0){
-                  $accession = explode('-', $accession);
-                  $tempLength = strlen($accession[1]);
-                  $newNum = str_pad($accession[1], (($num_length-$tempLength)+1), '0', STR_PAD_LEFT);
-                  $accession = $accession[0] . '-' .  $newNum;
-                  $unique = false;
-                  $material_copy = new MaterialCopy;
-                  $material_copy->copy_acqNumber = $accession;
-                  $material_copy->acqNumber = $material->getKey();
-                  $material_copy->save();
-                  $accession = explode('-', $accession);
-                }
-                else{
-                  $accession = explode('-', $accession);
-                  $accession = $accession[0] . '-' . ((int)$accession[1] + $num);
-                }
-              }
-            }
-          }
-        }
-
 
         $title = trim($request->input('title'));
         $user = User::find(Auth::user()->username);
@@ -644,7 +649,7 @@ class Controller extends BaseController
                 }
               }
             }          
-         }
+          }
       }
       else{
         if($acqNumber->photo != ''){

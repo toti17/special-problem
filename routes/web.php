@@ -63,7 +63,7 @@ Route::group(['middleware' => ['login.check']], function () {
 
 	Route::get('/dashboard/borrowedmaterials', 'BorrowController@borrowedmaterials');
 
-	Route::post('/dashboard/material/staffDelete/{acqNumber}/{username}', 'BorrowController@staffDelete');
+	Route::post('/dashboard/material/staffDelete/{acqNumber}', 'BorrowController@staffDelete');
 
 	Route::get('dashboard/borrow/{acqNumber}/{title}', 'BorrowController@borrow');
 

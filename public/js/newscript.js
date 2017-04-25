@@ -1,3 +1,49 @@
+	$(document).on('click', '.user-login',  function(){
+		$('.has-error').removeClass('has-error');
+		$('.help-block').remove();
+		$('.user-login').removeClass('user-active');
+		$('.user-login').removeClass('up-color');
+		$(this).addClass('user-active');
+		$(this).addClass('up-color');
+		if($.trim($(this).text()) == 'ADMIN'){
+			$('.user-label').text('Admin Number:');
+			$('#role').val('admin');
+		}
+		else if($.trim($(this).text()) == 'USER'){
+			$('.user-label').text('Student Number:');
+			$('#role').val('student');
+		}
+		else if($.trim($(this).text()) == 'STAFF'){
+			$('.user-label').text('Employee Number:');
+			$('#role').val('staff');
+		}
+	});
+
+	// $(".up-register").click(function(){
+	$(document).on('click', '.up-register', function(){
+		if(!($(".up-register").hasClass("up-color"))){
+			$(".up-register").addClass("up-color");
+			$(".non-up-register").removeClass("up-color");
+		}
+		$('.help-block').remove();
+		$("#institution").val("University of the Philippines Visayas");
+		$("#institution").attr("readonly", "readonly");
+		$("#institution").css({"cursor": "not-allowed"});
+		$("#status").val("confirmed");
+	});
+	// $(".non-up-register").click(function(){
+	$(document).on('click', '.non-up-register', function(){
+		if(!($(".non-up-register").hasClass("up-color"))){
+			$(".non-up-register").addClass("up-color");
+			$(".up-register").removeClass("up-color");
+		}
+		$("#institution").val("");
+		$('.help-block').addClass('hidden');
+		$("#institution").removeAttr("readonly");
+		$("#institution").css({"cursor": "text"});
+		$("#status").val("unconfirmed");
+	});	
+
 $(document).ready(function (){
 	// shows navbar collapse for mobile
 
@@ -22,27 +68,26 @@ $(document).ready(function (){
 
 	// login script
 
-	// $('.user-login').click(function(){
-	$(document).on('click', '.user-login',  function(){
-		$('.has-error').removeClass('has-error');
-		$('.help-block').remove();
-		$('.user-login').removeClass('user-active');
-		$('.user-login').removeClass('up-color');
-		$(this).addClass('user-active');
-		$(this).addClass('up-color');
-		if($.trim($(this).text()) == 'ADMIN'){
-			$('.user-label').text('Admin Number:');
-			$('#role').val('admin');
-		}
-		else if($.trim($(this).text()) == 'USER'){
-			$('.user-label').text('Student Number:');
-			$('#role').val('student');
-		}
-		else if($.trim($(this).text()) == 'STAFF'){
-			$('.user-label').text('Employee Number:');
-			$('#role').val('staff');
-		}
-	});
+	// $(document).on('click', '.user-login',  function(){
+	// 	$('.has-error').removeClass('has-error');
+	// 	$('.help-block').remove();
+	// 	$('.user-login').removeClass('user-active');
+	// 	$('.user-login').removeClass('up-color');
+	// 	$(this).addClass('user-active');
+	// 	$(this).addClass('up-color');
+	// 	if($.trim($(this).text()) == 'ADMIN'){
+	// 		$('.user-label').text('Admin Number:');
+	// 		$('#role').val('admin');
+	// 	}
+	// 	else if($.trim($(this).text()) == 'USER'){
+	// 		$('.user-label').text('Student Number:');
+	// 		$('#role').val('student');
+	// 	}
+	// 	else if($.trim($(this).text()) == 'STAFF'){
+	// 		$('.user-label').text('Employee Number:');
+	// 		$('#role').val('staff');
+	// 	}
+	// });
 
 	var wasNeverSubmitted = true; 
 	$('.login-button').click(function(){
@@ -63,28 +108,28 @@ $(document).ready(function (){
 		$('.user-panel').fadeIn().delay(2000).fadeOut();
 	}	
 
-	$("#up-register").click(function(){
-		if(!($("#up-register").hasClass("up-color"))){
-			$("#up-register").addClass("up-color");
-			$("#non-up-register").removeClass("up-color");
-		}
-		$('.help-block').remove();
-		$("#institution").val("University of the Philippines Visayas");
-		$("#institution").attr("readonly", "readonly");
-		$("#institution").css({"cursor": "not-allowed"});
-		$("#status").val("confirmed");
-	});
-	$("#non-up-register").click(function(){
-		if(!($("#non-up-register").hasClass("up-color"))){
-			$("#non-up-register").addClass("up-color");
-			$("#up-register").removeClass("up-color");
-		}
-		$("#institution").val("");
-		$('.help-block').addClass('hidden');
-		$("#institution").removeAttr("readonly");
-		$("#institution").css({"cursor": "text"});
-		$("#status").val("unconfirmed");
-	});
+	// $(".up-register").click(function(){
+	// 	if(!($(".up-register").hasClass("up-color"))){
+	// 		$(".up-register").addClass("up-color");
+	// 		$(".non-up-register").removeClass("up-color");
+	// 	}
+	// 	$('.help-block').remove();
+	// 	$("#institution").val("University of the Philippines Visayas");
+	// 	$("#institution").attr("readonly", "readonly");
+	// 	$("#institution").css({"cursor": "not-allowed"});
+	// 	$("#status").val("confirmed");
+	// });
+	// $(".non-up-register").click(function(){
+	// 	if(!($(".non-up-register").hasClass("up-color"))){
+	// 		$(".non-up-register").addClass("up-color");
+	// 		$(".up-register").removeClass("up-color");
+	// 	}
+	// 	$("#institution").val("");
+	// 	$('.help-block').addClass('hidden');
+	// 	$("#institution").removeAttr("readonly");
+	// 	$("#institution").css({"cursor": "text"});
+	// 	$("#status").val("unconfirmed");
+	// });
 
 	// has error
 	if($('.studentnumber-div').children().children().length == 2){
@@ -187,7 +232,7 @@ $(document).ready(function (){
 			$('.lastname-help').addClass('hidden');
 		}
 
-		if($('#non-up-register').hasClass('up-color') != true){
+		if($('.non-up-register').hasClass('up-color') == false && $('#role').val() == 'UP'){
 			if(username.length == 0){
 				$('.username-help').removeClass('hidden');
 				$('.username-help strong').text('The user name field is required.');
@@ -248,7 +293,7 @@ $(document).ready(function (){
 			$('.email-help').addClass('hidden');
 		}
 
-		if($('#non-up-register').text() != 'UP' || $('#role option:selected').val() == "UP"){
+		if($('.non-up-register').text() != 'UP' || $('#role option:selected').val() == "UP"){
 			if(institution.length == 0){
 				$('.institution-help').removeClass('hidden');
 				$('.institution-help strong').text('The institution field is required.');

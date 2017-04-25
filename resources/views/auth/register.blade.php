@@ -5,8 +5,8 @@
     <div class="row">
         <div class="panel panel-default center-block register-panel">
             <div id="panel" class="panel-heading register-heading text-center">
-                <div id="up-register" class="col-xs-6 col-md-6 up-color pill-register">UP</div>
-                <div id="non-up-register" class="col-xs-6 col-md-6 pill-register">NON UP</div>
+                <div class="up-register col-xs-6 col-md-6 up-color pill-register">UP</div>
+                <div class="non-up-register col-xs-6 col-md-6 pill-register">NON UP</div>
             </div>
             <div class="panel-body">
                 <form class="form-horizontal" id="users-form" role="form" method="POST" action="{{ url('/student/register') }}">

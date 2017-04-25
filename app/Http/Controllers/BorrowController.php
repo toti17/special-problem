@@ -22,15 +22,31 @@ class BorrowController extends Controller
                 'borrowed_datetime' => $date
             ]
         );
-        // $user->attach(' ', ['borrowed_datetime' => $date, 'status' => 'pending']);
-        // $acqNumber->borrow()->attach($username, ['borrowed_datetime' => $date, 'status' => 'pending']);
     }
-    public function checkBorrowed(Material $acqNumber){
-       $check_acq = DB::table('borrowed')->select('acqNumber')->where([
-        ['acqNumber', $acqNumber->acqNumber],
-        ['username', Auth::user()->username],
-        ])->get()->count();
-       $user_borrowed_count = Auth::user()->material->count();
+    public function checkBorrowed($acqNumber){
+        $username = Auth::user();
+        $borrow_count = 0;
+        $checked_out_materials = DB::table('borrowed')->where('username', $username->username)->where('status', 'checked out')->get();
+        foreach($checked_out_materials as $checked){
+            if($checked->acqNumber == $acqNumber){
+                $borrow_count ++;
+                break;
+            }
+            else{
+                $copies = DB::table('material_copies')->where('acqNumber', $acqNumber)->get();
+                foreach($copies as $copy){
+                    if($checked->acqNumber == $copy->copy_acqNumber){
+                        $borrow_count ++;
+                        break;
+                    }
+                }
+            }
+        }
+
+        $check_acq = $borrow_count;
+
+        $user_borrowed_count = DB::table('borrowed')->where('username', $username->username)->get()->count();
+
        return response()->json([
     	'acq_count' => $check_acq,
     	'user_borrowed_count' =>$user_borrowed_count,
@@ -38,20 +54,19 @@ class BorrowController extends Controller
     }
     public function borrowedmaterials(){
         $username = Auth::user();
-        // $borrowed_materials = $username->material;
         $borrowed_materials = DB::table('borrowed')->where('username', $username->username)->get();
         return response()->json([
             'materials' => $borrowed_materials
         ]);
     }
+    
     public function delete($acqNumber){
         DB::table('borrowed')->where('acqNumber', $acqNumber)->delete();
     }
-    public function staffDelete(Material $acqNumber, $username){
-        $username = User::find($username);
-        $username->material()->detach($acqNumber->acqNumber);
-        DB::table('borrowed')->where('acqNumber', $acqNumber->acqNumber)->update(['status' => 'pending']);
+    public function staffDelete($acqNumber){
+        DB::table('borrowed')->where('acqNumber', $acqNumber)->delete();
     }
+
     public function confirmMaterials($acqNumber, $username){
         $error = 'none';
         $acq_check_borrow = DB::table('borrowed')->where('acqNumber', $acqNumber)->where('status', 'checked out')->get()->count();

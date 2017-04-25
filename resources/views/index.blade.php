@@ -21,7 +21,7 @@
 						<img class='carousel-img img img-responsive' src='/images/newspaper1.jpg' alt='books'/>
 					</div>
 					<div class='item'><div class="overlay"></div>
-						<img class='carousel-img img img-responsive' src='/images/books1.jpg' alt='books'/>
+						<img class='carousel-img img img-responsive' src='/images/books3.jpg' alt='books'/>
 					</div>
 					<div class='item'><div class="overlay"></div>
 						<img class='carousel-img img img-responsive' src='/images/files1.jpg' alt='books'/>
