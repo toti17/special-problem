@@ -2,7 +2,7 @@
 @section('material')
 
 <div class='col-md-6'>
-	<button id="add-inventory-button" type="button" class="btn btn-default" data-toggle='modal' data-target='#inventory-modal'>Add Inventory</button>
+	<button id="add-inventory-button" type="button" class="btn btn-default" data-toggle='modal' data-target='#inventory-modal'>Add Inventory &nbsp;<span class='glyphicon glyphicon-plus'></button>
 </div>
 
 <div class="col-md-6 alert  alert-success success-status @if(session('status')) has-inventory-status @endif">
@@ -27,7 +27,7 @@
 	<div class='input-group'>
 		<div class='input-group-btn'>
 			<div class='dropdown'>
-				<button class='btn btn-default dropdown-toggle inventory-search-type' type='button' data-toggle='dropdown' value='Object'>Accession Number
+				<button class='btn btn-primary dropdown-toggle inventory-search-type' type='button' data-toggle='dropdown' value='Object'>Accession Number
 					<span class='caret'></span>
 				</button>
 				<ul class='dropdown-menu inventory-type-dropdown'>
@@ -39,7 +39,7 @@
 				</ul>
 			</div>
 		</div>			
-		<input type='text' class = 'form-control inventory-search'/>
+		<input type='text' class = 'form-control inventory-search' placeholder='Search here...'/>
 	</div>
 	<span class='author-info hidden'><i>Click the name to view the list of inventories he/she has owned or donated.</i></span>
 </div>

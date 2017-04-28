@@ -17,7 +17,7 @@
 		<script src="/js/moment.js"></script>
 		<script src="/js/jquery.twbsPagination.min.js"></script>
 		<script src="/js/jquery.tablesorter.js"></script>
-		<script src="/js/newscript.js"></script>	
+		<script src="/js/user.js"></script>	
 		<script src="/js/material.js"></script>
 		<script src='/js/inventory.js'></script>
 		<noscript>

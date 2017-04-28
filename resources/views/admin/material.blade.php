@@ -2,9 +2,9 @@
 @section('material')
 
 <div class='col-md-6'>
-	<button id="add-material-button" type="button" class="btn btn-default" data-toggle='modal' data-target='#material-modal'>Add Material</button>
-	<button type='button' class='btn btn-default search-material-button'>Search Materials</button>
-	<button class='btn btn-default confirm-materials-button'>Borrowed Materials</button>
+	<button id="add-material-button" type="button" class="btn btn-default" data-toggle='modal' data-target='#material-modal'>Add Material &nbsp;<span class='glyphicon glyphicon-plus'></span></button>
+	<button type='button' class='btn btn-default search-material-button'>Search Materials &nbsp;<span class='glyphicon glyphicon-search'></span></button>
+	<button class='btn btn-default confirm-materials-button'>Borrowed Materials &nbsp;<span class='glyphicon glyphicon-book'></span></button>
 </div>
 
 <div class="col-md-6 alert  alert-success success-status @if(session('status')) has-status @endif">
@@ -32,7 +32,7 @@
 	<div class='input-group'>
 		<div class='input-group-btn'>
 			<div class='dropdown'>
-				<button class='btn btn-default dropdown-toggle search-type' type='button' data-toggle='dropdown' value='Title'>Title
+				<button class='btn btn-primary dropdown-toggle search-type' type='button' data-toggle='dropdown' value='Title'>Title
 					<span class='caret'></span>
 				</button>
 				<ul class='dropdown-menu type-dropdown'>
@@ -54,18 +54,18 @@
 				</ul>
 			</div>
 		</div>			
-		<input type='text' class = 'form-control search'/>
+		<input type='text' class = 'form-control search' placeholder='Search here...'/>
 	</div>
 	<span class='author-info hidden'><i>Click the author's name to view the list of materials he/she has written.</i></span>
 	<div class='text-center results-div'><p>Sort Results By</p>
 		<div class='btn-group' data-toggle='buttons'>
-			<label class="btn btn-default active" id="sort-materials">
+			<label class="btn btn-default sort-buttons active" id="sort-materials">
 			 	<input type="radio" name="sort-options" autocomplete="off" checked> All Materials
   			</label>
-			<label class="btn btn-default" id="sort-most-viewed">
+			<label class="btn btn-default sort-buttons" id="sort-most-viewed">
 				<input type="radio" name="sort-options" autocomplete="off"> Most Viewed
 			</label>
-			<label class="btn btn-default" id="sort-most-borrowed">
+			<label class="btn btn-default sort-buttons" id="sort-most-borrowed">
 				<input type="radio" name="sort-options" autocomplete="off"> Most Borrowed
 			</label>  			
 		</div>

@@ -303,7 +303,12 @@ class ViewController extends Controller
             $picture = '/inventory/' . $pic_name;
         }
 
+        $user = DB::table('modified')->where('acqNumber', $acqNumber->acqNumber)->orderBy('updated_at', 'desc')->select('username')->first();
+        $username = User::where('username', $user->username)->first();
+        $fullname = $username->firstname . ' ' . $username->middlename . ' ' . $username->lastname;
+
         return response()->json([
+            'username' => $fullname,
             'category' => $category,
             'accession' => $accession,
             'object' => $object,
@@ -342,6 +347,7 @@ class ViewController extends Controller
         $producers = [];
         $tags =[];
         $picture = '';
+
         for($i=0;$i<sizeof($acqNumber->author);$i++){
             array_push($authors, $acqNumber->author[$i]->firstname);
             array_push($authors, $acqNumber->author[$i]->middlename);
@@ -410,25 +416,38 @@ class ViewController extends Controller
         else{
             $duration = '';
         }
-        if($acqNumber->donor_id != ''){
-            $donor_firstname = $acqNumber->donor->donor_name->firstname;
-            $donor_middlename = $acqNumber->donor->donor_name->middlename;
-            $donor_lastname = $acqNumber->donor->donor_name->lastname;
-            $donor_year = $acqNumber->donor->year;
-            $amount = '';
-            $address = '';
-            $purchased_year ='';
+
+        $donor_firstnames = [];
+        $donor_middlenames = [];
+        $donor_lastnames = [];
+        $donor_copies = [];
+        $donor_dates = [];
+
+        for($i=0;$i<sizeof($acqNumber->donor);$i++){
+            array_push($donor_firstnames, $acqNumber->donor[$i]->donor_name->firstname);
+            array_push($donor_middlenames, $acqNumber->donor[$i]->donor_name->middlename);
+            array_push($donor_lastnames, $acqNumber->donor[$i]->donor_name->lastname);
+            array_push($donor_copies, $acqNumber->donor[$i]->copy);
+            array_push($donor_dates, $acqNumber->donor[$i]->date);
         }
-        else{
-            $amount = $acqNumber->purchased_details->amount;
-            $address = $acqNumber->purchased_details->address->address_name;
-            $purchased_year = $acqNumber->purchased_details->year;
-            $donor_firstname = '';
-            $donor_middlename = '';
-            $donor_lastname = '';
-            $donor_year = '';
-        }     
+
+        $purch_copies = [];
+        $purch_amounts = [];
+        $purch_dates = [];
+        $purch_addresses = [];
+
+        for($i=0;$i<sizeof($acqNumber->purchased_details);$i++){
+            array_push($purch_copies, $acqNumber->purchased_details[$i]->copy);
+            array_push($purch_amounts, $acqNumber->purchased_details[$i]->amount);
+            array_push($purch_dates, $acqNumber->purchased_details[$i]->date);
+            array_push($purch_addresses, $acqNumber->purchased_details[$i]->address->address_name);
+        }
+
+        $user = DB::table('modified')->where('acqNumber', $acqNumber->acqNumber)->orderBy('updated_at', 'desc')->select('username')->first();
+        $username = User::where('username', $user->username)->first();
+        $fullname = $username->firstname . ' ' . $username->middlename . ' ' . $username->lastname;
         return response()->json([
+            'user' => $fullname,
             'category' => $acqNumber->material_type->type,
             'acqNumber' => $acqNumber->acqNumber,
             'title' => $acqNumber->title,
@@ -442,13 +461,15 @@ class ViewController extends Controller
             'publisher_name' => $publisher_name,
             'publisher_year' => $publisher_year,
             'publisher_place' => $publisher_place,
-            'donor_firstname' => $donor_firstname,
-            'donor_middlename' => $donor_middlename,
-            'donor_lastname' => $donor_lastname,
-            'donor_year' => $donor_year,
-            'purchased_amount' => $amount,
-            'purchased_address' => $address,
-            'purchased_year' => $purchased_year,
+            'donor_firstnames' => $donor_firstnames,
+            'donor_middlenames' => $donor_middlenames,
+            'donor_lastnames' => $donor_lastnames,
+            'donor_copies' => $donor_copies,
+            'donor_dates' => $donor_dates,
+            'purch_copies' => $purch_copies,
+            'purch_amounts' => $purch_amounts,
+            'purch_dates' => $purch_dates,
+            'purch_addresses' => $purch_addresses,
             'course' => $course,
             'school' => $school,
             'photo_size' => $size,

@@ -803,9 +803,9 @@ $(document).ready(function (){
 				$('.amount-help').removeClass('hidden');
 				errorCounter++;					
 			}
-			else  if(amountValue.length > 40){
+			else  if($('#amount').val().length > 20){
 				$('.amount-help').addClass('error');
-				$('.amount-help strong').text('The amount field should not exceed 40 characters.');
+				$('.amount-help strong').text('The amount field should not exceed 20 digits.');
 				$('.amount-help').removeClass('hidden');
 				errorCounter++;					
 			}
@@ -1134,6 +1134,7 @@ $(document).ready(function (){
 
 	function showData(data){
 		console.log(data);
+		$('.username').text(data.username);
 		$('#picname').val(data.picture_name);
 		origAcqNumber = data.accession.acqNumber;
 		$('#condition').prop('disabled', true);
@@ -1179,6 +1180,7 @@ $(document).ready(function (){
 	var inventoryData = '';
 
 	$('body').on('click', '.inventory-view-button', function(){
+		$('.modified').removeClass('hidden');
 		$('#inventory-edit-button').removeClass('hidden');
 		$('.modal-title').text('View Inventory');
 		$('.invent-button').addClass('hidden');
@@ -1253,6 +1255,7 @@ $(document).ready(function (){
 	var editCounter = false;
 	var addCounter = false;
 	$('#add-inventory-button').click(function(){
+		$('.modified').addClass('hidden');
 		$('.image-div').removeClass('hidden');
 		$('#image-header').removeClass('hidden');
 		$('.image-group').removeClass('hidden');
@@ -1326,6 +1329,7 @@ $(document).ready(function (){
 	});
 
 	$('#cancel-close').click(function(){
+		$('.modified').removeClass('hidden');
 		showModal();
 		$('#inventory-cancel-edit-button').removeClass('hidden');
 	});
@@ -1348,6 +1352,7 @@ $(document).ready(function (){
 	});
 
 	$('#inventory-edit-button').click(function(){
+		$('.modified').addClass('hidden');
 		editCounter = true;
 		hideTables();
 		putBackData(inventoryData);

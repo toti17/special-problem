@@ -33,6 +33,10 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Material::class, 'borrowed', 'username', 'acqNumber')->withPivot('status');
     }
+    public function inventory()
+    {
+        return $this->belongsToMany(Inventory::class, 'borrowed', 'username', 'acqNumber')->withPivot('status');   
+    }
     public function modify()
     {
         return $this->belongsToMany(Material::class, 'modified', 'username', 'acqNumber')->withTimestamps();

@@ -6,21 +6,21 @@
         <div class='register-panel center-block sign-in-panel'>
             <div class="panel panel-default center-block">
                 <div class="panel-heading sign-in-heading">
-                    <div class='col-xs-4 col-md-4 user-login user-active up-color'>
-                        USER
+                    <div class='col-xs-12 col-md-12 user-login user-active up-color'>
+                        LOGIN
                     </div>
-                    <div class='col-xs-4 col-md-4 user-login staff-label'>
+<!--                     <div class='col-xs-4 col-md-4 user-login staff-label'>
                         STAFF
                     </div>
                     <div class='col-xs-4 col-md-4 user-login'>
                         ADMIN
-                    </div>                                       
+                    </div> -->                                       
                 </div>
                 <div class="panel-body login-body">
                     <form class="form-horizontal" role="form" method="POST" action="{{ url('/login') }}">
                         {{ csrf_field() }}
                         <div class="form-group{{ $errors->has('username') ? ' has-error' : '' }} @if(session('status')) has-error @endif">
-                            <label for="username" class="col-md-4 control-label user-label">Student Number:</label>
+                            <label for="username" class="col-md-4 control-label user-label">Username:</label>
 
                             <div class="col-md-6">
                                 <input id="username" type="text" class="form-control" name="username" value="{{ old('username') }}" required autofocus>
@@ -55,9 +55,9 @@
                                     Login
                                 </button>
 
-<!--                                 <a class="btn btn-link" href="{{ url('/password/reset') }}">
+                                <a class="pull-right btn btn-link" href="{{ url('/password/reset') }}">
                                     Forgot Your Password?
-                                </a> -->
+                                </a>
                             </div>
                         </div>
                     </form>

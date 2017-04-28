@@ -38,6 +38,11 @@ $(document).ready(function (){
 	var addCounter = false;
 
 	$('#add-material-button').click(function(){
+		$('.modified').addClass('hidden');
+		$('.donors').addClass('hidden');
+		$('.purchases').addClass('hidden');
+		$('.acquisition-div').removeClass("hidden");
+		$('.view-close').addClass('hidden');
 		$('#description-field').parent().removeClass('hidden');
 		addCounter = true;
 		$('.search-type').html('Accession Number ' + "<span class='caret'></span>");
@@ -47,15 +52,13 @@ $(document).ready(function (){
 		$('.material-form').attr('action', window.location.origin + "/add/material/" + false);
 		$('.modal-title').text('Add Material');
 		$('#material-submit').text("Add");
-		$('.table-donors').addClass('hidden');
 		$('photograph').addClass('hidden');
 		$('.cancel-edit').addClass('hidden');
-		$('.tags-header').removeClass('hidden');
 		$('.tag').removeClass('hidden');
 		$('.author-photographer-director').removeClass('hidden');
 		$('.co-author').removeClass('hidden');
 		$('#add-producer-button').removeClass('hidden');
-		$('#add-co-author-button').removeClass('hidden');
+		$('.add-co-author').removeClass('hidden');
 		$('.publisher-field').removeClass('hidden');
 		$('.acquisition-field').removeClass('hidden');
 		$('.publish-radio').removeClass('hidden');
@@ -63,9 +66,7 @@ $(document).ready(function (){
 		$('#edit-button').addClass('hidden');
 		$('.tables').addClass('hidden');
 		$('#material-reset').removeClass('hidden');
-		$('#material-submit').removeClass('hidden');
-		$('.donated-div').addClass('hidden');
-		$('.purchased-div').addClass('hidden');			
+		$('#material-submit').removeClass('hidden');			
 		$('#title').prop('disabled', false);
 		$('#description').prop('disabled', false);		
 		$('input').each(function(){
@@ -188,21 +189,6 @@ $(document).ready(function (){
 		}
 	});
 
-	var acquisitionMode = "";
-	$('.acquisition-mode').click(function (){
-		acquisitionMode = $.trim($(this).parent().text());
-		if(acquisitionMode == "Purchased"){
-			$(this).val('purchased');
-			$('.donated-div').addClass('hidden');
-			$('.purchased-div').removeClass('hidden');
-		}
-		else if(acquisitionMode == 'Donated'){
-			$(this).val('donated');
-			$('.donated-div').removeClass('hidden');
-			$('.purchased-div').addClass('hidden');				
-		}
-	});
-
 	$(".duration-dropdown").on('click', 'li a', function(){
 		$('.duration-type').html($(this).text() + ' <span class="caret"></span>');
 		$('#duration-type').val($(this).text());
@@ -220,8 +206,6 @@ $(document).ready(function (){
 		pubStatus = "";
 		acquisitionMode = "";
 		$('.material-form').trigger('reset');
-		$('.purchased-div').addClass('hidden');
-		$('.donated-div').addClass('hidden');
 		$('.published-div').addClass('hidden');
 		$('.help-block').addClass('hidden');
 		$('.thesis').addClass('hidden');
@@ -241,6 +225,12 @@ $(document).ready(function (){
 		// removing tags		
 		for(j=1;j<=tagCounter;j++){
 			$('.remove-tag').trigger('click');			
+		}
+		for(i=0;i<donorNum;i++){
+			$('.delete-donor').trigger('click');
+		}
+		for(i=0;i<purchasedNum;i++){
+			$('.delete-purchased-details').trigger('click');
 		}
 	});
 
@@ -358,30 +348,6 @@ $(document).ready(function (){
 		}
 
 		$('.con-location').text(location);
-
-		var copy = $('#copy').val();
-		if(copy < 0 || copy % 1 != 0){
-			$('.copy-help').addClass('error');
-			$('.copy-help').removeClass('hidden');
-			$('.copy-help strong').text('The copy field should have positive whole numbers.');
-			errorCounter++;
-		}
-		else{$('.copy-help').removeClass('error');
-			$('.copy-help').addClass('hidden');
-		}
-
-		if(copy == 0){
-			$('.copy-help').removeClass('error');
-			$('.con-count').removeClass('hidden');
-			$('#copy').val(0);
-		}
-
-		if(copy > 0){
-			$('.copy-help').removeClass('error');
-			$('.con-count').removeClass('hidden');
-		}
-
-		$('.con-count').text(copy);
 
 		var description = $('#description').val();
 		description = $.trim(description);
@@ -707,6 +673,7 @@ $(document).ready(function (){
 		else{
 			$('.con-photographs').addClass('hidden');
 		}
+
 		$('.co-author').each(function(){
 				if($(this).children('.firstnames').children().children("input").val() == ""){
 					$(this).children('.firstnames').children('span').addClass('error');
@@ -716,7 +683,6 @@ $(document).ready(function (){
 				}
 				else if($(this).children('.firstnames').children().children("input").val().length >=100){
 					$(this).children('.firstnames').children('span').addClass('error');
-					$(this).children('.firstnames').children('span').removeClass('hidden');
 					$(this).children('.firstnames').children('span').removeClass('hidden');
 					$(this).children('.firstnames').children('span').children('strong').text('The first name field should not exceed 100 characters.');
 					errorCounter++;								
@@ -733,7 +699,6 @@ $(document).ready(function (){
 				}
 				else if($(this).children('.middlenames').children().children("input").val().length >=100){
 					$(this).children('.middlenames').children('span').addClass('error');
-					$(this).children('.middlenames').children('span').removeClass('hidden');
 					$(this).children('.middlenames').children('span').removeClass('hidden');
 					$(this).children('.middlenames').children('span').children('strong').text('The middle name field should not exceed 100 characters.');
 					errorCounter++;			
@@ -891,220 +856,345 @@ $(document).ready(function (){
 				$('#place').val('');
 			}
 		}
-				
 
-		if(acquisitionMode.length == 0){
-			$('.acquisition-mode-help strong').text('The mode of acquisition field is required.');
-			$('.acquisition-mode-help').removeClass('hidden');
-			$('.acquisition-mode-help').addClass('error');
-			errorCounter++;
+		var copyPattern = new RegExp(/^\d+$/);
+
+		donorCopiesArray = [];
+		donorsArray = [];
+		donorDatesArray = [];
+
+		totalCopies = 0;
+
+
+		if(donorNum != 0){
+			$('.co-donor').each(function(){
+				if($(this).children('.donor-copies').children().children("input").val() == ""){
+					$(this).children('.donor-copies').children('span').addClass('error');
+					$(this).children('.donor-copies').children('span').removeClass('hidden');
+					$(this).children('.donor-copies').children('span').children('strong').text('The copy field is required.');
+					errorCounter++;
+				}
+				else if(copyPattern.test($(this).children('.donor-copies').children().children("input").val()) == false){
+					console.log('asdfa');
+					$(this).children('.donor-copies').children('span').addClass('error');
+					$(this).children('.donor-copies').children('span').removeClass('hidden');
+					$(this).children('.donor-copies').children('span').children('strong').text('Please enter numbers without a decimal.');
+					errorCounter++;								
+				}
+				else if($(this).children('.donor-copies').children().children("input").val() < 0){
+					$(this).children('.donor-copies').children('span').addClass('error');
+					$(this).children('.donor-copies').children('span').removeClass('hidden');
+					$(this).children('.donor-copies').children('span').children('strong').text('Please enter a positive number.');
+					errorCounter++;						
+				}
+				else if($(this).children('.donor-copies').children().children("input").val().length >= 4){
+					$(this).children('.donor-copies').children('span').addClass('error');
+					$(this).children('.donor-copies').children('span').removeClass('hidden');
+					$(this).children('.donor-copies').children('span').children('strong').text('The copy field should not exceed by 4 digits.');
+					errorCounter++;								
+				}
+				else{
+					$(this).children('.donor-copies').children('span').removeClass('error');
+					$(this).children('.donor-copies').children('span').addClass('hidden');
+					donorCopiesArray.push($(this).children('.donor-copies').children().children("input").val());
+					totalCopies += parseInt($(this).children('.donor-copies').children().children("input").val());
+				}
+
+				if($(this).children('.donor-firstnames').children().children("input").val() == ""){
+					$(this).children('.donor-firstnames').children('span').addClass('error');
+					$(this).children('.donor-firstnames').children('span').removeClass('hidden');
+					$(this).children('.donor-firstnames').children('span').children('strong').text('The first name field is required.');
+					errorCounter++;
+				}
+				else if($(this).children('.donor-firstnames').children().children("input").val().length >=100){
+					$(this).children('.donor-firstnames').children('span').addClass('error');
+					$(this).children('.donor-firstnames').children('span').removeClass('hidden');
+					$(this).children('.donor-firstnames').children('span').children('strong').text('The first name field should not exceed 100 characters.');
+					errorCounter++;								
+				}
+				else{
+					$(this).children('.donor-firstnames').children('span').removeClass('error');
+					$(this).children('.donor-firstnames').children('span').addClass('hidden');
+					donorsArray.push($(this).children('.donor-firstnames').children().children("input").val());
+				}
+
+				if($(this).children('.donor-middlenames').children().children("input").val() == ""){
+					$(this).children('.donor-middlenames').children('span').addClass('error');
+					$(this).children('.donor-middlenames').children('span').removeClass('hidden');
+					$(this).children('.donor-middlenames').children('span').children('strong').text('The middle name field is required.');
+					errorCounter++;
+				}
+				else if($(this).children('.donor-middlenames').children().children("input").val().length >=100){
+					$(this).children('.donor-middlenames').children('span').addClass('error');
+					$(this).children('.donor-middlenames').children('span').removeClass('hidden');
+					$(this).children('.donor-middlenames').children('span').children('strong').text('The middle name field should not exceed 100 characters.');
+					errorCounter++;								
+				}
+				else{
+					$(this).children('.donor-middlenames').children('span').removeClass('error');
+					$(this).children('.donor-middlenames').children('span').addClass('hidden');
+					donorsArray.push($(this).children('.donor-middlenames').children().children("input").val());
+				}
+
+				if($(this).children('.donor-lastnames').children().children("input").val() == ""){
+					$(this).children('.donor-lastnames').children('span').addClass('error');
+					$(this).children('.donor-lastnames').children('span').removeClass('hidden');
+					$(this).children('.donor-lastnames').children('span').children('strong').text('The last name field is required.');
+					errorCounter++;
+				}
+				else if($(this).children('.donor-lastnames').children().children("input").val().length >=100){
+					$(this).children('.donor-lastnames').children('span').addClass('error');
+					$(this).children('.donor-lastnames').children('span').removeClass('hidden');
+					$(this).children('.donor-lastnames').children('span').children('strong').text('The last name field should not exceed 100 characters.');
+					errorCounter++;								
+				}
+				else{
+					$(this).children('.donor-lastnames').children('span').removeClass('error');
+					$(this).children('.donor-lastnames').children('span').addClass('hidden');
+					donorsArray.push($(this).children('.donor-lastnames').children().children("input").val());
+				}
+
+				datePattern = new RegExp(/^(19|20)\d\d[- /.](0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])$/);
+
+				dateTest = datePattern.test($(this).children('.donor-dates').children().children("input").val());
+
+				if(dateTest == false){
+					$(this).children('.donor-dates').children('span').addClass('error');
+					$(this).children('.donor-dates').children('span').removeClass('hidden');
+					$(this).children('.donor-dates').children('span').children('strong').text('The date field is invalid.');
+					errorCounter++;
+				}
+				else{
+					$(this).children('.donor-dates').children('span').removeClass('error');
+					$(this).children('.donor-dates').children('span').addClass('hidden');
+					donorDatesArray.push($(this).children('.donor-dates').children().children("input").val());
+				}		
+			});
+
+			$('#donorCopies').val(donorCopiesArray);
+			$('#donors').val(donorsArray);
+			$('#donorDates').val(donorDatesArray);
+
+			$('.confirm-donors').removeClass('hidden');
+
+			index = 0;
+			for(i=0;i<donorsArray.length;i+=3){
+				fullname = donorsArray[i] + ' ' + donorsArray[i+1] + ' ' + donorsArray[i+2];
+				newDonor = $(document.createElement('span'));
+				newDonor.after().html(
+					"<p>" + "Donor: " + fullname + "</p>" +
+					"<p>" + "Date Donated: " + donorDatesArray[index] + "</p>" +
+					"<p>" + "Number of Copies: " + donorCopiesArray[index] + "</p>" +
+					"<hr/>"
+				);
+				$('.confirm-donors').append(newDonor);
+				index++;
+			}
 		}
 		else{
-			$('.acquisition-mode-help').removeClass('error');
-			$('.acquisition-mode-help').addClass('hidden');
-			if(acquisitionMode == 'Donated'){
-				$('.confirm-purchased').addClass('hidden');
-				$('.confirm-donors').removeClass('hidden');
-				$('#amount').val('');
-				$('#purchased-year').val('');
-				$('#address').val('');
+			$('.confirm-donors').addClass('hidden');
+		}
 
-				if($('#donor-firstname').val() == ""){
-					$('.donor-first-name-help strong').text('The first name field is required.');
-					$('.donor-first-name-help').removeClass('hidden');
-					$('.donor-first-name-help').addClass('error');
+
+		purchCopiesArray = [];
+		purchAmountArray = [];
+		purchDateArray = [];
+		purchAddressArray = [];
+
+		if(purchasedNum != 0){
+			$('.co-purchased').each(function(){
+				if($(this).children('.purchased-copies').children().children("input").val() == ""){
+					$(this).children('.purchased-copies').children('span').addClass('error');
+					$(this).children('.purchased-copies').children('span').removeClass('hidden');
+					$(this).children('.purchased-copies').children('span').children('strong').text('The copy field is required.');
 					errorCounter++;
 				}
-				else if($('#donor-firstname').val().length >100){
-					$('.donor-first-name-help').addClass('error');
-					$('.donor-first-name-help strong').text('The first name field should not exceed 100 characters.');
-					$('.donor-first-name-help').removeClass('hidden');
-					errorCounter++;					
+				else if (copyPattern.test($(this).children('.purchased-copies').children().children("input").val()) == false){
+					$(this).children('.purchased-copies').children('span').addClass('error');
+					$(this).children('.purchased-copies').children('span').removeClass('hidden');
+					$(this).children('.purchased-copies').children('span').children('strong').text('Please enter numbers without a decimal.');
+					errorCounter++;
 				}
-				else{
-					$('.donor-first-name-help').removeClass('error');
-					$('.donor-first-name-help').addClass('hidden');
+				else if($(this).children('.purchased-copies').children().children("input").val().length > 4){
+					$(this).children('.purchased-copies').children('span').addClass('error');
+					$(this).children('.purchased-copies').children('span').removeClass('hidden');
+					$(this).children('.purchased-copies').children('span').children('strong').text('The copy field should not exceed 4 digits.');
+					errorCounter++;				
 				}
-
-				if($('#donor-middlename').val() == ""){
-					$('.donor-middlename-name-help').addClass('error');
-					$('.donor-middle-name-help strong').text('The middle name field is required.');
-					$('.donor-middle-name-help').removeClass('hidden');
-					errorCounter++;		
-				}
-				else if($('#donor-middlename').val().length >100){
-					$('.donor-middlename-name-help').addClass('error');
-					$('.donor-middle-name-help strong').text('The middle name field should not exceed 100 characters.');
-					$('.donor-middle-name-help').removeClass('hidden');
-					errorCounter++;					
+				else if($(this).children('.purchased-copies').children().children("input").val().length < 0){
+					$(this).children('.purchased-copies').children('span').addClass('error');
+					$(this).children('.purchased-copies').children('span').removeClass('hidden');
+					$(this).children('.purchased-copies').children('span').children('strong').text('Please enter a positive number.');
+					errorCounter++;				
 				}				
 				else{
-					$('.donor-middlename-name-help').removeClass('error');
-					$('.donor-middle-name-help').addClass('hidden');
-				}
-				if($('#donor-lastname').val() == ""){
-					$('.donor-last-name-help').addClass('error');
-					$('.donor-last-name-help strong').text('The last name field is required.');
-					$('.donor-last-name-help').removeClass('hidden');
-					errorCounter++;
-				}
-				else if($('#donor-lastname').val().length >100){
-					$('.donor-last-name-help').addClass('error');
-					$('.donor-last-name-help strong').text('The last name field should not exceed 100 characters.');
-					$('.donor-last-name-help').removeClass('hidden');
-					errorCounter++;					
-				}					
-				else{
-					$('.donor-last-name-help').removeClass('error');
-					$('.donor-last-name-help').addClass('hidden');
+					$(this).children('.purchased-copies').children('span').removeClass('error');
+					$(this).children('.purchased-copies').children('span').addClass('hidden');
+					purchCopiesArray.push($(this).children('.purchased-copies').children().children("input").val());
+					totalCopies += parseInt($(this).children('.purchased-copies').children().children("input").val());
 				}
 
-				$('.con-donor').text($('#donor-firstname').val() +' ' + $('#donor-middlename').val() + ' ' + $('#donor-lastname').val());
 
-				donatedYearValue = YearPattern.test($('#donated-year').val());
-				if($('#donated-year').val() == ""){
-					$('.donor-year-help strong').text('The year field is required.');
-					$('.donor-year-help').removeClass('hidden');
-					$('.donor-year-help').addClass('error');
-					errorCounter++;
-				}
-				else if(donatedYearValue == false){
-					$('.donor-year-help').addClass('error');
-					$('.donor-year-help strong').text('The year field should only be four digits.');
-					$('.donor-year-help').removeClass('hidden');
-					errorCounter++;					
-				}
-				else{
-					$('.donor-year-help').removeClass('error');
-					$('.donor-year-help').addClass('hidden');
-				}
+				var amountPattern = new RegExp(/^[\d,]*(\.\d*)?$/,"g");
+				var amountValue = amountPattern.test($(this).children('.purchased-amounts').children().children("input").val());
 
-				$('.con-date-donated').text($('#donated-year').val());
-			}
-			else if(acquisitionMode == 'Purchased'){
-				$('.confirm-purchased').removeClass('hidden');
-				$('.confirm-donors').addClass('hidden');				
-				$('#donor-firstname').val('');
-				$('#donor-middlename').val('');
-				$('#donor-lastname').val('');
-				$('#donated-year').val('');
-				amountPattern = new RegExp(/^[\d,]*(\.\d*)?$/,"g");
-				amountValue = amountPattern.test($('#amount').val());				
-				if($('#amount').val() ==""){
-					$('.amount-help strong').text('The amount field is required.');
-					$('.amount-help').removeClass('hidden');
-					$('.amount-help').addClass('error');
+				if($(this).children('.purchased-amounts').children().children("input").val() == ""){
+					$(this).children('.purchased-amounts').children('span').addClass('error');
+					$(this).children('.purchased-amounts').children('span').removeClass('hidden');
+					$(this).children('.purchased-amounts').children('span').children('strong').text('The amount field is required.');
 					errorCounter++;				
 				}
 				else if(amountValue == false){
-					$('.amount-help').addClass('error');
-					$('.amount-help strong').text('Incorrect format for amount.');
-					$('.amount-help').removeClass('hidden');
-					errorCounter++;					
+					$(this).children('.purchased-amounts').children('span').addClass('error');
+					$(this).children('.purchased-amounts').children('span').removeClass('hidden');
+					$(this).children('.purchased-amounts').children('span').children('strong').text('Incorrect format for amount.');
+					errorCounter++;
 				}
-				else  if(amountValue.length > 40){
-					$('.amount-help').addClass('error');
-					$('.amount-help strong').text('The amount field should not exceed 40 characters.');
-					$('.amount-help').removeClass('hidden');
-					errorCounter++;					
-				}
-				else{
-					$('.amount-help').removeClass('error');
-					$('.amount-help').addClass('hidden');
-				}
-
-				$('.con-amount').text($('#amount').val());
-
-				purchasedYearValue = YearPattern.test($('#purchased-year').val());				
-				if($('#purchased-year').val() ==""){
-					$('.purchased-year-help strong').text('The year field is required.');
-					$('.purchased-year-help').removeClass('hidden');
-					$('.purchased-year-help').addClass('error');
-					errorCounter++;					
-				}
-				else if(purchasedYearValue == false){
-					$('.purchased-year-help').addClass('error');
-					$('.purchased-year-help strong').text('The year field should be 4 digits.');
-					$('.purchased-year-help').removeClass('hidden');
-					errorCounter++;					
+				else if($(this).children('.purchased-amounts').children().children("input").val().length > 20){
+					$(this).children('.purchased-amounts').children('span').addClass('error');
+					$(this).children('.purchased-amounts').children('span').removeClass('hidden');
+					$(this).children('.purchased-amounts').children('span').children('strong').text('The amount field should not exceed 20 digits.');
+					errorCounter++;			
 				}
 				else{
-					$('.purchased-year-help').removeClass('error');
-					$('.purchased-year-help').addClass('hidden');
+					$(this).children('.purchased-amounts').children('span').removeClass('error');
+					$(this).children('.purchased-amounts').children('span').addClass('hidden');				
+					purchAmountArray.push($(this).children('.purchased-amounts').children().children("input").val());
 				}
 
-				$('.con-pur-date').text($('#purchased-year').val());
+				datePattern = new RegExp(/^(19|20)\d\d[- /.](0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])$/);
 
-				if($('#address').val() ==""){
-					$('.purchased-address-help strong').text('The address field is required.');
-					$('.purchased-address-help').removeClass('hidden');
-					$('.purchased-address-help').addClass('error');
-					errorCounter++;					
+				dateTest = datePattern.test($(this).children('.purchased-dates').children().children("input").val());
+
+				if(dateTest == false){
+					$(this).children('.purchased-dates').children('span').addClass('error');
+					$(this).children('.purchased-dates').children('span').removeClass('hidden');
+					$(this).children('.purchased-dates').children('span').children('strong').text('The date field is invalid.');
+					errorCounter++;
 				}
 				else{
-					$('.purchased-address-help').removeClass('error');
-					$('.purchased-address-help').addClass('hidden');
+					$(this).children('.purchased-dates').children('span').removeClass('error');
+					$(this).children('.purchased-dates').children('span').addClass('hidden');
+					purchDateArray.push($(this).children('.purchased-dates').children().children("input").val());
 				}
 
-				$('.con-pur-address').text($('#address').val());
-			}
+				if($(this).children('.purchased-addresses').children().children("input").val() == ""){
+					$(this).children('.purchased-addresses').children('span').addClass('error');
+					$(this).children('.purchased-addresses').children('span').removeClass('hidden');
+					$(this).children('.purchased-addresses').children('span').children('strong').text('The address field is required.');
+					errorCounter++;
+				}
+				else if($(this).children('.purchased-addresses').children().children("input").val().length >=100){
+					$(this).children('.purchased-addresses').children('span').addClass('error');
+					$(this).children('.purchased-addresses').children('span').removeClass('hidden');
+					$(this).children('.purchased-addresses').children('span').children('strong').text('The address field should not exceed 100 characters.');
+					errorCounter++;								
+				}
+				else{
+					$(this).children('.purchased-addresses').children('span').removeClass('error');
+					$(this).children('.purchased-addresses').children('span').addClass('hidden');
+					purchAddressArray.push($(this).children('.purchased-addresses').children().children("input").val());
+				}					
+			});
+			$('#purchasedCopies').val(purchCopiesArray);
+			$('#purchasedAmount').val(purchAmountArray);
+			$('#purchasedDate').val(purchDateArray);
+			$('#purchasedAddress').val(purchAddressArray);
+			$('.confirm-purchased').removeClass('hidden');
+		}
+		else{
+			$('.confirm-purchased').addClass('hidden');
 		}
 
-			var change = true;
-			if($('#material-submit').text() != 'Save changes'){
-				change = false;
-			}
-			function checkAcq(){
-				return $.ajax({
-					type: 'GET',
-					url: 'material/check/' + acqNumber + '/' + aqoh + '/' + change,
-					success: function(data){
-						accessionCheck = data.accessionNumber;
-						if(accessionCheck == 0){
-							$('.acqNumber-help').addClass('hidden');
-							$('.acqNumber-help').removeClass('error');
-						}
-						else{
-							$('.acqNumber-help').addClass('error');
-							$('.acqNumber-help').removeClass('hidden');
-							$('.acqNumber-help strong').text('The accession number ' + acqNumber + ' already exists.');					
-							errorCounter++;
-						}
-					}
-				});			
-			}
-			if(errorCounter == 0){
-				$('#material-submit').css('cursor', 'wait');
-				$('.modal-body').css('cursor', 'wait');
-				$('body').css('cursor', 'wait');
-				checkAcq().done(function(r){
-					$("body").css("cursor", "default");
-					if(r.accessionNumber != 0){
-						return false;
+		for(i=0;i<purchCopiesArray.length;i++){
+			newPurch = $(document.createElement('span'));
+			newPurch.after().html(
+				"<p>" + "Number of Copies: " + purchCopiesArray[i] + "</p>" +
+				"<p>" + "Amount: " + purchAmountArray[i] + "</p>" +
+				"<p>" + "Date Purchased: " + purchDateArray[i] + "</p>" +
+				"<p>" + "Address: " + purchAddressArray[i] + "</p>" +
+				"<hr/>"
+			);
+			$('.confirm-purchased').append(newPurch);
+		}
+
+		$('.con-count').text(totalCopies);
+
+		$('#copies').val(totalCopies);
+
+		if(donorNum == 0 && purchasedNum == 0){
+			errorCounter++;
+			$('.acquisition-details-help').removeClass('hidden');
+			$('.acquisition-details-help strong').text('The acquisition details is required.');
+		}
+		else{
+			$('.acquisition-details-help').addClass('hidden');
+		}
+
+		var change = true;
+		if($('#material-submit').text() != 'Save changes'){
+			change = false;
+		}
+		function checkAcq(){
+			return $.ajax({
+				type: 'GET',
+				url: 'material/check/' + acqNumber + '/' + aqoh + '/' + change,
+				success: function(data){
+					accessionCheck = data.accessionNumber;
+					if(accessionCheck == 0){
+						$('.acqNumber-help').addClass('hidden');
+						$('.acqNumber-help').removeClass('error');
 					}
 					else{
-						if($('.file-name').val() == 'Click the browse button to select pictures...' || $('.file-name').val() == ''){
-							$('.image-div').addClass('hidden');
-						}
-						else{
-							$('.image-div').removeClass('hidden');
-						}
-						hideModal();
-						$('#confirm-add-modal').modal('show');
+						$('.acqNumber-help').addClass('error');
+						$('.acqNumber-help').removeClass('hidden');
+						$('.acqNumber-help strong').text('The accession number ' + acqNumber + ' already exists.');					
+						errorCounter++;
 					}
-				}).
-				fail(function(x){
+				}
+			});			
+		}
+		if(errorCounter == 0){
+			$('.material-close').prop('disabled', true);
+			$('#material-reset').prop('disabled', true);
+			$('#material-submit').prop('disabled', true);			
+			$('#material-submit').css('cursor', 'wait');
+			$('.modal-body').css('cursor', 'wait');
+			$('body').css('cursor', 'wait');
+			checkAcq().done(function(r){
+				if(r.accessionNumber != 0){
+					$("body").css("cursor", "default");
+					$('.modal-body').css('cursor', 'default');
 					return false;
-				});	
-			}
-			else{
-				$('#material-modal').animate({
-				   scrollTop: ($('.error').offset().top)
-				},500);
-				$(".modal-body").effect( "shake", { direction: "left", times: 3, distance: 10}, 500 );
+				}
+				else{
+					$('.modal-body').css('cursor', 'wait');
+					$('body').css('cursor', 'wait');
+					if($('.file-name').val() == 'Click the browse button to select pictures...' || $('.file-name').val() == ''){
+						$('.image-div').addClass('hidden');
+					}
+					else{
+						$('.image-div').removeClass('hidden');
+					}
+					hideModal();
+					$('#confirm-add-modal').modal('show');
+				}
+			}).
+			fail(function(x){
 				return false;
-			}
+			});	
+		}
+		else{
+			$('.material-close').prop('disabled', false);
+			$('#material-reset').prop('disabled', false);
+			$('#material-submit').prop('disabled', false);				
+			$('#material-modal').animate({
+			   scrollTop: ($('.error').offset().top)
+			},500);
+			$(".modal-body").effect( "shake", { direction: "left", times: 3, distance: 10}, 500 );
 			return false;
+		}
+		return false;
 	});
 
 	if($('.success-status').hasClass('has-status') == true){
@@ -1118,6 +1208,13 @@ $(document).ready(function (){
 	});
 
 	$('#confirm-cancel').click(function(){
+		$('.modal-body').css('cursor', 'default');
+		$('body').css('cursor', 'default');
+		$('.material-close').prop('disabled', false);
+		$('#material-reset').prop('disabled', false);
+		$('#material-submit').prop('disabled', false);
+		$('.confirm-donors').children().remove();
+		$('.confirm-purchased').children().remove();
 		showModal();
 	})
 
@@ -1262,8 +1359,6 @@ $(document).ready(function (){
 		for(i=0;i<tableProducerCounter;i++){
 			$('.table-producers').children().remove();
 		}
-		$('.tags-header').removeClass('hidden');
-		// $('.cancel-edit').trigger('click');
 		$('.search').prop('disabled', false);
 	}
 
@@ -1297,17 +1392,18 @@ $(document).ready(function (){
 	var acqNumber ='';
 	var title = '';
 	var tagsArray = [];
+	var donorFirstnamesArray = [];
+	var donorMiddlenamesArray = [];
+	var donorLastnamesArray = [];
+	var donorCopiesArray = [];
+	var donorDatesArray = [];
+	var purchCopiesArray  = [];
+	var purchAmountsArray = [];
+	var purchDatesArray = [];
+	var purchAddressesArray = [];
+	var donorsLength = 0;
+	var purchLength = 0;
 	var authorsArray = [];
-	var publisher_name ='';
-	var publisher_year= '';
-	var publisher_place = '';
-	var amount = '';
-	var purchased_year = '';
-	var address = '';
-	var donor_firstname ='';
-	var donor_middlename ='';
-	var donor_lastname ='';		
-	var donor_year ='';
 	var course ='';
 	var school ='';
 	var photo_firstname = '';
@@ -1352,10 +1448,23 @@ $(document).ready(function (){
 			type: "GET",
 			url: 'material/' + material_id,
 			success: function (data) {
+				$('.username').text(data.user);
 				if($('#user-type').val() == 'user'){
 					$('#acqNumber').parent().addClass('hidden');
 				}
 				console.log(data);
+				donorsLength = data.donor_firstnames.length;
+				purchLength = data.purch_copies.length;
+				donorsArray = data.donors;
+				donorFirstnamesArray = data.donor_firstnames;
+				donorMiddlenamesArray = data.donor_middlenames;
+				donorLastnamesArray = data.donor_lastnames;
+				donorCopiesArray = data.donor_copies;
+				donorDatesArray = data.donor_dates;
+				purchCopiesArray  = data.purch_copies;
+				purchAmountsArray = data.purch_amounts;
+				purchDatesArray = data.purch_dates;
+				purchAddressesArray = data.purch_addresses;
 				$("body").css("cursor", "default");
 				category = data.category;
 				acqNumber = data.acqNumber;
@@ -1456,7 +1565,10 @@ $(document).ready(function (){
 					tableAuthorCounter++;	
 				}
 				if(tagsArray.length == 0){
-					$('.tags-header').addClass('hidden');
+					$('.tags-div').addClass('hidden');
+				}
+				else{
+					$('.tags-div').removeClass('hidden');
 				}
 				for(i=0;i<tagsArray.length;i++){
 					var newTag = $(document.createElement('tr'));
@@ -1485,38 +1597,44 @@ $(document).ready(function (){
 					$('#published-year').val(publisher_year);
 					$('#place').val(publisher_place);
 				}
-				if(data.donor_year == ''){
-					amount = data.purchased_amount;
-					purchased_year = data.purchased_year;
-					address = data.purchased_address;
-					donor_firstname='';
-					donor_middlename='';
-					donor_lastname='';								
-					donor_year='';
-					$('.purchased-div').removeClass('hidden');
-					$('.table-donors').addClass('hidden');
-					$('.purchased-div').removeClass('hidden');
-					$('#amount').val(data.purchased_amount);
-					$('#purchased-year').val(purchased_year);
-					$('#address').val(address);
+
+				$('.tbody-donors').children().remove();
+
+				if(data.donor_copies.length != 0){
+					$('.donors').removeClass('hidden');
+					for(i=0;i<data.donor_copies.length;i++){
+						newDonor = $(document.createElement('tr'));
+						newDonor.after().html(
+							"<td>" + donorFirstnamesArray[i] + " " + donorMiddlenamesArray[i] + " " + donorLastnamesArray[i]  + "</td>" +
+							"<td>" + data.donor_copies[i] + "</td>" +
+							"<td>" + data.donor_dates[i] + "</td>"
+						);
+						$('.tbody-donors').append(newDonor);
+					}
 				}
 				else{
-					amount ='';
-					purchased_year = '';
-					address = '';				
-					donor_firstname = data.donor_firstname;
-					donor_middlename = data.donor_middlename;
-					donor_lastname = data.donor_lastname;
-					donor_year = data.donor_year;
-					$('#donor-firstname').val(donor_firstname);
-					$('#donor-middlename').val(donor_middlename);
-					$('#donor-lastname').val(donor_lastname);
-					$('#donated-year').val(donor_year);
-					$('.purchased-div').addClass('hidden');
-					$('.table-donors').removeClass('hidden');				
-					$('.td-donor').text(donor_firstname + ' ' + donor_middlename + ' ' + donor_lastname);
-					$('.td-year').text(donor_year);
+					$('.donors').addClass('hidden');
 				}
+
+				$('.tbody-purchases').children().remove();
+
+				if(data.purch_addresses.length !=0){
+					$('.purchases').removeClass('hidden');
+					for(i=0;i<data.purch_addresses.length;i++){
+						newPurch = $(document.createElement('tr'));
+						newPurch.after().html(
+							"<td>" + data.purch_amounts[i] + "</td>" +
+							"<td>" + data.purch_copies[i] + "</td>" +
+							"<td>" + data.purch_dates[i] + "</td>" +
+							"<td>" + data.purch_addresses[i] + "</td>"
+						);
+						$('.tbody-purchases').append(newPurch);
+					}
+				}
+				else{
+					$('.purchases').addClass('hidden');
+				}
+
 				if(category=='Photographs'){
 					$('.photograph').removeClass('hidden');
 					photo_firstname = data.photo_firstname;
@@ -1556,13 +1674,16 @@ $(document).ready(function (){
 	}
 
 	$('body').on('click', '.material-view-button', function(){
+		$('.modified').removeClass('hidden');
+		$('.acquisition-div').addClass('hidden');
+		$('.view-close').removeClass('hidden');
 		$('.material-close').addClass('hidden');
 		$('.edit-close').removeClass('hidden');
 		$('.modal-title').text('View Material');
 		$('#material-reset').addClass('hidden');
 		$('#material-submit').addClass('hidden');
 		$('.co-author').addClass('hidden');
-		$('#add-co-author-button').addClass('hidden');
+		$('.add-co-author').addClass('hidden');
 		$('.acquisition-field').addClass('hidden');
 		$('.acquisition-radio').addClass('hidden');
 		$('.tables').removeClass('hidden');
@@ -1571,7 +1692,11 @@ $(document).ready(function (){
 		var material_id = $(this).find('input').val();
 		x = $(this);
 		x.css('cursor', 'wait');
+		$('body').css('cursor', 'wait');
+		$('tr').css('pointer-events', 'none');
 		viewMaterial(material_id).done(function(data){	
+			$('body').css('cursor', 'default');
+			$('tr').css('pointer-events', 'auto');
 			x.css('cursor', 'default');
 			if(data.category == 'Thesis'){
 				$('#description-field').text('Abstract');
@@ -1622,6 +1747,7 @@ $(document).ready(function (){
 	});
 
 	$('#edit-confirm-cancel').click(function(){
+		$('.modified').removeClass('hidden');
 		$('#copy-button').css('margin-right', '10%');
 		hideEditView();
 		$('#edit-confirm-modal').modal('hide');
@@ -1640,6 +1766,11 @@ $(document).ready(function (){
 	var editCounter = false;
 
 	$('#edit-button').click(function(){
+		$('.modified').addClass('hidden');
+		$('.acquisition-div').removeClass('hidden');
+		$('.donors').addClass('hidden');
+		$('.purchases').addClass('hidden');
+		$('.view-close').addClass('hidden');
 		$('#copy-button').css('margin-right', '18%');
 		$('#description-field').parent().removeClass('hidden');
 		editCounter = true;
@@ -1650,10 +1781,9 @@ $(document).ready(function (){
 		$('.cancel-edit').removeClass('hidden');
 		$('#edit-button').addClass('hidden');
 		$('.author-table').addClass('hidden');
-		$('.table-donors').addClass('hidden');
 		$('.table-tags').addClass('hidden');
 		$('select').prop('disabled', false);
-		$('#add-co-author-button').removeClass('hidden');		
+		$('.add-co-author').removeClass('hidden');		
 		$('#material-submit').removeClass('hidden');
 		$('#material-reset').removeClass('hidden');
 		$('.tag').removeClass('hidden');
@@ -1689,6 +1819,7 @@ $(document).ready(function (){
 				$('#add-co-author-button').trigger('click');
 			}
 		}
+
 		i=0;
 
 		$('.co-author').each(function(){
@@ -1696,6 +1827,33 @@ $(document).ready(function (){
 			$(this).children('.middlenames').children('.input-group').children('input').val(arrays[i+1]);
 			$(this).children('.lastnames').children('.input-group').children('input').val(arrays[i+2]);
 			i+=3;
+		});
+
+		for(i=0;i<donorsLength;i++){
+			$('#add-donor-button').trigger('click');
+		}
+
+		i=0;
+		$('.co-donor').each(function(){
+			$(this).children('.donor-copies').children('.input-group').children('input').val(donorCopiesArray[i]);
+			$(this).children('.donor-firstnames').children('.input-group').children('input').val(donorFirstnamesArray[i]);
+			$(this).children('.donor-middlenames').children('.input-group').children('input').val(donorMiddlenamesArray[i]);
+			$(this).children('.donor-lastnames').children('.input-group').children('input').val(donorLastnamesArray[i]);
+			$(this).children('.donor-dates').children('.input-group').children('input').val(donorDatesArray[i]);
+			i++;
+		});		
+
+		for(i=0;i<purchLength;i++){
+			$('#add-purchased-button').trigger('click');
+		}
+
+		i=0;
+		$('.co-purchased').each(function(){
+			$(this).children('.purchased-copies').children('.input-group').children('input').val(purchCopiesArray[i]);
+			$(this).children('.purchased-amounts').children('.input-group').children('input').val(purchAmountsArray[i]);
+			$(this).children('.purchased-dates').children('.input-group').children('input').val(purchDatesArray[i]);
+			$(this).children('.purchased-addresses').children('.input-group').children('input').val(purchAddressesArray[i]);		
+			i++;
 		});
 
 		if(category == 'Photographs'){
@@ -1726,21 +1884,6 @@ $(document).ready(function (){
 		}
 		else{
 			$('.unpublished').trigger('click');
-		}
-		if(donor_year != ''){
-			$('.donated').trigger('click');
-			$('.donated-div').removeClass('hidden');
-			$('#donor-firstname').val(donor_firstname);
-			$('#donor-middlename').val(donor_middlename);
-			$('#donor-lastname').val(donor_lastname);
-			$('#donated-year').val(donor_year);			
-		}
-		else{
-			$('.purchased').trigger('click');
-			$('.purchased-div').removeClass('hidden');
-			$('#amount').val(amount);
-			$('#purchased-year').val(purchased_year);
-			$('#address').val(address);		
 		}
 	});
 
@@ -1777,7 +1920,13 @@ $(document).ready(function (){
 		}
 		for(i=1;i<=prodCounter;i++){
 			$('.delete-prod').trigger('click');
-		}		
+		}
+		for(i=0;i<donorsLength;i++){
+			$('.delete-donor').trigger('click');
+		}
+		for(i=0;i<purchLength;i++){
+			$('.delete-purchased-details').trigger('click');
+		}
 		for(i=1;i<=tagCounter;i++){
 			$('.remove-tag').trigger('click');
 		}
@@ -1793,14 +1942,6 @@ $(document).ready(function (){
 		else{
 			$('.photograph').removeClass('hidden');
 		}
-		if(donor_year != ''){
-			$('.table-donors').removeClass('hidden');
-			$('.purchased-div').addClass('hidden');
-		}
-		else{
-			$('.table-donors').addClass('hidden');
-			$('.purchased-div').removeClass('hidden');
-		}
 		if(publisher_name != ''){
 			$('.publisher-field').removeClass('hidden');
 		}
@@ -1814,14 +1955,13 @@ $(document).ready(function (){
 		$('.size-type').append().html(photo_type + " <span class='caret'></span>");		
 		$('#material-reset').addClass('hidden');
 		$('#material-submit').addClass('hidden');
-		$('.donated-div').addClass('hidden');
 		$('.acquisition-field').addClass('hidden');
 		$('.acquisition-radio').addClass('hidden');
 		$('.acquisition-field').addClass('hidden');		
 		$('.publish-radio').addClass('hidden');		
 		$('.co-author').addClass('hidden');
 		$('.tag').addClass('hidden');
-		$('#add-co-author-button').addClass('hidden');	
+		$('.add-co-author').addClass('hidden');	
 		$('.author-table').removeClass('hidden');
 		$('select').prop('disabled', true);
 		$('.cancel-edit').addClass('hidden');
@@ -1833,7 +1973,11 @@ $(document).ready(function (){
 		$('#course').val(course);
 		$('#hours').val(durationArray[0]);
 		$('#minutes').val(durationArray[1]);
-		$('#seconds').val(durationArray[2]);		
+		$('#seconds').val(durationArray[2]);
+		$('.acquisition-div').addClass('hidden');
+		$('.purchases').removeClass('hidden');
+		$('.donors').removeClass('hidden');
+		$('.view-close').removeClass('hidden');			
 	}
 
 	$('.cancel-edit').click(function(){
@@ -1891,7 +2035,7 @@ $(document).ready(function (){
 
 	$('.search-material-button').click(function(){
 		$('#pagination-demo').removeClass('hidden');
-		$('.borrowed-pagination').addClass('hidden');
+		$('#borrowed-pagination').addClass('hidden');
 		$('.results-div').removeClass('hidden');
 		$('.borrowed-results-div').addClass('hidden');
 		$('.search').val('');
@@ -2145,14 +2289,13 @@ $(document).ready(function (){
 		$('#no-borrowed-materials').addClass('hidden');
 		$('.search-type').html('Username ' + "<span class='caret'></span>");
 		searchType = 'borrowedUsername';
-		// showMaterial(searchType);	
 		$('.search-type').val('borrowedUsername');
 		$('.type-dropdown').addClass('hidden');
 		$('.borrowed-dropdown').removeClass('hidden');
 		$('.material-table').addClass('hidden');
 		$('.confirm-material-table').removeClass('hidden');
 		$('#pagination-demo').addClass('hidden');
-		$('.borrowed-pagination').removeClass('hidden');
+		$('#borrowed-pagination').removeClass('hidden');
 	});
 
 	function removeBorrowed(value){
@@ -2293,6 +2436,11 @@ $(document).ready(function (){
 	});
 	// end of borrow materials script
 	// search and sort script
+
+	$('.sort-buttons').click(function(){
+		$('.sort-buttons').removeClass('btn-success active').addClass('btn-default');
+		$(this).removeClass('btn-default').addClass('btn-success active');
+	});
 
 	var sortType = 'materials';
 	$('#sort-materials').click(function(){
@@ -3382,28 +3530,99 @@ $(document).ready(function (){
 
 	// add additional copy script
 
-	// var copyNum = 1;
-	// $('#add-copy-button').click(function(){
-	// 	var newCopy = $(document.createElement('div')).attr('class', 'form-group extra-copy');
-	// 	newCopy.after().html(
-	// 		"<div class='acquisition-field'>" +
-	// 			"<br/>" +
-	// 			"<div class='form-group acquisition-radio'>" +
-	// 				"<div class='input-group'>" +
-	// 					"<label class='radio-inline'>" +
-	// 						"<input type='radio' class='acquisition-mode donated' name='acquisition-mode" + copyNum  + "' value='donated'/>Donated " +
-	// 					"</label>" +
-	// 					"<label class='radio-inline'>" +
-	// 						"<input type='radio' class='acquisition-mode purchased' name='acquisition-mode" + copyNum + "' value='purchased'/>Purchased " +
-	// 					"</label>" +						
-	// 				"</div>" +
-	// 				"<span class='acquisition-mode-help help-block hidden'><strong></strong></span>" +
-	// 			"</div>" +
-	// 		"</div>"
-	// 	);
-	// 	$('.add-copy').append(newCopy);
-	// 	copyNum++;
-	// });
+	var donorNum = 0;
+	$('#add-donor-button').click(function(){
+		var newDonor = $(document.createElement("div")).attr('class', 'form-group co-donor');
+		newDonor.after().html(
+			"<span class='donor-copies'>" +
+				"<div class='input-group'>" +
+					"<span class='input-group-addon label-title'>Number of copies*</span>" +
+					"<input type='number' min='0' class='donor-copies form-control' placeholder='0'/>" +
+				"</div>" +
+				"<span class='donor-copy-help help-block hidden'><strong></strong></span>" +
+			"</span>" +
+			"<span class='donor-firstnames'>" +
+				"<div class='input-group'>" +
+					"<span class='input-group-addon label-title'>First Name*</span>" +
+					"<input type='text' class='donor-firstname form-control' placeholder='Francis'/>" +
+				"</div>" +
+				"<span class='donor-first-name-help help-block hidden'><strong></strong></span>" +
+			"</span>" +
+			"<span class='donor-middlenames'>" +
+				"<div class='input-group'>" +
+					"<span class='input-group-addon label-title'>Middle Name*</span>" +
+					"<input type='text' class='donor-middlename form-control' placeholder='Wundt'/>" +
+				"</div>" +
+				"<span class='donor-middle-name-help help-block hidden'><strong></strong></span>" +
+			"</span>" +
+			"<span class='donor-lastnames'>" +
+				"<div class='input-group'>" +
+					"<span class='input-group-addon label-title'>Last Name*</span>" +
+					"<input type='text' class='donor-lastname form-control' placeholder='Wertheimer'/>" +
+				"</div>" +
+				"<span class='donor-last-name-help help-block hidden'><strong></strong></span>" +
+			"</span>" +
+			"<span class='donor-dates'>" +
+				"<div class='input-group'>" +
+					"<span class='input-group-addon label-title'>Date*</span>" +
+					"<input type='date' class='donated-date form-control' />" +
+				"</div>" +
+				"<span class='donor-date-help help-block hidden'><strong></strong></span>" +
+			"</span>" +
+			"<button type='button' class='btn btn-danger co-author-button delete-donor'>Delete Donor</button>"
+		);
+		$('.add-donor').append(newDonor);
+		donorNum++;
+	});
+
+	var purchasedNum = 0;
+	$('#add-purchased-button').click(function(){
+		var newPurchased = $(document.createElement("div")).attr('class', 'form-group co-purchased');
+		newPurchased.after().html(
+			"<span class='purchased-copies'>" +
+				"<div class='input-group'>" +
+					"<span class='input-group-addon label-title'>Number of copies*</span>" +
+					"<input type='number' class='purchased-copy form-control' placeholder='0'/>" +
+				"</div>" +
+				"<span class='purchased-copy-help help-block hidden'><strong></strong></span>" +
+			"</span>" +
+			"<span class='purchased-amounts'>" +
+				"<div class='input-group'>" +
+					"<span class='input-group-addon label-title'>Amount*</span>" +
+					"<input type='number' min='0' class='purchased-amount form-control' placeholder='0'/>" +
+					"<span class='input-group-addon'>&#8369;</span>" +
+				"</div>" +
+				"<span class='purchased-amount-help help-block hidden'><strong></strong></span>" +
+			"</span>" +
+			"<span class='purchased-dates'>" +
+				"<div class='input-group'>" +
+					"<span class='input-group-addon label-title'>Date*</span>" +
+					"<input type='date' class='purchased-date form-control' />" +
+				"</div>" +
+				"<span class='purchased-date-help help-block hidden'><strong></strong></span>" +
+			"</span>" +
+			"<span class='purchased-addresses'>" +
+				"<div class='input-group'>" +
+					"<span class='input-group-addon label-title'>Address*</span>" +
+					"<input type='text' class='purchased-address form-control' placeholder='Apollo St.'/>" +
+				"</div>" +
+				"<span class='purchased-address-help help-block hidden'><strong></strong></span>" +
+			"</span>" +
+			"<button type='button' class='btn btn-danger co-author-button delete-purchased-details'>Delete Purchased Details</button>"	
+		);
+		$('.add-purchased').append(newPurchased);
+		purchasedNum++;
+	});
+
+	$('body').on('click', '.delete-donor', function(){
+		$(this).parent().remove();
+		donorNum--;
+	});
+
+	$('body').on('click', '.delete-purchased-details', function(){
+		$(this).parent().remove();
+		purchasedNum--;
+	});
 
 	// end of add additional copy script
 

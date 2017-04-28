@@ -8,7 +8,7 @@ class Material extends Model
 {
     protected $table = 'material';
     protected $primaryKey = 'acqNumber';
-    protected $fillable = ['acqNumber', 'title', 'status', 'material_type_id', 'publisher_id', 'donor_id', 'location_id', 'description', 'copy_count'];
+    protected $fillable = ['acqNumber', 'title', 'status', 'material_type_id', 'publisher_id', 'location_id', 'description', 'copy_count'];
     public $incrementing = false;
 
     public function borrow()
@@ -35,21 +35,21 @@ class Material extends Model
     {
         return $this->belongsToMany(Producer::class, 'produced', 'acqNumber', 'producer_id');
     }
+    public function purchased_details()
+    {
+        return $this->hasMany(Purchase_Detail::class, 'acqNumber');
+    }
+    public function donor()
+    {
+        return $this->belongsToMany(Donor::class, 'material_donors', 'acqNumber', 'donor_id');
+    }        
     public function publisher()
     {
         return $this->belongsTo(Publisher::class);
     }
-    public function donor()
-    {
-        return $this->belongsTo(Donor::class);
-    }
     public function material_type()
     {
         return $this->belongsTo(MaterialType::class, 'material_type_id');
-    }
-    public function purchased_details()
-    {
-        return $this->hasOne(Purchase_Detail::class, 'acqNumber');
     }
     public function location()
     {

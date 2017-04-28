@@ -5,7 +5,7 @@
 	<div class="col-md-12 @if(Auth::user()->status == 'unconfirmed') borrowed-div @else confirm-div @endif " data-toggle="tooltip" data-placement="top">
 		<button 
 			@if(Auth::user()->status == 'unconfirmed') disabled @endif type='button' 
-			class='btn btn-default borrowed-button'>Borrowed Materials
+			class='btn btn-primary borrowed-button'>Borrowed Materials
 			@if($borrowed !=0)
 			<span class="borrow-badge badge">
 				{{$borrowed}}
@@ -22,7 +22,7 @@
 			<div class='input-group'>
 				<div class='input-group-btn'>
 					<div class='dropdown'>
-						<button class='btn btn-default dropdown-toggle search-type' type='button' data-toggle='dropdown' value='Title'>Title<span class='caret'></span></button>
+						<button class='btn btn-primary dropdown-toggle search-type' type='button' data-toggle='dropdown' value='Title'>Title <span class='caret'></span></button>
 						<ul class='dropdown-menu type-dropdown'>
 							<li><a href="#">Title</a></li>					
 							<li><a href="#">Accession Number</a></li>

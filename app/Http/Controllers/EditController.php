@@ -49,8 +49,6 @@ class EditController extends Controller
    }
 
     public function edit(Request $request, Material $acqNumber){
-              // return DB::table('material_copies')->select('copy_acqNumber')
-      //   ->orderBy(DB::raw('LPAD(lower(copy_acqNumber), 10,0)', 'DESC'))->first();
         $this->deleteMaterial($acqNumber, 'true', $request->picname, $request->acqNumber, $request);
         $this->addMaterial($request, 'true');
         return back()->with('status', $request->title . ' edited successfully!');      

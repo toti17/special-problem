@@ -14,12 +14,4 @@ class MaterialCopy extends Model
 	{
 		return $this->belongsTo(Material::class, 'acqNumber');
 	}
-	public function purchased_detail()
-	{
-		return $this->hasOne(Purchase_Detail::class, 'copy_acqNumber');
-	}
-	public function donor()
-	{
-	return $this->belongsTo(Donor::class);
-	}
 }

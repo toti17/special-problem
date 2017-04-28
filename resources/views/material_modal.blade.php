@@ -23,11 +23,11 @@
 					<div>
 					<h4>Details</h4>
 					@if(Auth::user()->type == "admin" || Auth::user()->type == "staff")
-					<button type='button' class='btn btn-default pull-right hidden edit-button' id='edit-button'>Edit</button>
-					<button type='button' class='btn btn-default pull-right cancel-edit hidden edit-button'>Cancel Edit</button>
+					<button type='button' class='btn btn-info pull-right hidden edit-button' id='edit-button'>Edit</button>
+					<button type='button' class='btn btn-warning pull-right cancel-edit hidden edit-button'>Cancel Edit</button>
 					@elseif(Auth::user()->type == 'user')
 					<div class='borrow-button-div tool-tip' data-toggle="tooltip" data-placement="top">
-						<button type='button' class='btn btn-default pull-right hidden borrow-button' id='borrow-button' @if(Auth::user()->status == 'unconfirmed') disabled @endif 
+						<button type='button' class='btn btn-primary pull-right hidden borrow-button' id='borrow-button' @if(Auth::user()->status == 'unconfirmed') disabled @endif 
 						>Borrow</button>
 					</div>
 					@endif
@@ -94,15 +94,7 @@
 						</div>
 						<span class="location-help help-block hidden">
 							<strong></strong>
-						</span>	
-
-						<div class="input-group">
-							<span class='input-group-addon label-title'>Number of Copies</span>
-							<input type='number' id='copy' class='form-control' placeholder='1' name='copy' value="{{ old('copy') }}" />
-						</div>
-						<span class="copy-help help-block hidden">
-							<strong></strong>
-						</span>										
+						</span>									
 
 						<div class='input-group'>
 							<span class='input-group-addon label-title' id='description-field'>Description</span>
@@ -250,18 +242,21 @@
 						</div>
 						<div class='prod-head'></div>
 					</div>
-					<h4 class='tags-header'>Tags</h4>
+
+					<div class='tags-div hidden'>
+						<h4 class='tags-header'>Tags</h4>
+						
+						<div class='table-responsive'>
+							<table class='table table-bordered table-striped tables'>
+								<tbody class='table-tags'>
+									
+								</tbody>
+							</table>
+						</div>	
+					</div>
 					
-					<div class='table-responsive'>
-						<table class='table table-bordered table-striped tables'>
-							<tbody class='table-tags'>
-								
-							</tbody>
-						</table>
-					</div>					
-					
-					<div class='form-group'>
-						<div class='tag'>
+					<div class='form-group tag'>
+						<h4>Tags</h4>
 						<div class='input-group'>
 							<span class='input-group-addon label-title'>Tag</span>
 							<input type='text' id='tag' class='form-control' placeholder='Computer Science' name='tag' value="{{ old('tag') }}" />
@@ -274,8 +269,7 @@
 						</div>
 						<span class="tag-help help-block hidden">
 							<strong></strong>
-						</span>						
-						</div>
+						</span>
 						<span class='tags'></span>																
 					</div>
 
@@ -321,105 +315,70 @@
 					</div>
 					</div>
 					@if(Auth::user()->type != "user")
-					<div class='acquisition-field'>
-						<h4>Acquisition</h4>
-						<div class='form-group acquisition-radio'>				
-							<div class='input-group'>
-								<label class='radio-inline'>
-									<input type='radio' class='acquisition-mode donated' name='acquisition-mode' value="{{ old('acquisition-mode') }}" />Donated
-								</label>
-								<label class='radio-inline'>
-									<input type='radio' class='acquisition-mode purchased' name='acquisition-mode' value="{{ old('acquisition-mode') }}" />Purchased
-								</label>
-							</div>						
 
-							<span class="acquisition-mode-help help-block hidden">
-								<strong></strong>
-							</span>
+
+					<div class='donors hidden'>
+						<h4>Donors</h4>
+						<div class='table-responsive'>
+							<table class='table table-bordered table-striped tables table-donors'>
+								<thead>
+									<tr>
+										<th>Donor</th>
+										<th>Copies</th>
+										<th>Date</th>
+									</tr>
+								</thead>
+								<tbody class='tbody-donors'>
+								</tbody>
+							</table>						
 						</div>
-					</div>
-					<div class='table-responsive'>
-						<table class='table table-bordered table-striped tables table-donors hidden'>
-							<thead>
-								<tr>
-									<th>Donor</th>
-									<th>Year donated</th>
-								</tr>
-							</thead>
-							<tbody>
-								<tr>
-									<td class='td-donor'></td>
-									<td class='td-year'></td>
-								</tr>
-							</tbody>
-						</table>
-					</div>
-					<div class='form-group donated-div hidden'>
-						<h4>Donor Details</h4>
-						<div class='input-group'>
-							<span class='input-group-addon label-title'>First Name*</span>
-							<input type='text' id='donor-firstname' class='form-control' placeholder='Francis' name='donor-firstname' value="{{ old('donor-firstname') }}" />						
-						</div>
-						<span class="donor-first-name-help help-block hidden">
-							<strong></strong>
-						</span>					
-						<div class='input-group'>
-							<span class='input-group-addon label-title'>Middle Name*</span>
-							<input type='text' id='donor-middlename' class='form-control' placeholder='Wundt' name='donor-middlename' value="{{ old('donor-middlename') }}" />						
-						</div>
-						<span class="donor-middle-name-help help-block hidden">
-							<strong></strong>
-						</span>					
-						<div class='input-group'>
-							<span class='input-group-addon label-title'>Last Name*</span>
-							<input type='text' id='donor-lastname' class='form-control' placeholder='Wertheimer' name='donor-lastname' value="{{ old('donor-lastname') }}" />						
-						</div>	
-						<span class="donor-last-name-help help-block hidden">
-							<strong></strong>
-						</span>					
-						<div class='input-group'>
-							<span class='input-group-addon label-title'>Year*</span>
-							<input type='number' id='donated-year' class='form-control' placeholder='2003' name='donated-year' value="{{ old('donated-year') }}" />
-						</div>
-						<span class="donor-year-help help-block hidden">
-							<strong></strong>
-						</span>																		
 					</div>
 
-					<div class='form-group purchased-div hidden'>
-						<h4>Purchased Details</h4>
-						<div class='input-group'>
-							<span class='input-group-addon label-title'>Amount*</span>
-							<input type='text' id='amount' class='form-control' placeholder='1000' name='amount' value="{{ old('amount') }}" />	
-							<span class='input-group-addon'>&#8369;</span>				
+					<div class='purchases hidden'>
+						<h4>Purchases</h4>
+						<div class='table-responsive'>
+							<table class='table table-bordered table-striped tables table-purchases'>
+								<thead>
+									<tr>
+										<th>Amount</th>
+										<th>Copies</th>
+										<th>Date</th>
+										<th>Address</th>
+									</tr>
+								</thead>
+								<tbody class='tbody-purchases'>
+								</tbody>
+							</table>						
 						</div>
-						@if ($errors->has('amount'))
-						    <span class="help-block">
-						        <strong>{{ $errors->first('amount') }}</strong>
-						    </span>
-						@endif						
-						<span class="amount-help help-block hidden">
-							<strong></strong>
-						</span>					
-						<div class='input-group'>
-							<span class='input-group-addon label-title'>Year*</span>
-							<input type='number' id='purchased-year' class='form-control' placeholder='2010' name='purchased-year' value="{{ old('purchased-year') }}" />						
-						</div>	
-						<span class="purchased-year-help help-block hidden">
-							<strong></strong>
-						</span>					
-						<div class='input-group'>
-							<span class='input-group-addon label-title'>Address*</span>
-							<input type='text' id='address' class='form-control' placeholder='National Book Store' name='address' value="{{ old('address') }}" />						
-						</div>	
-						<span class="purchased-address-help help-block hidden">
-							<strong></strong>
-						</span>							
 					</div>
 
-<!-- 					<div class='form-group add-copy'>
-						<button type='button' class='btn btn-success co-author-button' id='add-copy-button'>Add Copy</button>
-					</div>			 -->		
+
+					<div class='acquisition-div'>
+						<div class='form-group'>
+							<h4>Acquisition Details</h4>
+						</div>
+
+						<span class="acquisition-details-help help-block hidden">
+							<strong></strong>
+						</span>					
+
+						<input type='hidden' name='copy' id='copies'/>
+
+						<div class='form-group add-donor'>
+							<button type='button' class='btn btn-success co-author-button' id='add-donor-button'>Add Donor/s</button>
+							<input type='hidden' name='donorCopies' id='donorCopies'/>
+							<input type='hidden' name='donors' id='donors'/>
+							<input type='hidden' name='donorDates' id='donorDates'/>
+						</div>	
+
+						<div class='form-group add-purchased'>
+							<button type='button' class='btn btn-success co-author-button' id='add-purchased-button'>Add Purchased Details</button>
+							<input type='hidden' name='purchasedCopies' id='purchasedCopies'/>
+							<input type='hidden' name='purchasedAmount' id='purchasedAmount'/>
+							<input type='hidden' name='purchasedDate' id='purchasedDate'/>
+							<input type='hidden' name='purchasedAddress' id='purchasedAddress'/>
+						</div>	
+					</div>
 
 					<h4 id='image-header' class='hidden'>Image Upload</h4>
 					<div class='form-group image-group hidden'>
@@ -438,7 +397,10 @@
 					@endif
 				</div>
 				<div class='modal-footer'>
+					@if(Auth::user()->type == 'admin' || Auth::user()->type == 'staff') <p class='pull-left modified'><i>Last modified by: <span class='username'></span></i></p>@endif
+					<div class='clearfix'></div>					
 					<div class='material-buttons'>
+						<button type="button" data-dismiss="modal" class="view-close btn btn-info">Close</button>
 						<button type='button' class="btn btn-default material-close @if (Auth::user()->type == 'user') pull-right @else pull-left @endif " aria-label='Close'>Close</button>
 						<button type='reset' id='material-reset' class='btn btn-danger'>Reset</button>
 						<button type='submit' id='material-submit' class='btn btn-success'>Add</button>
@@ -508,13 +470,14 @@
 			</div>
 			<div class="modal-body">
 				<div class='row'>
-					<div class='col-md-6 multimedia-div'>
+					<div class='col-md-6'>
 						<h4 class='text-center'>Details</h4>
+						<hr/>
 						<p>Category: <span class='con-category'></span></p>
 						<p>Accession Number: <span class='con-acq'></span></p>
 						<p>Title: <span class='con-title'></span></p>
 						<p>Location: <span class='con-location'></span></p>
-						<p>Copy : <span class='con-count hidden'></span></p>
+						<p>Total Copies : <span class='con-count'></span></p>
 						<p class='description-div hidden'>Description: <span class='con-description'></span></p>
 						<span class='con-thesis hidden'>
 							<p>School: <span class='con-school'></span></p>
@@ -528,18 +491,21 @@
 							<p>Duration: <span class='con-duration'></span></p>
 						</span>
 					</div>
-					<div class='col-md-6 multimedia-div'>
+					<div class='col-md-6'>
 						<h4 class='text-center person'>Authors</h4>
+						<hr/>
 						<p>Full Name: <span class='con-fullname'></span></p>
 					</div>
 					<div class='col-md-4 prod-div hidden'>
 						<h4>Producers</h4>
+						<hr/>
 						<p>Full Name: <span class='con-prod-fullname'></span></p>
 					</div>
 				</div>
 				<div class='row'>
 					<div class='col-md-6'>
 						<h4 class='text-center'>Publish Details</h4>
+						<hr/>
 						<p>Publish Status: <span class='con-pub-status'></span></p>	
 						<span class='published-span hidden'>			
 							<p>Publisher: <span class='con-pub-fullname'></span></p>
@@ -548,21 +514,20 @@
 						</span>
 					</div>
 					<div class='col-md-6'>
-						<h4 class='text-center'>Acquisition</h4>
 						<span class='confirm-donors hidden'>
-							<p>Donor: <span class='con-donor'></span></p>
-							<p>Date Donated: <span class='con-date-donated'></span></p>
+							<h4 class='text-center'>Donor/s</h4>
+							<hr/>
 						</span>
 						<span class='confirm-purchased hidden'>
-							<p>Amount: <span class='con-amount'></span></p>
-							<p>Date Purchased: <span class='con-pur-date'></span></p>
-							<p>Purchased Address: <span class='con-pur-address'></span></p>
+							<h4 class='text-center'>Purchase/s</h4>
+							<hr/>
 						</span>
 					</div>							
 				</div>
 				<div class='row'>
 					<div class='col-md-6 con-tags hidden'>
 						<h4 class='text-center'>Tags</h4>
+						<hr/>
 						<p>Tags: <span class='con-tag'></span></p>				
 					</div>
 				</div>

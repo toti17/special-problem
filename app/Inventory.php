@@ -14,6 +14,10 @@ class Inventory extends Model
     {
         return $this->belongsTo(Inventory_Type::class, 'inventory_type_id');
     }
+    public function user()
+    {
+        return $this->belongsToMany(User::class, 'modified', 'acqNumber', 'username')->withTimestamps();
+    }
     public function owner()
     {
         return $this->belongsTo(Owner::class, 'owner_id');

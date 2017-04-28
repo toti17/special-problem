@@ -20,14 +20,8 @@
 				<div class='modal-body'>
 					<div>
 						<h4>Details</h4>
-						@if(Auth::user()->type == "admin" || Auth::user()->type == "staff")
-						<button type='button' class='btn btn-default pull-right hidden edit-button' id='inventory-edit-button'>Edit</button>
-						<button type='button' class='btn btn-default pull-right hidden edit-button hidden' id='inventory-cancel-edit-button'>Cancel Edit</button>
-						@elseif(Auth::user()->type == 'user')
-						<div class='tool-tip' data-toggle="tooltip" data-placement="top">
-							<button type='button' class='btn btn-default pull-right hidden borrow-button' id='borrow-button'>Borrow</button>
-						</div>
-						@endif
+						<button type='button' class='btn btn-info pull-right hidden edit-button' id='inventory-edit-button'>Edit</button>
+						<button type='button' class='btn btn-warning pull-right hidden edit-button hidden' id='inventory-cancel-edit-button'>Cancel Edit</button>
 					</div>
 					<div class='table-responsive details-div edit-table hidden'>
 						<table class='table table-bordered table-striped tables table-details'>
@@ -515,8 +509,10 @@
 					@endif			
 				</div>
 				<div class='modal-footer'>
+					@if(Auth::user()->type == 'admin' || Auth::user()->type == 'staff') <p class='pull-left modified'><i>Last modified by: <span class='username'></span></i></p>@endif
+					<div class='clearfix'></div>
 					<div class='material-buttons'>
-						<button type='button' class='btn btn-default view-invent-button-close inventory-close hidden' aria-label='Close'>Close</button>
+						<button type='button' class=' btn btn-info view-invent-button-close inventory-close hidden' aria-label='Close'>Close</button>
 						<button type='reset' id='inventory-reset' class='inventory-reset btn btn-danger invent-button'>Reset</button>
 						<button type='submit' id='inventory-submit' class='btn btn-success invent-button'>Add</button>
 					</div>
@@ -600,6 +596,7 @@
 				<div class='row'>
 					<div class='col-md-6'>
 						<h4 class='text-center'>Details</h4>
+						<hr/>
 						<p>Category: <span class='con-category'></span></p>
 						<p>Accession Number: <span class='con-acq'></span></p>
 						<p>Location: <span class='con-location'></span></p>
@@ -608,6 +605,7 @@
 					</div>
 					<div class='col-md-6'>
 						<h4 class='text-center'>Owner</h4>
+						<hr/>
 						<p>Full Name: <span class='con-fullname'></span></p>
 						<p>Nickname: <span class='con-nickname'></span></p>
 						<p>Locality: <span class='con-local'></span></p>
@@ -616,6 +614,7 @@
 				<div class='row'>
 					<div class='col-md-6'>
 						<h4 class='text-center'>Physical Descriptions</h4>
+						<hr/>
 						<p>Length: <span class='con-length'></span></p>
 						<p>Width: <span class='con-width'></span></p>
 						<p>Condition: <span class='con-condition'></span></p>
@@ -626,6 +625,7 @@
 					</div>	
 					<div class='col-md-6'>
 						<h4 class='text-center'>Acquisition</h4>
+						<hr/>
 						<span class='confirm-donors hidden'>
 							<p>Donor: <span class='con-donor'></span></p>
 							<p>Date Donated: <span class='con-date-donated'></span></p>

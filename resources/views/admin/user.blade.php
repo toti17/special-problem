@@ -3,10 +3,10 @@
 
 <div class="row">
     @if(Auth::user()->type == "admin")
-    <button id="student-button" type="button" class="btn btn-default">Add Student/Faculty Number</button>
-    <button id="user-button" type="button" class="btn btn-default">Add User</button>
+    <button id="student-button" type="button" class="btn btn-default">Add Student/Faculty Number &nbsp;<span class='glyphicon glyphicon-plus'></span></button>
+    <button id="user-button" type="button" class="btn btn-default">Add User &nbsp;<span class='glyphicon glyphicon-user'></span></button>
     @endif
-     <button id='confirm-account-button' type='button' class="btn btn-default @if(Auth::user()->type =='staff') hidden @endif ">Confirm Accounts</button>
+     <button id='confirm-account-button' type='button' class="btn btn-default @if(Auth::user()->type =='staff') hidden @endif ">Confirm Accounts &nbsp;<span class='glyphicon glyphicon-ok'></span></button>
 </div>
 
 @if(session('studentnumberStatus'))
@@ -26,7 +26,7 @@
     <div class='input-group'>
         <div class='input-group-btn'>
             <div class='dropdown'>
-                <button class='btn btn-default dropdown-toggle search-type' type='button' data-toggle='dropdown' value='Username'>Username <span class='caret'></span></button>
+                <button class='btn btn-primary dropdown-toggle search-type' type='button' data-toggle='dropdown' value='Username'>Username <span class='caret'></span></button>
                 <ul class='dropdown-menu type-dropdown'>
                     <li><a href="#">Username</a></li>
                     <li><a href="#">Fullname</a></li>
@@ -34,7 +34,7 @@
                 </ul>
             </div>
         </div>          
-        <input type='text' class = 'form-control search'/>
+        <input type='text' class = 'form-control search' placeholder='Search here...'/>
     </div>
 </div>
 
