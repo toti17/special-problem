@@ -84,33 +84,33 @@ class Controller extends BaseController
    	}
 
     	public function addInventory(Request $request){
-		$category = $request->category;
-		$acqNumber = $request->acqNumber;
-		$object = $request->object;
-		$english_names = explode(',', $request->engNames);
-		$venacular_names = explode(',', $request->venNames);
-		$owner_first_name = $request->input('owner-firstname');
-		$owner_middle_name = $request->input('owner-middlename');
-		$owner_last_name = $request->input('owner-lastname');
-		$owner_nickname = $request->input('owner-nickname');
-		$owner_locality = $request->local;
-		$unit = $request->unit;
-		$length = $request->length;
-		$width = $request->width;
-		$condition = $request->condition;
-		$materials = explode(',', $request->materials);
-		$colors = explode(',', $request->colors);
-		$decorations = explode(',', $request->decorations);
-		$marks = explode(',', $request->marks);
-		$acquisition = $request->input('acquisition-mode');
-		$donor_firstname = $request->input('donor-firstname');
-		$donor_middlename = $request->input('donor-middlename');
-		$donor_lastname = $request->input('donor-lastname');
-		$donor_date = $request->input('donated-date');
-		$amount = $request->amount;
-		$address = $request->address;
-		$purchased_date = $request->input('purchased-date');
-		$picture = $request->pic;   
+		$category = strip_tags($request->category);
+		$acqNumber = strip_tags($request->acqNumber);
+		$object = strip_tags($request->object);
+		$english_names = explode(',', strip_tags($request->engNames));
+		$venacular_names = explode(',', strip_tags($request->venNames));
+		$owner_first_name = strip_tags($request->input('owner-firstname'));
+		$owner_middle_name = strip_tags($request->input('owner-middlename'));
+		$owner_last_name = strip_tags($request->input('owner-lastname'));
+		$owner_nickname = strip_tags($request->input('owner-nickname'));
+		$owner_locality = strip_tags($request->local);
+		$unit = strip_tags($request->unit);
+		$length = strip_tags($request->length);
+		$width = strip_tags($request->width);
+		$condition = strip_tags($request->condition);
+		$materials = explode(',', strip_tags($request->materials));
+		$colors = explode(',', strip_tags($request->colors));
+		$decorations = explode(',', strip_tags($request->decorations));
+		$marks = explode(',', strip_tags($request->marks));
+		$acquisition = strip_tags($request->input('acquisition-mode'));
+		$donor_firstname = strip_tags($request->input('donor-firstname'));
+		$donor_middlename = strip_tags($request->input('donor-middlename'));
+		$donor_lastname = strip_tags($request->input('donor-lastname'));
+		$donor_date = strip_tags($request->input('donated-date'));
+		$amount = strip_tags($request->amount);
+		$address = strip_tags($request->address);
+		$purchased_date = strip_tags($request->input('purchased-date'));
+		$picture = strip_tags($request->pic);
 
 		if($picture){
 			$ext = $picture->extension();
@@ -127,7 +127,7 @@ class Controller extends BaseController
 		$inventory->acqNumber = $acqNumber;
 		$inventory->object = $object;
 
-		$location = Location::firstorNew(['location_name' => $request->location]);
+		$location = Location::firstorNew(['location_name' => strip_tags(trim($request->location))]);
 		$location->save();
 		$inventory->location_id = $location->getKey();
 
@@ -231,7 +231,7 @@ class Controller extends BaseController
 		}
         
 		$user = User::find(Auth::user()->username);
-		$user->modify()->attach($request->acqNumber);        
+		$user->modify()->attach(strip_tags($request->acqNumber));
 		return back()->with('status', $object . ' added successfully!');
 	}
 
@@ -359,26 +359,26 @@ class Controller extends BaseController
 	}
 	public function addMaterial(Request $request, $edit){
 		$total_copies = 0;
-		$numbers = $request->numbers;
-		$category = $request->input('category');
+		$numbers = strip_tags($request->numbers);
+		$category = strip_tags($request->input('category'));
 		$category = trim($category);
-		$material = Material::firstorNew(['acqNumber' => trim($request->input('acqNumber'))]);
+		$material = Material::firstorNew(['acqNumber' => strip_tags(trim($request->input('acqNumber')))]);
 		$material_type = new MaterialType;
 		$type = $material_type::where('type', '=', $category)->first();
 		$material->material_type_id = $type->getKey();
-		$material->title = trim($request->input('title'));
+		$material->title = trim(strip_tags($request->input('title')));
 
 		if(strlen($request->description) != 0){
-			$material->description = $request->description;
+			$material->description = strip_tags($request->description);
 		}
 
-		$location = Location::firstorNew(['location_name' => $request->location]);
+		$location = Location::firstorNew(['location_name' => strip_tags($request->location)]);
 		$location->save();
 		$material->location_id = $location->getKey();
 
 		if($category != 'Photographs' && $category != 'Compact Discs' 
 		&& $category != 'Digital Versatile Discs' && $category != 'Video Home Systems' && $category != 'Cassette Tapes'){
-			$authors = explode(',', $request->input('authors'));
+			$authors = explode(',', strip_tags($request->input('authors')));
 			for($i=0;$i<sizeof($authors); $i+=3){
 				$author = new Author;
 				$author = Author::firstorNew(['firstname' => trim($authors[$i]), 'middlename' => $authors[$i + 1], 'lastname' => trim($authors[$i + 2])]);
@@ -387,7 +387,7 @@ class Controller extends BaseController
 			}
 		}
 
-		$tags = explode(',', $request->input('tags'));
+		$tags = explode(',', strip_tags($request->input('tags')));
 		for($i=0;$i<sizeof($tags);$i++){
 			if($tags[$i] != ''){
 				$tag = Tags::firstorNew(['tag_name' => trim($tags[$i])]);
@@ -397,22 +397,22 @@ class Controller extends BaseController
 		}
 
 		if($request->input('publish-status') == 'published'){
-			$publisher_name = Publisher_Name::firstorNew(['publisher_name' => trim($request->input('publisher'))]);
-			$address = Address::firstorNew(['address_name' => trim($request->input('place'))]);
+			$publisher_name = Publisher_Name::firstorNew(['publisher_name' => strip_tags(trim($request->input('publisher')))]);
+			$address = Address::firstorNew(['address_name' => strip_tags(trim($request->input('place')))]);
 			$publisher_name->save();
 			$address->save();            
 			$publisher = new Publisher;
 			$publisher->publisher_name_id = $publisher_name->publisher_name_id;
 			$publisher->address_id = $address->address_id;
-			$publisher->year = trim($request->input('published-year'));
+			$publisher->year = strip_tags(trim($request->input('published-year')));
 			$publisher->save();
 			$material->publisher_id = $publisher->publisher_id;
 		}
 
 
-		if($request->donors != ""){
+		if(strip_tags($request->donors) != ""){
 
-			$donors = explode(',', $request->donors);
+			$donors = explode(',', strip_tags($request->donors));
 			$donor_id_array = [];
 			for($i=0; $i<sizeof($donors); $i+=3){
 				$donor_name = Donor_Name::firstorNew([
@@ -424,8 +424,8 @@ class Controller extends BaseController
 				array_push($donor_id_array, $donor_name->getKey());
 			}
 
-			$donor_copies = explode(',', $request->donorCopies);
-			$donor_dates = explode(',', $request->donorDates);
+			$donor_copies = explode(',', strip_tags($request->donorCopies));
+			$donor_dates = explode(',', strip_tags($request->donorDates));
 
 			for($i=0;$i<sizeof($donor_id_array);$i++){
 				$donor = new Donor;
@@ -438,16 +438,16 @@ class Controller extends BaseController
 			}
 		}
 
-		if($request->purchasedCopies != ""){
-			$purchased_copies = explode(',', $request->purchasedCopies);
-			$purchased_amounts = explode(',', $request->purchasedAmount);
-			$purchased_dates = explode(',', $request->purchasedDate);
-			$purchased_addresses = explode(',', $request->purchasedAddress);
+		if(strip_tags($request->purchasedCopies) != ""){
+			$purchased_copies = explode(',', strip_tags($request->purchasedCopies));
+			$purchased_amounts = explode(',', strip_tags($request->purchasedAmount));
+			$purchased_dates = explode(',', strip_tags($request->purchasedDate));
+			$purchased_addresses = explode(',', strip_tags($request->purchasedAddress));
 
 			for($i=0;$i<sizeof($purchased_copies);$i++){
 				$purchase = new Purchase_Detail;
 				$purchase->amount = $purchased_amounts[$i];
-				$purchase->acqNumber = $request->acqNumber;
+				$purchase->acqNumber = strip_tags($request->acqNumber);
 				$address = Address::firstorNew(['address_name' => trim($purchased_addresses[$i])]);
 				$address->save();
 				$purchase->address_id = $address->getKey();
@@ -462,7 +462,7 @@ class Controller extends BaseController
 			$copy_count = $total_copies;
 			$material->copy_count = $copy_count;          
 			if($copy_count > 0){
-		            $accession = explode('-', $request->acqNumber);
+		            $accession = explode('-', strip_tags($request->acqNumber));
 		            $num_length = strlen($accession[1]);
             		for($i=0;$i<$copy_count;$i++){
 					$accession = $accession[0] . '-' . ((int)$accession[1] + 1);
@@ -491,14 +491,14 @@ class Controller extends BaseController
           		}
         	}
         	else{
-	          $copy_count = DB::table('material_copies')->where('acqNumber', $request->acqNumber)->get()->count();
+	          $copy_count = DB::table('material_copies')->where('acqNumber', strip_tags($request->acqNumber))->get()->count();
 	          $material->copy_count = $copy_count;
         	}
 
 		if($category == 'Thesis'){
-			$course = Course::firstorNew(['name' => trim($request->input('course'))]);
+			$course = Course::firstorNew(['name' => strip_tags(trim($request->input('course')))]);
 			$course->save();
-			$school = School::firstorNew(['name' => trim($request->input('school'))]);
+			$school = School::firstorNew(['name' => strip_tags(trim($request->input('school')))]);
 			$school->save();
 			$thesis = new Thesis;
 			$thesis->acqNumber = $material->getKey();
@@ -508,18 +508,18 @@ class Controller extends BaseController
 		}
 		else if($category == 'Photographs'){
 			$photographer = Photographer::firstorNew([
-				'firstname' => trim($request->input('author-firstname')), 
-				'middlename' => trim($request->input('author-middlename')), 
+				'firstname' => trim(strip_tags($request->input('author-firstname'))), 
+				'middlename' => strip_tags(trim($request->input('author-middlename'))), 
 				'lastname' => trim($request->input('author-lastname'))
 			]);
 			$photographer->save();
 			$photo = new Photo;
 			$photo->photographer_id = $photographer->getKey();
 			$photo->acqNumber = $material->getKey();
-			$photo->year = trim($request->input('year'));
-			$category = trim($request->input('description'));
-			$photo->size = trim($request->input('size'));
-			$photo->size_type = trim($request->input('size-type'));
+			$photo->year = strip_tags(trim($request->input('year')));
+			$category =strip_tags(trim($request->input('description')));
+			$photo->size = strip_tags(trim($request->input('size')));
+			$photo->size_type = strip_tags(trim($request->input('size-type')));
 			$photo->save();
 
 			$picture = $request->pic;
@@ -530,7 +530,7 @@ class Controller extends BaseController
 				$picture->storeAs('material/', $extension);
 				$material_picture = new MaterialPicture;
 				$material_picture->photo_id = $photo->getKey();
-				$material_picture->name = $request->acqNumber;
+				$material_picture->name = strip_tags($request->acqNumber);
 				$material_picture->extension = $ext;
 				$material_picture->save();
 			}
@@ -538,21 +538,21 @@ class Controller extends BaseController
 		else if($category == 'Compact Discs' || $category == 'Digital Versatile Discs' || $category == 'Video Home Systems' || $category == 'Cassette Tapes'){
 			$multimedia = new Multimedia;
 			$multimedia->acqNumber = $material->getKey();
-			$hour = $request->input('hours');
-			$minute = $request->input('minutes');
-			$second = $request->input('seconds');
+			$hour = strip_tags($request->input('hours'));
+			$minute = strip_tags($request->input('minutes'));
+			$second = strip_tags($request->input('seconds'));
 			$array1 = [$hour, $minute, $second];
 			$time = $hour . ':' . $minute . ':' . $second;
 			$time = strtotime($time);
 			$multimedia->duration = date('H:i:s', $time);
 			$multimedia->save();
-			$directors = explode(',', $request->input('authors'));
+			$directors = explode(',', strip_tags($request->input('authors')));
 			for($i=0;$i<sizeof($directors); $i+=3){
 			    $director = Director::firstorNew(['firstname' => trim($directors[$i]), 'middlename' => trim($directors[$i + 1]), 'lastname' => trim($directors[$i + 2])]);
 			    $director->save();
 			    $material->director()->attach($director->director_id);
 			}
-			$producers = explode(',', $request->input('producers'));
+			$producers = explode(',', strip_tags($request->input('producers')));
 			if(sizeof($producers) >= 3){
 				for($i=0;$i<sizeof($producers); $i+=3){
 					$producer = Producer::firstorNew(['firstname' => trim($producers[$i]), 'middlename' => trim($producers[$i + 1]), 'lastname' => trim($producers[$i + 2])]);
@@ -565,15 +565,16 @@ class Controller extends BaseController
 		$material->copy_count = $total_copies;
 		$material->save();
 
-		$title = trim($request->input('title'));
+		$title = strip_tags(trim($request->input('title')));
 		$user = User::find(Auth::user()->username);
-		$user->modify()->attach($request->acqNumber);
+		$user->modify()->attach(strip_tags($request->acqNumber));
 
 		return back()->with('status', $title . ' added successfully!');
 	}
 	public function deleteMaterial(Material $acqNumber, $edit, $picname, $newAcqNumber, Request $request){
 	      $purchase_detail = new Purchase_Detail;
 	      $publisher = new Publisher;
+	      $publisher_name = new Publisher_Name;
 	      $address = new Address;
 	      $author = new Author;
 	      $tag = new Tags;
@@ -712,6 +713,21 @@ class Controller extends BaseController
 			}
 			$acqNumber->donor()->detach($donors->donor_id);
 			$donor::destroy($donors->donor_id);	
+		}
+
+		if($acqNumber->publisher_id != ""){
+			$publisher_name_id = $acqNumber->publisher->publisher_name_id;
+			$address_id = $acqNumber->publisher->address_id;
+			$this->getAddressCount($address_id);
+			$publisher_name_count = DB::table('publisher')->where('publisher_name_id', $publisher_name_id)->get()->count();
+			if($publisher_name_count == 1){
+				$publisher_name::destroy($publisher_name_id);
+			}
+			$publisher_count = DB::table('material')->where('publisher_id', $acqNumber->publisher_id)->get()->count();
+			if($publisher_count == 1){
+				$publisher::destroy($acqNumber->publisher_id);
+			}
+
 		}
 
 		foreach($acqNumber->purchased_details as $purchase){

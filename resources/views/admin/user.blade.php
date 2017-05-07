@@ -15,7 +15,7 @@
 </div>
 @endif
 
-<div class="col-xs-12 col-md-6 col-md-offset-3  alert alert-danger student-number-panel error-text hidden">
+<div class="col-xs-12 col-md-6 col-md-offset-3  alert alert-danger student-number-panel error-text">
     <span id="error-text"></span>
 </div>
 
@@ -169,7 +169,7 @@
                 <strong>{{ $errors->first('email') }}</strong>
             </span>                           
             @if ($errors->has('email'))
-                <span class="help-block">
+                <span class="email-block help-block">
                     <strong>{{ $errors->first('email') }}</strong>
                 </span>
             @endif

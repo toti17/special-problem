@@ -36,14 +36,14 @@ class RegisterController extends Controller
         $studentNumber = StudentNumber::where('student_number', '=', $request->input('username'))->first();
         if(Auth::check() && Auth::user()->type == "admin"){
             User::create([
-                'firstname' => $request->input('firstname'),
-                'middlename' => $request->input('middlename'),
-                'lastname' => $request->input('lastname'),
-                'username' => $request->input('username'),
-                'email' => $request->input('email'),
-                'institution' => $request->input('institution'),
-                'type' => $request->input('type'),
-                'status' => $request->input('status'),
+                'firstname' => strip_tags($request->input('firstname')),
+                'middlename' => strip_tags($request->input('middlename')),
+                'lastname' => strip_tags($request->input('lastname')),
+                'username' => strip_tags($request->input('username')),
+                'email' => strip_tags($request->input('email')),
+                'institution' => strip_tags($request->input('institution')),
+                'type' => strip_tags($request->input('type')),
+                'status' => strip_tags($request->input('status')),
                 'password' => bcrypt($request->input('password')),
             ]);
             if($request->input('type') == 'student'){
@@ -56,14 +56,14 @@ class RegisterController extends Controller
             if($school == "University of the Philippines Visayas"){
                 if($studentNumber){
                     User::create([
-                        'firstname' => $request->input('firstname'),
-                        'middlename' => $request->input('middlename'),
-                        'lastname' => $request->input('lastname'),
-                        'username' => $request->input('username'),
-                        'email' => $request->input('email'),
-                        'institution' => $request->input('institution'),
-                        'type' => $request->input('type'),
-                        'status' => $request->input('status'),
+                        'firstname' => strip_tags($request->input('firstname')),
+                        'middlename' => strip_tags($request->input('middlename')),
+                        'lastname' => strip_tags($request->input('lastname')),
+                        'username' => strip_tags($request->input('username')),
+                        'email' => strip_tags($request->input('email')),
+                        'institution' => strip_tags($request->input('institution')),
+                        'type' => strip_tags($request->input('type')),
+                        'status' => strip_tags($request->input('status')),
                         'password' => bcrypt($request->input('password')),
                     ]);
                     if(Auth::attempt(['username' => $request->input('username'), 'password' => $request->input('password')])){
@@ -76,14 +76,14 @@ class RegisterController extends Controller
             }
             else{
                     User::create([
-                        'firstname' => $request->input('firstname'),
-                        'middlename' => $request->input('middlename'),
-                        'lastname' => $request->input('lastname'),
-                        'username' => $request->input('username'),
-                        'email' => $request->input('email'),
-                        'institution' => $request->input('institution'),
-                        'type' => $request->input('type'),
-                        'status' => $request->input('status'),
+                        'firstname' => strip_tags($request->input('firstname')),
+                        'middlename' => strip_tags($request->input('middlename')),
+                        'lastname' => strip_tags($request->input('lastname')),
+                        'username' => strip_tags($request->input('username')),
+                        'email' => strip_tags($request->input('email')),
+                        'institution' =>strip_tags($request->input('institution')),
+                        'type' => strip_tags($request->input('type')),
+                        'status' => strip_tags($request->input('status')),
                         'password' => bcrypt($request->input('password')),
                     ]);
                     if(Auth::attempt(['username' => $request->input('username'), 'password' => $request->input('password')])){

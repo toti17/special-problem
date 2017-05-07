@@ -117,6 +117,6 @@ Route::group(['middleware' => ['login.check']], function () {
 
 	Route::post('/edit/material/{acqNumber}', 'EditController@edit');
 
-	Route::delete('dashboard/material/delete/{acqNumber}/{edit}/{picname}/{newAcqNumber}/{request}', 'Controller@deleteMaterial');
+	Route::post('dashboard/material/delete/{acqNumber}/{edit}/{picname}/{newAcqNumber}/{request}', 'Controller@deleteMaterial');
 
 });

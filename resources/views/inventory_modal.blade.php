@@ -116,7 +116,7 @@
 						<span class='english-name inputfields'></span>
 
 						<div class='table-responsive venName-table edit-table hidden'>
-							<h4>Venacular Names</h4>
+							<h4>Vernacular Name</h4>
 							<table class='table table-bordered table-striped tables'>
 								<tbody class='table-venName deleteRows'>
 
@@ -126,7 +126,7 @@
 
 						<div class='venacular-name-new inputfields'>
 							<div class='input-group'>
-								<span class='input-group-addon label-title'>Venacular Name</span>
+								<span class='input-group-addon label-title'>Vernacular Names</span>
 								<input type='text' id='venName' class='form-control' placeholder='Bandana' name='venName'/>
 								<input type='hidden' name='venNames' id='venNames'/>	
 								<div class='input-group-btn'>
@@ -466,7 +466,7 @@
 						<h4>Purchased Details</h4>
 						<div class='input-group'>
 							<span class='input-group-addon label-title'>Amount</span>
-							<input type='text' id='amount' class='form-control' placeholder='1000' name='amount' value="{{ old('amount') }}" />	
+							<input type='number' id='amount' class='form-control' placeholder='1000' name='amount' value="{{ old('amount') }}" />	
 							<span class='input-group-addon'>&#8369;</span>				
 						</div>
 						@if ($errors->has('amount'))

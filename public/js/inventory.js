@@ -339,10 +339,10 @@ $(document).ready(function (){
 			$('.acqNumber-help strong').text('The accession field is required.');
 			errorCounter++;
 		}
-		else if(acq.length > 50){
+		else if(acq.length > 100){
 			$('.acqNumber-help').addClass('error');
 			$('.acqNumber-help').removeClass('hidden');
-			$('.acqNumber-help strong').text('The accession field should not exceed 50 characters.');
+			$('.acqNumber-help strong').text('The accession field should not exceed 100 characters.');
 			errorCounter++;
 		}
 		else{
@@ -356,10 +356,10 @@ $(document).ready(function (){
 			$('.object-help strong').text('The object field is required.');
 			errorCounter++;
 		}
-		else if(object.length > 50){
+		else if(object.length > 100){
 			$('.object-help').addClass('error');
 			$('.object-help').removeClass('hidden');
-			$('.object-help strong').text('The object field should not exceed 50 characters.');
+			$('.object-help strong').text('The object field should not exceed 100 characters.');
 			errorCounter++;
 		}
 		else{
@@ -373,10 +373,10 @@ $(document).ready(function (){
 			$('.location-help strong').text('The location field is required.');
 			errorCounter++;
 		}
-		else if(object.length > 50){
+		else if(object.length > 100){
 			$('.location-help').addClass('error');
 			$('.location-help').removeClass('hidden');
-			$('.location-help strong').text('The location field should not exceed 50 characters.');
+			$('.location-help strong').text('The location field should not exceed 100 characters.');
 			errorCounter++;
 		}
 		else{
@@ -391,10 +391,10 @@ $(document).ready(function (){
 			if(engName != ''){
 				engNameArray.push(engName);
 			}
-			else if(engName.length > 50){
+			else if(engName.length > 100){
 				$(this).children('span').addClass('error');
 				$(this).children('span').removeClass('hidden');
-				$(this).children('span').children('strong').text('The english name field should not exceed 50 characters.');
+				$(this).children('span').children('strong').text('The english name field should not exceed 100 characters.');
 				errorCounter++;
 			}
 			else{
@@ -418,10 +418,10 @@ $(document).ready(function (){
 			if(venName != ''){
 				venNameArray.push(venName);
 			}
-			else if(venName.length > 50){
+			else if(venName.length > 100){
 				$(this).children('span').addClass('error');
 				$(this).children('span').removeClass('hidden');
-				$(this).children('span').children('strong').text('The venacular name field should not exceed 50 characters.');
+				$(this).children('span').children('strong').text('The venacular name field should not exceed 100 characters.');
 				errorCounter++;
 			}
 			else{
@@ -445,10 +445,10 @@ $(document).ready(function (){
 			$('.owner-firstname-help strong').text('The first name field is required.');
 			errorCounter++;
 		}
-		else if(firstName.length > 50){
+		else if(firstName.length > 100){
 			$('.owner-firstname-help').addClass('error');
 			$('.owner-firstname-help').removeClass('hidden');
-			$('.owner-firstname-help strong').text('The first name field should not exceed 50 characters.');
+			$('.owner-firstname-help strong').text('The first name field should not exceed 100 characters.');
 			errorCounter++;
 		}
 		else{
@@ -462,10 +462,10 @@ $(document).ready(function (){
 			$('.owner-middlename-help strong').text('The middle name field is required.');
 			errorCounter++;
 		}
-		else if(middleName.length > 50){
+		else if(middleName.length > 100){
 			$('.owner-middlename-help').addClass('error');
 			$('.owner-middlename-help').removeClass('hidden');
-			$('.owner-middlename-help strong').text('The middle name field should not exceed 50 characters.');
+			$('.owner-middlename-help strong').text('The middle name field should not exceed 100 characters.');
 			errorCounter++;
 		}
 		else{
@@ -479,11 +479,11 @@ $(document).ready(function (){
 			$('.owner-lastname-help strong').text('The last name field is required.');
 			errorCounter++;
 		}
-		else if(lastName.length > 50){
+		else if(lastName.length > 100){
 			$('.owner-lastname-help').addClass('error');
 			$('.owner-lastname-help').removeClass('hidden');
 			$('.owner-lastname-help').removeClass('hidden');
-			$('.owner-lastname-help strong').text('The last name field should not exceed 50 characters.');
+			$('.owner-lastname-help strong').text('The last name field should not exceed 100 characters.');
 			errorCounter++;
 		}
 		else{
@@ -497,10 +497,10 @@ $(document).ready(function (){
 			$('.owner-nickname-help strong').text('The nickname field is required.');
 			errorCounter++;
 		}
-		else if(nickname.length > 50){
+		else if(nickname.length > 100){
 			$('.owner-nickname-help').addClass('error');
 			$('.owner-nickname-help').removeClass('hidden');
-			$('.owner-nickname-help strong').text('The nickname field should not exceed 50 characters.');
+			$('.owner-nickname-help strong').text('The nickname field should not exceed 100 characters.');
 			errorCounter++;
 		}
 		else{
@@ -514,10 +514,10 @@ $(document).ready(function (){
 			$('.local-help strong').text('The locality field is required.');
 			errorCounter++;
 		}
-		else if(lastName.length > 50){
+		else if(lastName.length > 100){
 			$('.local-help').addClass('error');
 			$('.local-help').removeClass('hidden');
-			$('.local-help strong').text('The locality field should not exceed 50 characters.');
+			$('.local-help strong').text('The locality field should not exceed 100 characters.');
 			errorCounter++;
 		}
 		else{
@@ -542,10 +542,10 @@ $(document).ready(function (){
 			$('.length-help strong').text('The length field is required.');
 			errorCounter++;
 		}
-		else if(length.length > 50){
+		else if(length.length > 100){
 			$('.length-help').addClass('error');
 			$('.length-help').removeClass('hidden');
-			$('.length-help strong').text('The length field should not exceed 50 characters.');
+			$('.length-help strong').text('The length field should not exceed 100 characters.');
 			errorCounter++;
 		}
 		else if(length <= 0){
@@ -565,10 +565,10 @@ $(document).ready(function (){
 			$('.width-help strong').text('The width field is required.');
 			errorCounter++;
 		}
-		else if(width.length > 50){
+		else if(width.length > 100){
 			$('.width-help').addClass('error');
 			$('.width-help').removeClass('hidden');
-			$('.width-help strong').text('The width field should not exceed 50 characters.');
+			$('.width-help strong').text('The width field should not exceed 100 characters.');
 			errorCounter++;
 		}
 		else if(width <= 0){
@@ -588,10 +588,10 @@ $(document).ready(function (){
 			$('.condition-help strong').text('The condition field is required.');
 			errorCounter++;
 		}
-		else if(condition.length > 50){
+		else if(condition.length > 500){
 			$('.condition-help').addClass('error');
 			$('.condition-help').removeClass('hidden');
-			$('.condition-help strong').text('The condition field should not exceed 50 characters.');
+			$('.condition-help strong').text('The condition field should not exceed 500 characters.');
 			errorCounter++;
 		}
 		else{
@@ -605,10 +605,10 @@ $(document).ready(function (){
 			if(material != ''){
 				matArray.push(material);
 			}
-			else if(material.length > 50){
+			else if(material.length > 100){
 				$(this).children('span').addClass('error');
 				$(this).children('span').removeClass('hidden');
-				$(this).children('span').children('strong').text('The material field should not exceed 50 characters.');
+				$(this).children('span').children('strong').text('The material field should not exceed 100 characters.');
 				errorCounter++;
 			}
 			else{
@@ -632,10 +632,10 @@ $(document).ready(function (){
 			if(color != ''){
 				colorArray.push(color);
 			}
-			else if(color.length > 50){
+			else if(color.length > 100){
 				$(this).children('span').removeClass('hidden');
 				$(this).children('span').addClass('error');
-				$(this).children('span').children('strong').text('The color field should not exceed 50 characters.');
+				$(this).children('span').children('strong').text('The color field should not exceed 100 characters.');
 				errorCounter++;
 			}
 			else{
@@ -659,10 +659,10 @@ $(document).ready(function (){
 			if(decoration != ''){
 				decorArray.push(decoration);
 			}
-			else if(decoration.length > 50){
+			else if(decoration.length > 100){
 				$(this).children('span').removeClass('hidden');
 				$(this).children('span').addClass('error');
-				$(this).children('span').children('strong').text('The decoration field should not exceed 50 characters.');
+				$(this).children('span').children('strong').text('The decoration field should not exceed 100 characters.');
 				errorCounter++;
 			}
 			else{
@@ -686,10 +686,10 @@ $(document).ready(function (){
 			if(mark != ''){
 				markArray.push(mark);
 			}
-			else if(mark.length > 50){
+			else if(mark.length > 100){
 				$(this).children('span').addClass('error');
 				$(this).children('span').removeClass('hidden');
-				$(this).children('span').children('strong').text('The special marks field should not exceed 50 characters.');
+				$(this).children('span').children('strong').text('The special marks field should not exceed 100 characters.');
 				errorCounter++;
 			}
 			else{
@@ -726,7 +726,7 @@ $(document).ready(function (){
 				errorCounter++;
 			}
 			else if($('#donor-firstname').val().length >50){
-				$('.donor-first-name-help strong').text('The first name field should not exceed 50 characters.');
+				$('.donor-first-name-help strong').text('The first name field should not exceed 100 characters.');
 				$('.donor-first-name-help').removeClass('hidden');
 				$('.donor-first-name-help').addClass('error');
 				errorCounter++;					
@@ -735,14 +735,14 @@ $(document).ready(function (){
 				$('.donor-first-name-help').removeClass('error');
 				$('.donor-first-name-help').addClass('hidden');
 			}
-			if($('#donor-middlename').val() == ""){
-				$('.donor-middle-name-help strong').text('The middle name field is required.');
-				$('.donor-middle-name-help').removeClass('hidden');
-				$('.donor-middle-name-help').addClass('error');
-				errorCounter++;
-			}
-			else if($('#donor-middlename').val().length >50){
-				$('.donor-middle-name-help strong').text('The middle name field should not exceed 50 characters.');
+			// if($('#donor-middlename').val() == ""){
+			// 	$('.donor-middle-name-help strong').text('The middle name field is required.');
+			// 	$('.donor-middle-name-help').removeClass('hidden');
+			// 	$('.donor-middle-name-help').addClass('error');
+			// 	errorCounter++;
+			// }
+			if($('#donor-middlename').val().length >50){
+				$('.donor-middle-name-help strong').text('The middle name field should not exceed 100 characters.');
 				$('.donor-middle-name-help').removeClass('hidden');
 				$('.donor-middle-name-help').addClass('error');
 				errorCounter++;					
@@ -758,7 +758,7 @@ $(document).ready(function (){
 				errorCounter++;
 			}
 			else if($('#donor-lastname').val().length >50){
-				$('.donor-last-name-help strong').text('The last name field should not exceed 50 characters.');
+				$('.donor-last-name-help strong').text('The last name field should not exceed 100 characters.');
 				$('.donor-last-name-help').removeClass('hidden');
 				$('.donor-last-name-help').addClass('error');
 				errorCounter++;					
@@ -1255,6 +1255,7 @@ $(document).ready(function (){
 	var editCounter = false;
 	var addCounter = false;
 	$('#add-inventory-button').click(function(){
+		$('#confirm-submit').text('Add');
 		$('.modified').addClass('hidden');
 		$('.image-div').removeClass('hidden');
 		$('#image-header').removeClass('hidden');
@@ -1352,6 +1353,7 @@ $(document).ready(function (){
 	});
 
 	$('#inventory-edit-button').click(function(){
+		$('#confirm-submit').text('Save Changes');
 		$('.modified').addClass('hidden');
 		editCounter = true;
 		hideTables();

@@ -180,6 +180,9 @@ $(document).ready(function (){
 	};
 
 	$('.register-button').click(function(event){
+		$('.error-block').text('');
+		$('.email-block').text('');
+		$('.form-group').removeClass('has-error');
 		errorCounter = 0;
 		firstname = $.trim($('#firstname').val());
 		middlename = $.trim($('#middlename').val());
@@ -233,7 +236,7 @@ $(document).ready(function (){
 			$('.lastname-help').addClass('hidden');
 		}
 
-		if($('.non-up-register').hasClass('up-color') == false && $('#role').val() == 'UP'){
+		if($('.non-up-register').hasClass('up-color') == false || $('#role').val() == 'UP'){
 			if(username.length == 0){
 				$('.username-help').removeClass('hidden');
 				$('.username-help strong').text('The user name field is required.');
@@ -244,7 +247,7 @@ $(document).ready(function (){
 				$('.username-help strong').text('Invalid format. Please input the correct format e.g. (201312345).');
 				errorCounter++;
 			}
-			else if(username.length > 9 || username.length < 6){
+			else if(username.length > 9 || username.length < 9){
 				$('.username-help').removeClass('hidden');
 				$('.username-help strong').text('The user name field should be equal to 9 numbers.');
 				errorCounter++;			
@@ -340,6 +343,8 @@ $(document).ready(function (){
 				$('.confirm-password-help').addClass('hidden');
 			}
 		}
+
+		console.log(errorCounter);
 
 		if(errorCounter == 0){
 			event.preventDefault();
@@ -604,20 +609,27 @@ $(document).ready(function (){
 
 	$("#add-student-number").click(function(){
 		if($("#studentNumber").val() != "" && $("#studentNumber").val().length == 9 && Number.isInteger(parseInt($("#studentNumber").val()))){
+			console.log('aaa');
 	    		if(jQuery.inArray($("#studentNumber").val(), studentNumberArray) == -1 ){
-					$(".student-number").append("<div class='panel panel-default col-md-2 numbers'><div class='panel-heading'><h3 class='panel-title'>" + $("#studentNumber").val()  + "</h3><span class='pull-right clickable-number glyphicon glyphicon-remove'></span></div></div>");
-				$(".student-number-panel").addClass("hidden");	
+				$(".student-number").append("<div class='panel panel-default col-md-2 numbers'><div class='panel-heading'><h3 class='panel-title'>" + $("#studentNumber").val()  + "</h3><span class='pull-right clickable-number glyphicon glyphicon-remove'></span></div></div>");
 	    			studentNumberArray.push($("#studentNumber").val());
 	    			$("#studentNumber").val("");
 	    		}
 	    		else{
 	    			$("#error-text").text("The student number " + $("#studentNumber").val() +  " already exists.");
-	    			$(".student-number-panel").removeClass("hidden");
+	    			$('.student-number-panel').fadeIn().delay(2000).fadeOut();
 	    		}
 		}
 		else{
+			console.log('asdfa');
 			$("#error-text").text("Invalid student number. (E.g. 201354053)");
-			$(".student-number-panel").removeClass("hidden");
+			$('.student-number-panel').fadeIn().delay(2000).fadeOut();
+		}
+	});
+
+	$('#studentNumber').keyup(function(e){
+		if(e.which == 13){
+			$('#add-student-number').trigger('click');
 		}
 	});
 

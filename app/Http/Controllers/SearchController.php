@@ -224,10 +224,11 @@ class SearchController extends Controller
 			$fullname = explode(" ", $term);
 			$fullname_array = [];
 			for($i=0;$i<sizeof($fullname);$i++){
-				$fullname_array = DB::table('users')->where('firstname', 'LIKE', '%' . $fullname[$i] . '%')
-				->where('institution', '!=', 'University of the Philippines Visayas')
-				->orWhere('middlename', 'LIKE', '%' . $fullname[$i] .'%')
-				->orWhere('lastname', 'LIKE', '%' . $fullname[$i] .'%')->get();
+				$fullname_array = DB::table('users')->where('institution', '!=', 'University of the Philippines Visayas')->where(function ($query) use ($fullname, $i){
+                			$query->where('firstname', 'LIKE', '%' . $fullname[$i] . '%')
+							->orWhere('middlename', 'LIKE', '%' . $fullname[$i] .'%')
+							->orWhere('lastname', 'LIKE', '%' . $fullname[$i] .'%');
+            		})->get();
 			}
 			return $fullname_array;
 		}

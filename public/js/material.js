@@ -1,6 +1,103 @@
 $(document).ready(function (){
 
 	var usernameArray = [];
+	var fullnameArray = [];
+	var institutionArray = [];
+
+	function retrieveUsers(){
+		return $.ajax({
+			type: 'get',
+			url: '/dashboard/users',
+			success: function(data){
+			}
+		});
+	}
+
+	function displayUsers(){
+		$('body').css('cursor', 'wait');
+		retrieveUsers().done(function(data){
+			$('body').css('cursor', 'default');
+			$('.staff-search-div').removeClass('hidden');
+			$(".student-number-panel").addClass('hidden');
+			$('.student-form').addClass('hidden');
+			$('#user-form').addClass('hidden');
+			$('.confirm-account-div').removeClass('hidden');		
+			if(data.length == 0){
+				$('#no-confirmed-users').removeClass('hidden');
+				$('.search').prop('disabled', true);
+				$('.search-type').prop('disabled', true);
+			}
+			else{
+				$('#no-confirmed-users').addClass('hidden');
+				$('.search').prop('disabled', false);
+				$('.search-type').prop('disabled', false);				
+			}
+			results = data;
+	            var totalPages = Object.keys(data).length;
+	            var minPage = 10;
+	            var total = 0;
+	            var max = 0;
+	        	var index = 0;
+			var defaultOpts = {
+				totalPages: 1
+			};				
+			if(Object.keys(data).length <= minPage){
+				totalPages = 1;
+			}
+			else{
+				totalPages = Math.ceil(Object.keys(data).length/minPage);
+			}				
+			$('#pagination-demo').twbsPagination(defaultOpts);		            
+	            $('#pagination-demo').twbsPagination('destroy');
+	            $('#pagination-demo').twbsPagination($.extend({}, defaultOpts, {
+	                	startPage: 1,
+	                	totalPages: totalPages,
+				onPageClick: function(event, page){
+					$('.users-table').trigger('update');
+					for(i=0;i<Object.keys(data).length;i++){
+						usernameArray.push(data[i].username);
+						fullnameArray.push(data[i].firstname + ' ' + data[i].middlename + ' ' + data[i].lastname);
+						institutionArray.push(data[i].institution);
+					}
+					total = page * minPage;
+					index = Math.abs(total-minPage);
+					max = Object.keys(data).length - index;
+					if(max <= minPage){
+						max = Object.keys(data).length;
+					}
+					else{
+						max = index + minPage;
+					}
+					for(i=0;i<usernameArray.length;i++){
+						$('.' + usernameArray[i]).remove();
+					}
+					for(i=index;i<max;i++){
+						if(data[i].status == 'unconfirmed'){
+							unconfirmedBtn = 'btn btn-danger';
+							confirmedBtn = 'btn btn-default';
+						}
+						else{
+							unconfirmedBtn = 'btn btn-default';
+							confirmedBtn = 'btn btn-success';
+						}
+						var newMaterial = $(document.createElement('tr')).attr('class', data[i].username);
+						newMaterial.after().html(
+							"<td class='text-left'>" + data[i].username + "</td>" +
+							"<td class='text-left'>" + data[i].firstname + ' ' + data[i].middlename + ' ' + data[i].lastname + "</td>" +
+							"<td class='text-left'>" + data[i].institution + "</td>" +
+							"<td class='confirm-buttons'>" +
+							"<input type='hidden' value ='" + data[i].username + "'/>" +
+							"<button type='button' class='user-confirm-button " + unconfirmedBtn +  "'>unconfirmed</button>" +
+							" <button type='button' class='user-confirm-button " + confirmedBtn + "'>confirmed</button>" +
+							"</td>"
+						);
+						$('.confirmed-users').append(newMaterial);
+					}											
+	                	}
+	            }));
+		});
+	}
+	var usernameArray = [];
 
 	if($('.material-items').children().length == 0){
 		$('#no-materials').toggle(true);
@@ -38,6 +135,7 @@ $(document).ready(function (){
 	var addCounter = false;
 
 	$('#add-material-button').click(function(){
+		$('#confirm-submit').text("Add");
 		$('.modified').addClass('hidden');
 		$('.donors').addClass('hidden');
 		$('.purchases').addClass('hidden');
@@ -99,6 +197,7 @@ $(document).ready(function (){
 	});
 
 	var selectValue = "";
+	// $(document).on('click', '.category', function(){
 	$('#category').click(function(){
 		$('.file-name').val('Click the browse button to select pictures...');
 		$('input').each(function(){
@@ -551,7 +650,7 @@ $(document).ready(function (){
 			else if(hour.length >4){
 				$('.hour-help').addClass('error');
 				$('.hour-help').removeClass('hidden');
-				$('.hour-help strong').text('The hour field should not exceed 4 characters.');
+				$('.hour-help strong').text('The hour field should not exceed 4 digits.');
 				errorCounter++;
 			}
 			else{
@@ -572,7 +671,7 @@ $(document).ready(function (){
 			else if(minute.length >4){
 				$('.minute-help').addClass('error');
 				$('.minute-help').removeClass('hidden');
-				$('.minute-help strong').text('The minute field should not exceed 4 characters.');
+				$('.minute-help strong').text('The minute field should not exceed 4 digits.');
 				errorCounter++;			
 			}
 			else{
@@ -636,10 +735,10 @@ $(document).ready(function (){
 				$('.size-help strong').text('The format of size field is incorrect.');
 				errorCounter++;				
 			}
-			else if(size > 40){
+			else if(size.length > 10){
 				$('.size-help').addClass('error');
 				$('.size-help').removeClass('hidden');
-				$('.size-help strong').text('The size field should not exceed 40 characters.');
+				$('.size-help strong').text('The size field should not exceed 10 digits.');
 				errorCounter++;			
 			}
 			else{
@@ -1165,6 +1264,14 @@ $(document).ready(function (){
 				if(r.accessionNumber != 0){
 					$("body").css("cursor", "default");
 					$('.modal-body').css('cursor', 'default');
+					$('#material-submit').css('cursor', 'default');
+					$('.material-close').prop('disabled', false);
+					$('#material-reset').prop('disabled', false);
+					$('#material-submit').prop('disabled', false);
+					$('#material-modal').animate({
+					   scrollTop: ($('.error').offset().top)
+					},500);
+					$(".modal-body").effect( "shake", { direction: "left", times: 3, distance: 10}, 500 );								
 					return false;
 				}
 				else{
@@ -1702,7 +1809,6 @@ $(document).ready(function (){
 				$('#description-field').text('Abstract');
 			}
 			else{
-				console.log('asdfa');
 				$('#description-field').text('Description');
 			}
 			$('#picname').val(data.picname);
@@ -1766,6 +1872,7 @@ $(document).ready(function (){
 	var editCounter = false;
 
 	$('#edit-button').click(function(){
+		$('#confirm-submit').text("Save changes");
 		$('.modified').addClass('hidden');
 		$('.acquisition-div').removeClass('hidden');
 		$('.donors').addClass('hidden');
@@ -1990,7 +2097,7 @@ $(document).ready(function (){
 			headers: {
 			'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
 			},
-			type: "DELETE",
+			type: "POST",
 			url: 'material/delete/' + material_id + '/' + edit + '/' + 'none/none/request',
 			success: function(data){
 				console.log(data);
@@ -3328,9 +3435,9 @@ $(document).ready(function (){
 								}										
 								var newUser = $(document.createElement('tr')).attr('class', data[i].username);
 								newUser.after().html(
-									"<td class='text-left'>" + data[i].username + "</td>" +
-									"<td class='text-left'>" + data[i].firstname + ' ' + data[i].middlename + ' ' + data[i].lastname + "</td>" +
-									"<td class='text-left'>" + data[i].institution + "</td>" +
+									"<td class='text-left'>{{" + data[i].username + "}}</td>" +
+									"<td class='text-left'>{{" + data[i].firstname + ' ' + data[i].middlename + ' ' + data[i].lastname + "}}</td>" +
+									"<td class='text-left'>{{" + data[i].institution + "}}</td>" +
 									"<td class='confirm-buttons'>" +
 									"<input type='hidden' value ='" + data[i].username + "'/>" +
 									"<button type='button' class='user-confirm-button " + unconfirmedBtn +  "'>unconfirmed</button>" +

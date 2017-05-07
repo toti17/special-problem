@@ -25,30 +25,31 @@ class BorrowController extends Controller
     }
     public function checkBorrowed($acqNumber){
         $username = Auth::user();
-        $borrow_count = 0;
-        $checked_out_materials = DB::table('borrowed')->where('username', $username->username)->where('status', 'checked out')->get();
-        foreach($checked_out_materials as $checked){
-            if($checked->acqNumber == $acqNumber){
-                $borrow_count ++;
-                break;
-            }
-            else{
-                $copies = DB::table('material_copies')->where('acqNumber', $acqNumber)->get();
-                foreach($copies as $copy){
-                    if($checked->acqNumber == $copy->copy_acqNumber){
-                        $borrow_count ++;
-                        break;
-                    }
-                }
-            }
-        }
+        // $checked_out_materials = DB::table('borrowed')->where('username', $username->username)->where('status', 'checked out')->get();
+        // foreach($checked_out_materials as $checked){
+        //     if($checked->acqNumber == $acqNumber){
+        //         $borrow_count ++;
+        //         break;
+        //     }
+        //     else{
+        //         $copies = DB::table('material_copies')->where('acqNumber', $acqNumber)->get();
+        //         foreach($copies as $copy){
+        //             if($checked->acqNumber == $copy->copy_acqNumber){
+        //                 $borrow_count ++;
+        //                 break;
+        //             }
+        //         }
+        //     }
+        // }
 
-        $check_acq = $borrow_count;
+        $already_borrowed_count = DB::table('borrowed')->where('acqNumber', $acqNumber)->where('username', $username->username)->get()->count();
+
+        // $check_acq = $borrow_count;
 
         $user_borrowed_count = DB::table('borrowed')->where('username', $username->username)->get()->count();
 
        return response()->json([
-    	'acq_count' => $check_acq,
+    	'acq_count' => $already_borrowed_count,
     	'user_borrowed_count' =>$user_borrowed_count,
        ]);
     }
