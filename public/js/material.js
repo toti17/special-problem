@@ -135,6 +135,9 @@ $(document).ready(function (){
 	var addCounter = false;
 
 	$('#add-material-button').click(function(){
+		$('.tags-div').addClass('hidden');
+		$('.material-close').removeClass('hidden');
+		$('.edit-close').addClass('hidden');
 		$('#confirm-submit').text("Add");
 		$('.modified').addClass('hidden');
 		$('.donors').addClass('hidden');
@@ -401,6 +404,7 @@ $(document).ready(function (){
 			errorCounter++;
 		}
 		else{
+			$('#acqNumber').val($('#acqNumber').val().toUpperCase());
 			$('.acqNumber-help').removeClass('error');
 			$('.acqNumber-help').addClass('hidden');
 		}
@@ -774,7 +778,7 @@ $(document).ready(function (){
 		}
 
 		$('.co-author').each(function(){
-				if($(this).children('.firstnames').children().children("input").val() == ""){
+				if($.trim($(this).children('.firstnames').children().children("input").val()) == ""){
 					$(this).children('.firstnames').children('span').addClass('error');
 					$(this).children('.firstnames').children('span').removeClass('hidden');
 					$(this).children('.firstnames').children('span').children('strong').text('The first name of the ' + name  +' is required.');
@@ -791,8 +795,7 @@ $(document).ready(function (){
 					$(this).children('.firstnames').children('span').addClass('hidden');
 					nameArray.push($(this).children('.firstnames').children().children("input").val());
 				}
-				if($(this).children('.middlenames').children().children("input").val() == ""){
-					$(this).children('.middlenames').children('span').addClass('error');
+				if($.trim($(this).children('.middlenames').children().children("input").val()) == ""){
 					$(this).children('.middlenames').children().children("input").val(" ");
 					nameArray.push($(this).children('.middlenames').children().children("input").val());
 				}
@@ -807,7 +810,7 @@ $(document).ready(function (){
 					$(this).children('.middlenames').children('span').addClass('hidden');
 					nameArray.push($(this).children('.middlenames').children().children("input").val());
 				}
-				if($(this).children('.lastnames').children().children("input").val() == ""){
+				if($.trim($(this).children('.lastnames').children().children("input").val()) == ""){
 					$(this).children('.lastnames').children('span').addClass('error');
 					$(this).children('.lastnames').children('span').removeClass('hidden');
 					$(this).children('.lastnames').children('span').children('strong').text('The last name of the ' + name  +' is required.');
@@ -850,7 +853,7 @@ $(document).ready(function (){
 		tagArray=[];
 		$('#authors').val(nameArray);
 		$('.tag').each(function(){
-			if($(this).children().children('input').val() == ''){
+			if($.trim($(this).children().children('input').val()) == ''){
 			}
 			else{
 				tagArray.push($(this).children().children('input').val());
@@ -895,7 +898,7 @@ $(document).ready(function (){
 			if(pubStatus == 'Published'){
 				$('.published-span').removeClass('hidden');
 				$('.con-pub-status').text(pubStatus);
-				if($('#publisher').val() == ""){
+				if($.trim($('#publisher').val()) == ""){
 					$('.pub-help strong').text('The publisher field is required.');
 					$('.pub-help').removeClass('hidden');
 					$('.pub-help').addClass('error');
@@ -934,7 +937,7 @@ $(document).ready(function (){
 
 				$('.con-pub-year').text($('#published-year').val());
 
-				if($('#place').val() == ""){
+				if($.trim($('#place').val()) == ""){
 					$('.place-help strong').text('The place field is required.');
 					$('.place-help').removeClass('hidden');
 					$('.place-help').addClass('error');
@@ -999,7 +1002,7 @@ $(document).ready(function (){
 					totalCopies += parseInt($(this).children('.donor-copies').children().children("input").val());
 				}
 
-				if($(this).children('.donor-firstnames').children().children("input").val() == ""){
+				if($.trim($(this).children('.donor-firstnames').children().children("input").val()) == ""){
 					$(this).children('.donor-firstnames').children('span').addClass('error');
 					$(this).children('.donor-firstnames').children('span').removeClass('hidden');
 					$(this).children('.donor-firstnames').children('span').children('strong').text('The first name field is required.');
@@ -1017,7 +1020,7 @@ $(document).ready(function (){
 					donorsArray.push($(this).children('.donor-firstnames').children().children("input").val());
 				}
 
-				if($(this).children('.donor-middlenames').children().children("input").val() == ""){
+				if($.trim($(this).children('.donor-middlenames').children().children("input").val()) == ""){
 					$(this).children('.donor-middlenames').children('span').addClass('error');
 					$(this).children('.donor-middlenames').children('span').removeClass('hidden');
 					$(this).children('.donor-middlenames').children('span').children('strong').text('The middle name field is required.');
@@ -1035,7 +1038,7 @@ $(document).ready(function (){
 					donorsArray.push($(this).children('.donor-middlenames').children().children("input").val());
 				}
 
-				if($(this).children('.donor-lastnames').children().children("input").val() == ""){
+				if($.trim($(this).children('.donor-lastnames').children().children("input").val()) == ""){
 					$(this).children('.donor-lastnames').children('span').addClass('error');
 					$(this).children('.donor-lastnames').children('span').removeClass('hidden');
 					$(this).children('.donor-lastnames').children('span').children('strong').text('The last name field is required.');
@@ -1177,7 +1180,7 @@ $(document).ready(function (){
 					purchDateArray.push($(this).children('.purchased-dates').children().children("input").val());
 				}
 
-				if($(this).children('.purchased-addresses').children().children("input").val() == ""){
+				if($.trim($(this).children('.purchased-addresses').children().children("input").val()) == ""){
 					$(this).children('.purchased-addresses').children('span').addClass('error');
 					$(this).children('.purchased-addresses').children('span').removeClass('hidden');
 					$(this).children('.purchased-addresses').children('span').children('strong').text('The address field is required.');
@@ -1224,10 +1227,12 @@ $(document).ready(function (){
 		if(donorNum == 0 && purchasedNum == 0){
 			errorCounter++;
 			$('.acquisition-details-help').removeClass('hidden');
+			$('.acquisition-details-help').addClass('error');
 			$('.acquisition-details-help strong').text('The acquisition details is required.');
 		}
 		else{
 			$('.acquisition-details-help').addClass('hidden');
+			$('.acquisition-details-help').removeClass('error');
 		}
 
 		var change = true;
@@ -1262,6 +1267,7 @@ $(document).ready(function (){
 			$('body').css('cursor', 'wait');
 			checkAcq().done(function(r){
 				if(r.accessionNumber != 0){
+					console.log('hahaha');
 					$("body").css("cursor", "default");
 					$('.modal-body').css('cursor', 'default');
 					$('#material-submit').css('cursor', 'default');
@@ -1292,12 +1298,14 @@ $(document).ready(function (){
 			});	
 		}
 		else{
+			console.log('hehehe');
+			$('.confirm-donors').children().remove();
 			$('.material-close').prop('disabled', false);
 			$('#material-reset').prop('disabled', false);
 			$('#material-submit').prop('disabled', false);				
 			$('#material-modal').animate({
-			   scrollTop: ($('.error').offset().top)
-			},500);
+			   scrollTop: ($('.error').first().offset().top)
+			});
 			$(".modal-body").effect( "shake", { direction: "left", times: 3, distance: 10}, 500 );
 			return false;
 		}
@@ -2107,8 +2115,15 @@ $(document).ready(function (){
 
 	$('#material-confirm-delete').click(function(){
 		x = $(this);
-		$("body").css("cursor", "wait");				
+		$("body").css("cursor", "wait");
+		$('.modal-body').css('cursor', 'wait');
+		$('#material-confirm-delete').text('Deleting');
+		$(this).prop('disabled', true);
+		$('#delete-close').prop('disabled', true);
 		deleteMaterials($(this).val(), false).done(function(){
+			$('#material-confirm-delete').prop('disabled', false);
+			$('#delete-close').prop('disabled', false);
+			$('#material-confirm-delete').text('Delete');
 			$('.delete-status').fadeIn().delay(2000).fadeOut();
 			$("body").css("cursor", "default");
 			$('.delete-status').removeClass('hidden');
@@ -2551,7 +2566,8 @@ $(document).ready(function (){
 
 	var sortType = 'materials';
 	$('#sort-materials').click(function(){
-		if($(this).hasClass('active') != true){
+		if($(this).hasClass('active') == true){
+			console.log('haha');
 			$('.search').val('');
 			sortType = 'materials';		
 			showMaterial(searchType);		
@@ -2559,7 +2575,7 @@ $(document).ready(function (){
 	});
 
 	$('#sort-most-viewed').click(function(){
-		if($(this).hasClass('active') != true){
+		if($(this).hasClass('active') == true){
 			$('.search').val('');
 			sortType = 'view';		
 			showMaterial(searchType);
@@ -2567,7 +2583,7 @@ $(document).ready(function (){
 	});
 
 	$('#sort-most-borrowed').click(function(){
-		if($(this).hasClass('active') != true){
+		if($(this).hasClass('active') == true){
 			$('.search').val('');
 			sortType = 'borrow';
 			showMaterial(searchType);

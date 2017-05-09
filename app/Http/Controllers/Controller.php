@@ -78,6 +78,21 @@ class Controller extends BaseController
 	      }
    	}
 
+   	public function incrementAccession($accession){
+		$access = "";
+		for($j=0;$j<sizeof($accession);$j++){
+			if($accession[$j] == $accession[sizeof($accession) - 1]){
+				$newNum = str_pad(((int)end($accession) + 1 ), strlen(end($accession)), '0', STR_PAD_LEFT);
+				$access = $access . $newNum;			
+			}
+			else{
+				$access = $access . $accession[$j] . '-';
+			}
+		}
+		$accession = $access;
+		return $accession; 		
+   	}
+
    	public function deleteAddress($address_id){
 	      $address = new Address;
 	      $address::destroy($address_id);
@@ -463,18 +478,27 @@ class Controller extends BaseController
 			$material->copy_count = $copy_count;          
 			if($copy_count > 0){
 		            $accession = explode('-', strip_tags($request->acqNumber));
-		            $num_length = strlen($accession[1]);
+		            $num_length = strlen(end($accession));
             		for($i=0;$i<$copy_count;$i++){
-					$accession = $accession[0] . '-' . ((int)$accession[1] + 1);
+            			$accession = $this->incrementAccession($accession);
 					$unique = true;
 					$num = 1;
               			while($unique){
                 				$total_count = $this->getAcqCount($accession);
           					if($total_count == 0){
 				                  $accession = explode('-', $accession);
-				                  $tempLength = strlen($accession[1]);
-				                  $newNum = str_pad($accession[1], (($num_length-$tempLength)+1), '0', STR_PAD_LEFT);
-				                  $accession = $accession[0] . '-' .  $newNum;
+				                  $tempLength = strlen(end($accession));
+				                  $newNum = str_pad(end($accession), (($num_length-$tempLength)+1), '0', STR_PAD_LEFT);
+				                  $access = "";
+		            			for($j=0;$j<sizeof($accession);$j++){
+		            				if($accession[$j] == $accession[sizeof($accession) - 1]){
+		            					$access = $access . $newNum;
+		            				}
+		            				else{
+		            					$access = $access . $accession[$j] . '-';
+		            				}
+		            			}
+		            			$accession = $access;     
 				                  $unique = false;
 				                  $material_copy = new MaterialCopy;
 				                  $material_copy->copy_acqNumber = $accession;
@@ -484,7 +508,7 @@ class Controller extends BaseController
           					}
           					else{
 				                  $accession = explode('-', $accession);
-				                  $accession = $accession[0] . '-' . ((int)$accession[1] + $num);
+							$accession = $this->incrementAccession($accession);				           
           					}
               			}
             		}
@@ -619,22 +643,31 @@ class Controller extends BaseController
 					}
 				}
 			}
-			else if((int)$total_copies > (int)$acqNumber->copy_count){
+			else if((int)$total_copies > (int)$acqNumber->copy_count){		
             		if((int)$acqNumber->copy_count == 0){
 					$copy_count = (int)$total_copies;
-					$accession = explode('-', $acqNumber->acqNumber);
-              			$num_length = strlen($accession[1]);              
+					$accession = explode('-', $acqNumber->acqNumber);					
+              			$num_length = strlen(end($accession));
               			for($i=0;$i<$copy_count;$i++){
-						$accession = $accession[0] . '-' . ((int)$accession[1] + 1);
+	            			$accession = $this->incrementAccession($accession);
 						$unique = true;
                 				$num = 1;
                 				while($unique){
                   				$total_count = $this->getAcqCount($accession);
                 					if($total_count == 0){
 								$accession = explode('-', $accession);
-								$tempLength = strlen($accession[1]);
-								$newNum = str_pad($accession[1], (($num_length-$tempLength)+1), '0', STR_PAD_LEFT);
-								$accession = $accession[0] . '-' .  $newNum;
+								$tempLength = strlen(end($accession));
+								$newNum = str_pad(end($accession), (($num_length-$tempLength)+1), '0', STR_PAD_LEFT);
+			            			$access = "";
+			            			for($j=0;$j<sizeof($accession);$j++){
+			            				if($accession[$j] == $accession[sizeof($accession) - 1]){
+			            					$access = $access . $newNum;
+			            				}
+			            				else{
+			            					$access = $access . $accession[$j] . '-';
+			            				}
+			            			}
+			            			$accession = $access;								
 								$unique = false;
 								$material_copy = new MaterialCopy;
 								$material_copy->copy_acqNumber = $accession;
@@ -644,27 +677,36 @@ class Controller extends BaseController
                 					}
                 					else{
 								$accession = explode('-', $accession);
-								$accession = $accession[0] . '-' . ((int)$accession[1] + $num);
+								$accession = $this->incrementAccession($accession);
                 					}
                 				}
-              			}           
+              			}   
             		}
 				$accession = DB::table('material_copies')->where('acqNumber', $acqNumber->acqNumber)->select('copy_acqNumber')
               			->orderBy(DB::raw('LPAD(lower(copy_acqNumber), 10,0)', 'DESC'))->first();      
 		            $accession = explode('-', $accession->copy_acqNumber);
 		            $current_count = DB::table('material_copies')->where('acqNumber', $acqNumber->acqNumber)->get()->count();
-		            $num_length = strlen($accession[1]);
+		            $num_length = strlen(end($accession));
             		for($i=0;$i<((int)$total_copies - (int)$current_count);$i++){
-					$accession = $accession[0] . '-' . ((int)$accession[1] + 1);
+            			$accession = $this->incrementAccession($accession);
 					$unique = true;
               			$num = 1;
               			while($unique){
                 				$total_count = $this->getAcqCount($accession);
 						if($total_count == 0){
 							$accession = explode('-', $accession);
-							$tempLength = strlen($accession[1]);
-							$newNum = str_pad($accession[1], (($num_length-$tempLength)+1), '0', STR_PAD_LEFT);
-							$accession = $accession[0] . '-' .  $newNum;
+							$tempLength = strlen(end($accession));
+							$newNum = str_pad(end($accession), (($num_length-$tempLength)+1), '0', STR_PAD_LEFT);
+		            			$access = "";
+		            			for($j=0;$j<sizeof($accession);$j++){
+		            				if($accession[$j] == $accession[sizeof($accession) - 1]){
+		            					$access = $access . $newNum;
+		            				}
+		            				else{
+		            					$access = $access . $accession[$j] . '-';
+		            				}
+		            			}
+		            			$accession = $access;								
 							$unique = false;
 							$material_copy = new MaterialCopy;
 							$material_copy->copy_acqNumber = $accession;
@@ -674,7 +716,7 @@ class Controller extends BaseController
 						}
 						else{
 							$accession = explode('-', $accession);
-							$accession = $accession[0] . '-' . ((int)$accession[1] + $num);
+							$accession = $this->incrementAccession($accession);
 						}
 					}
 				}          

@@ -438,7 +438,7 @@
 			  	<p>Please click the ok button to cancel adding material.</p>
 			</div>
 			<div class="modal-footer">
-				<button type="button" data-dismiss="modal" class="btn btn-default" id='add-close'>Close</button>
+				<button type="button" data-dismiss="modal" class="btn btn-default" id='add-close'>Cancel</button>
 				<button type="button" class="btn btn-danger" id='material-cancel-add'>Ok</button>
 			</div>
 		</div>
@@ -455,7 +455,7 @@
 			  	<p class='p-delete-invent'></p>
 			</div>
 			<div class="modal-footer">
-				<button type="button" data-dismiss="modal" class="btn btn-default" id='delete-close'>Close</button>
+				<button type="button" data-dismiss="modal" class="btn btn-default" id='delete-close'>Cancel</button>
 				<button type="button" class="btn btn-danger" id='material-confirm-delete'>Delete</button>
 			</div>
 		</div>
