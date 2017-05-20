@@ -138,13 +138,13 @@ class ViewController extends Controller
 
                 $material_count = $vertical_count + $book_count + $thesis_count + $periodical_count + $picture_count + $multimedia_count;
 
-                $artifact_count = Inventory::where('inventory_type_id', 5)->get()->count();
+                $artifact_count = Inventory::where('inventory_type_id', 1)->get()->count();
 
-                $textile_count = Inventory::where('inventory_type_id', 6)->get()->count();
+                $textile_count = Inventory::where('inventory_type_id', 2)->get()->count();
 
-                $farming_count = Inventory::where('inventory_type_id', 7)->get()->count();
+                $farming_count = Inventory::where('inventory_type_id', 3)->get()->count();
 
-                $fishing_count = Inventory::where('inventory_type_id', 8)->get()->count();
+                $fishing_count = Inventory::where('inventory_type_id', 4)->get()->count();
 
                 $inventory_count = $artifact_count + $textile_count + $farming_count + $fishing_count;
 
@@ -197,7 +197,7 @@ class ViewController extends Controller
     }
 
     public function showInventory(){
-        $inventory = DB::table('inventories')->orderBy('acqNumber', 'desc')->get();
+        $inventory = DB::table('inventories')->orderBy('acqNumber', 'asc')->get();
         $type = $this->getInventoryType($inventory);
         return response()->json([
             'inventory' => $inventory,

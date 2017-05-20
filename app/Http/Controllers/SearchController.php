@@ -276,7 +276,7 @@ class SearchController extends Controller
 	public function retrieveTitle($sortType){
 		$type_array = [];
 		if($sortType == 'materials'){
-			$accession = Material::all();
+			$accession = Material::orderBy('acqNumber', 'asc')->get();
 		}
 		else if($sortType == 'view'){
 			$accession = Material::where('view_count', '>', 0)->orderBy('view_count', 'desc')->get();

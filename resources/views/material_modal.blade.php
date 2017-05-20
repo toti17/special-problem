@@ -124,24 +124,24 @@
 						<div class='photograph hidden'>
 							<div class='input-group'>
 								<span class='input-group-addon label-title'>Size*</span>
-								<input type='text' id='size' class='form-control' placeholder='100' name='size' value="{{ old('size') }}" />
+								<input type='text' id='size' class='form-control' placeholder='100 x 100' name='size' value="{{ old('size') }}" />
 								<div class='input-group-btn'>
 									<button type='button' class='btn btn-default dropdown-toggle size-type' data-toggle='dropdown'>
-										MB <span class='caret'></span>
+										cm <span class='caret'></span>
 									</button>
 									<ul class='dropdown-menu size-dropdown'>
 										<li>
-											<a href="#">KB</a>
+											<a href="#">cm</a>
 										</li>
 										<li>
-											<a href="#">MB</a>
+											<a href="#">mm</a>
 										</li>									
 										<li>
-											<a href="#">GB</a>
+											<a href="#">m</a>
 										</li>
 									</ul>
 								</div>
-								<input type='hidden' id='size-type' name='size-type' value='MB'/>
+								<input type='hidden' id='size-type' name='size-type' value='cm'/>
 							</div>
 							<span class="size-help help-block hidden">
 								<strong></strong>
@@ -302,7 +302,7 @@
 							<span class='input-group-addon label-title'>Year*</span>
 							<input type='number' id='published-year' class='form-control' placeholder='2003' name='published-year' value="{{ old('published-year') }}" />						
 						</div>
-						<span class="year-help help-block hidden">
+						<span class="pub-year-help help-block hidden">
 							<strong></strong>
 						</span>					
 						<div class='input-group'>

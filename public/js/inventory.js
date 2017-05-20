@@ -81,6 +81,7 @@ $(document).ready(function (){
 	});
 
 	$('.remove-picture').click(function(){
+		$('#picname').val('');
 		$('.file-name').val('Click the browse button to select pictures...');
 		$('.image-preview').removeAttr('style');
 	})
@@ -373,7 +374,7 @@ $(document).ready(function (){
 			$('.location-help strong').text('The location field is required.');
 			errorCounter++;
 		}
-		else if(object.length > 100){
+		else if(storage.length > 100){
 			$('.location-help').addClass('error');
 			$('.location-help').removeClass('hidden');
 			$('.location-help strong').text('The location field should not exceed 100 characters.');
@@ -388,16 +389,18 @@ $(document).ready(function (){
 
 		$('.english-name-new').each(function(){
 			engName = $.trim($(this).children().children('input').val());
-			if(engName != ''){
-				engNameArray.push(engName);
-			}
-			else if(engName.length > 100){
+			console.log(engName.length);
+			if(engName.length > 100){
+				console.log($(this));
 				$(this).children('span').addClass('error');
 				$(this).children('span').removeClass('hidden');
 				$(this).children('span').children('strong').text('The english name field should not exceed 100 characters.');
 				errorCounter++;
 			}
 			else{
+				if(engName != ''){
+					engNameArray.push(engName);
+				}
 				$(this).children('span').removeClass('error');
 				$(this).children('span').addClass('hidden');
 			}
@@ -414,17 +417,16 @@ $(document).ready(function (){
 
 		$('.venacular-name-new').each(function(){
 			venName = $.trim($(this).children().children('input').val());
-
-			if(venName != ''){
-				venNameArray.push(venName);
-			}
-			else if(venName.length > 100){
+			if(venName.length > 100){
 				$(this).children('span').addClass('error');
 				$(this).children('span').removeClass('hidden');
 				$(this).children('span').children('strong').text('The venacular name field should not exceed 100 characters.');
 				errorCounter++;
 			}
 			else{
+				if(venName != ''){
+					venNameArray.push(venName);
+				}				
 				$(this).children('span').removeClass('error');
 				$(this).children('span').addClass('hidden');
 			}
@@ -456,13 +458,7 @@ $(document).ready(function (){
 			$('.owner-firstname-help').addClass('hidden');
 		}
 
-		if(middleName == ''){
-			$('.owner-middlename-help').addClass('error');
-			$('.owner-middlename-help').removeClass('hidden');
-			$('.owner-middlename-help strong').text('The middle name field is required.');
-			errorCounter++;
-		}
-		else if(middleName.length > 100){
+		if(middleName.length > 100){
 			$('.owner-middlename-help').addClass('error');
 			$('.owner-middlename-help').removeClass('hidden');
 			$('.owner-middlename-help strong').text('The middle name field should not exceed 100 characters.');
@@ -491,13 +487,7 @@ $(document).ready(function (){
 			$('.owner-lastname-help').addClass('hidden');
 		}
 
-		if(nickname == ''){
-			$('.owner-nickname-help').addClass('error');
-			$('.owner-nickname-help').removeClass('hidden');
-			$('.owner-nickname-help strong').text('The nickname field is required.');
-			errorCounter++;
-		}
-		else if(nickname.length > 100){
+		if(nickname.length > 100){
 			$('.owner-nickname-help').addClass('error');
 			$('.owner-nickname-help').removeClass('hidden');
 			$('.owner-nickname-help strong').text('The nickname field should not exceed 100 characters.');
@@ -571,7 +561,7 @@ $(document).ready(function (){
 			$('.width-help strong').text('The width field should not exceed 100 characters.');
 			errorCounter++;
 		}
-		else if(width <= 0){
+		else if(width < 0){
 			$('.width-help').addClass('error');
 			$('.width-help').removeClass('hidden');
 			$('.width-help strong').text('The width field should have a positive number.');
@@ -719,7 +709,7 @@ $(document).ready(function (){
 		}
 
 		if(acquisitionStatus == 'Donated'){
-			if($('#donor-firstname').val() == ""){
+			if($.trim($('#donor-firstname').val()) == ""){
 				$('.donor-first-name-help strong').text('The first name field is required.');
 				$('.donor-first-name-help').removeClass('hidden');
 				$('.donor-first-name-help').addClass('error');
@@ -735,12 +725,6 @@ $(document).ready(function (){
 				$('.donor-first-name-help').removeClass('error');
 				$('.donor-first-name-help').addClass('hidden');
 			}
-			// if($('#donor-middlename').val() == ""){
-			// 	$('.donor-middle-name-help strong').text('The middle name field is required.');
-			// 	$('.donor-middle-name-help').removeClass('hidden');
-			// 	$('.donor-middle-name-help').addClass('error');
-			// 	errorCounter++;
-			// }
 			if($('#donor-middlename').val().length >50){
 				$('.donor-middle-name-help strong').text('The middle name field should not exceed 100 characters.');
 				$('.donor-middle-name-help').removeClass('hidden');
@@ -751,7 +735,7 @@ $(document).ready(function (){
 				$('.donor-middle-name-help').removeClass('error');
 				$('.donor-middle-name-help').addClass('hidden');
 			}
-			if($('#donor-lastname').val() == ""){
+			if($.trim($('#donor-lastname').val()) == ""){
 				$('.donor-last-name-help strong').text('The last name field is required.');
 				$('.donor-last-name-help').removeClass('hidden');
 				$('.donor-last-name-help').addClass('error');
@@ -803,7 +787,7 @@ $(document).ready(function (){
 				$('.amount-help').removeClass('hidden');
 				errorCounter++;					
 			}
-			else  if($('#amount').val().length > 20){
+			else if($('#amount').val().length > 20){
 				$('.amount-help').addClass('error');
 				$('.amount-help strong').text('The amount field should not exceed 20 digits.');
 				$('.amount-help').removeClass('hidden');
@@ -816,6 +800,12 @@ $(document).ready(function (){
 
 			if($('#address').val() ==""){
 				$('.purchased-address-help strong').text('The address field is required.');
+				$('.purchased-address-help').removeClass('hidden');
+				$('.purchased-address-help').addClass('error');
+				errorCounter++;					
+			}
+			else if($('#address').val().length > 100){
+				$('.purchased-address-help strong').text('The address field should not exceed 100 characters.');
 				$('.purchased-address-help').removeClass('hidden');
 				$('.purchased-address-help').addClass('error');
 				errorCounter++;					
@@ -1270,6 +1260,8 @@ $(document).ready(function (){
 		$('.view-invent-button-close').addClass('pull-left');
 		$(this).prop('disabled', true);
 		$('#inventory-modal').modal('show');
+		$('.donated-div').addClass('hidden');
+		$('.purchased-div').addClass('hidden');		
 	});
 
 
@@ -1315,6 +1307,7 @@ $(document).ready(function (){
 	}
 
 	$('.inventory-close').click(function(){
+		$('.help-block').addClass('hidden');
 		if(addCounter == true){
 			fadeModal();
 			$('#cancel-add-modal').modal('show');
@@ -1370,6 +1363,9 @@ $(document).ready(function (){
 	}
 
 	$('#inventory-reset').click(function(){
+		$('.help-block').removeClass('error');
+		$('.help-block strong').text('');
+		$('.help-block').addClass('hidden');
 		measureStatus = '';
 		acquisitionStatus = '';
 		$('.file-name').val('Click the browse button to select pictures...');

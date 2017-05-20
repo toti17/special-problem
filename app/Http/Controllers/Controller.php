@@ -125,17 +125,19 @@ class Controller extends BaseController
 		$amount = strip_tags($request->amount);
 		$address = strip_tags($request->address);
 		$purchased_date = strip_tags($request->input('purchased-date'));
-		$picture = strip_tags($request->pic);
-
+		$picture = $request->pic;
 		if($picture){
 			$ext = $picture->extension();
 			$extension = $acqNumber . '.' . $ext;
 			$picture->storeAs('inventory/', $extension);
 			$inventory_picture = new InventoryPictures;
-			$inventory_picture->acqNumber = $acqNumber;
-			$inventory_picture->name = $acqNumber;
-			$inventory_picture->extension = $ext;
-			$inventory_picture->save();
+			$picture_count = DB::table('inventory_pictures')->where('acqNumber', $acqNumber)->get()->count();
+			if($picture_count == 0){
+				$inventory_picture->acqNumber = $acqNumber;
+				$inventory_picture->name = $acqNumber;
+				$inventory_picture->extension = $ext;
+				$inventory_picture->save();				
+			}
 		}
 
 		$inventory = new Inventory;
@@ -279,18 +281,19 @@ class Controller extends BaseController
 			if($acqNumber->picture != ''){
 				$pic_name = $acqNumber->picture->name;
 				$extension = $acqNumber->picture->extension;
-				$name = $pic_name . '.' . $extension;
+				$name = $pic_name . '.' . $extension; 
 				if($picname != $name){
-					Storage::delete('/inventory/' . $pic_name . '.' . $extension);
-					$acqNumber->picture->delete();          
+					$acqNumber->picture->delete();
+					Storage::delete('inventory/' . $pic_name . '.' . $extension);         
 				}
 			}
 		}
+
 		else{
 			if($acqNumber->picture != ''){
 				$pic_name = $acqNumber->picture->name;
 				$extension = $acqNumber->picture->extension;
-				Storage::delete('/inventory/' . $pic_name . '.' . $extension);
+				Storage::delete('inventory/' . $pic_name . '.' . $extension);
 				$acqNumber->picture->delete();
 			}
 		}
@@ -617,12 +620,14 @@ class Controller extends BaseController
 
 		if($edit == 'true'){
 			if($acqNumber->photo != ''){
-				$pic_name = $acqNumber->photo->material_picture->name;
-				$extension = $acqNumber->photo->material_picture->extension;
-				$name = $pic_name . '.' . $extension;
-				if($picname != $name){
-					Storage::delete('/material/' . $pic_name . '.' . $extension);
-					$acqNumber->photo->material_picture->delete();          
+				if($acqNumber->photo->material_picture != ""){
+					$pic_name = $acqNumber->photo->material_picture->name;
+					$extension = $acqNumber->photo->material_picture->extension;
+					$name = $pic_name . '.' . $extension;
+					if($picname != $name){
+						Storage::delete('/material/' . $pic_name . '.' . $extension);
+						$acqNumber->photo->material_picture->delete();          
+					}
 				}
 			}
 			if($acqNumber->acqNumber != $newAcqNumber){
@@ -724,10 +729,12 @@ class Controller extends BaseController
 		}
 		else{
 			if($acqNumber->photo != ''){
-				$pic_name = $acqNumber->photo->material_picture->name;
-				$extension = $acqNumber->photo->material_picture->extension;
-				Storage::delete('/material/' . $pic_name . '.' . $extension);
-				$acqNumber->photo->material_picture->delete();
+				if($acqNumber->photo->material_picture != ""){
+					$pic_name = $acqNumber->photo->material_picture->name;
+					$extension = $acqNumber->photo->material_picture->extension;
+					Storage::delete('/material/' . $pic_name . '.' . $extension);
+					$acqNumber->photo->material_picture->delete();
+				}
 			}
         		$borrowed_count = DB::table('borrowed')->select('acqNumber')->where('acqNumber', $acqNumber->acqNumber)->get()->count();
 			if($borrowed_count>0){

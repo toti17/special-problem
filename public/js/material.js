@@ -288,6 +288,19 @@ $(document).ready(function (){
 		else{
 			$('.published-div').addClass('hidden');
 			$(this).val('unpublished');
+			$('.published-span').addClass('hidden');
+			$('#published-year').val('');
+			$('#publisher').val('');
+			$('#place').val('');
+			$('.pub-help').removeClass('error');
+			$('.pub-help strong').text('');
+			$('.pub-help').addClass('hidden');
+			$('.pub-year-help').removeClass('error');
+			$('.pub-year-help').addClass('hidden');
+			$('.pub-year-help strong').text('');
+			$('.place-help').removeClass('error');
+			$('.place-help').addClass('hidden');
+			$('.place-help strong').text('');			
 		}
 	});
 
@@ -359,7 +372,7 @@ $(document).ready(function (){
 		var acqPattern = new RegExp(/\-\d*$/);
 		var errorCounter = 0;
 		var category = selectValue;
-		if(category == "" || category == 'Choose Category'){
+		if(category == "" || category == 'Choose Category' || category == null){
 			$('.select-help').addClass('error');
 			$('.select-help').removeClass('hidden');
 			$('.select-help strong').text('The category field is required.');
@@ -468,12 +481,10 @@ $(document).ready(function (){
 		}
 
 		if(description.length != 0){
-			$('.description-help').addClass('error');
 			$('.description-div').removeClass('hidden');
 			$('.con-description').text(description);
 		}
 		else{
-			$('.description-help').removeClass('error');
 			$('.description-div').addClass('hidden');
 		}
 
@@ -728,21 +739,20 @@ $(document).ready(function (){
 		if(category == 'Photographs'){
 			$('.con-photographs').removeClass('hidden');
 			name = 'photographer';
-			var size = $('#size').val();
-			size = $.trim(size);
-			sizePattern = new RegExp(/^(\d)+$/, "g");
-			sizeValue = sizePattern.test(size);
+			$('#size').val($.trim($('#size').val()));
 
-			if(sizeValue == false){
+			var size = $('#size').val();
+
+			if(size == ""){
 				$('.size-help').addClass('error');
 				$('.size-help').removeClass('hidden');
-				$('.size-help strong').text('The format of size field is incorrect.');
+				$('.size-help strong').text('The size field is required.');
 				errorCounter++;				
 			}
-			else if(size.length > 10){
+			else if(size.length > 50){
 				$('.size-help').addClass('error');
 				$('.size-help').removeClass('hidden');
-				$('.size-help strong').text('The size field should not exceed 10 digits.');
+				$('.size-help strong').text('The size field should not exceed 50 characters.');
 				errorCounter++;			
 			}
 			else{
@@ -905,9 +915,9 @@ $(document).ready(function (){
 					errorCounter++;
 				}
 				else if($('#publisher').val().length > 100){
-					$('.pub-help').addClass('error');
 					$('.pub-help strong').text('The publisher field should not exceed 100 characters.');
 					$('.pub-help').removeClass('hidden');
+					$('.pub-help').addClass('error');
 					errorCounter++;					
 				}
 				else{
@@ -919,20 +929,20 @@ $(document).ready(function (){
 
 				publishedYearValue = YearPattern.test($('#published-year').val());
 				if($('#published-year').val() == ""){
-					$('.year-help').addClass('error');
-					$('.year-help strong').text('The year field is required.');
-					$('.year-help').removeClass('hidden');
+					$('.pub-year-help strong').text('The year field is required.');
+					$('.pub-year-help').removeClass('hidden');
+					$('.pub-year-help').addClass('error');
 					errorCounter++;
 				}
 				else if(publishedYearValue == false){
-					$('.year-help').addClass('error');
-					$('.year-help strong').text('The year field should only be four digits.');
-					$('.year-help').removeClass('hidden');
+					$('.pub-year-help strong').text('The year field should only be four digits.');
+					$('.pub-year-help').removeClass('hidden');
+					$('.pub-year-help').addClass('error');
 					errorCounter++					
 				}
 				else{
-					$('.year-help').removeClass('error');
-					$('.year-help').addClass('hidden');
+					$('.pub-year-help').removeClass('error');
+					$('.pub-year-help').addClass('hidden');
 				}
 
 				$('.con-pub-year').text($('#published-year').val());
@@ -951,11 +961,6 @@ $(document).ready(function (){
 				$('.con-pub-place').text($('#place').val());
 			}
 			else if(pubStatus == 'Unpublished'){
-				$('.con-pub-status').text(pubStatus);
-				$('.published-span').addClass('hidden');
-				$('#published-year').val('');
-				$('#publisher').val('');
-				$('#place').val('');
 			}
 		}
 
@@ -989,12 +994,6 @@ $(document).ready(function (){
 					$(this).children('.donor-copies').children('span').children('strong').text('Please enter a positive number.');
 					errorCounter++;						
 				}
-				else if($(this).children('.donor-copies').children().children("input").val().length >= 4){
-					$(this).children('.donor-copies').children('span').addClass('error');
-					$(this).children('.donor-copies').children('span').removeClass('hidden');
-					$(this).children('.donor-copies').children('span').children('strong').text('The copy field should not exceed by 4 digits.');
-					errorCounter++;								
-				}
 				else{
 					$(this).children('.donor-copies').children('span').removeClass('error');
 					$(this).children('.donor-copies').children('span').addClass('hidden');
@@ -1020,13 +1019,13 @@ $(document).ready(function (){
 					donorsArray.push($(this).children('.donor-firstnames').children().children("input").val());
 				}
 
-				if($.trim($(this).children('.donor-middlenames').children().children("input").val()) == ""){
-					$(this).children('.donor-middlenames').children('span').addClass('error');
-					$(this).children('.donor-middlenames').children('span').removeClass('hidden');
-					$(this).children('.donor-middlenames').children('span').children('strong').text('The middle name field is required.');
-					errorCounter++;
-				}
-				else if($(this).children('.donor-middlenames').children().children("input").val().length >=100){
+				// if($.trim($(this).children('.donor-middlenames').children().children("input").val()) == ""){
+				// 	$(this).children('.donor-middlenames').children('span').addClass('error');
+				// 	$(this).children('.donor-middlenames').children('span').removeClass('hidden');
+				// 	$(this).children('.donor-middlenames').children('span').children('strong').text('The middle name field is required.');
+				// 	errorCounter++;
+				// }
+				if($(this).children('.donor-middlenames').children().children("input").val().length >=100){
 					$(this).children('.donor-middlenames').children('span').addClass('error');
 					$(this).children('.donor-middlenames').children('span').removeClass('hidden');
 					$(this).children('.donor-middlenames').children('span').children('strong').text('The middle name field should not exceed 100 characters.');
@@ -1274,11 +1273,11 @@ $(document).ready(function (){
 					$('.material-close').prop('disabled', false);
 					$('#material-reset').prop('disabled', false);
 					$('#material-submit').prop('disabled', false);
-					$('#material-modal').animate({
-					   scrollTop: ($('.error').offset().top)
-					},500);
-					$(".modal-body").effect( "shake", { direction: "left", times: 3, distance: 10}, 500 );								
-					return false;
+					// $('#material-modal').animate({
+					//    scrollTop: ($('.error').first().offset().top)
+					// },500);
+					// $(".modal-body").effect( "shake", { direction: "left", times: 3, distance: 10}, 500 );								
+					// return false;
 				}
 				else{
 					$('.modal-body').css('cursor', 'wait');
@@ -1819,8 +1818,10 @@ $(document).ready(function (){
 			else{
 				$('#description-field').text('Description');
 			}
-			$('#picname').val(data.picname);
-			$('.file-name').val(data.picname);
+			if(data.picname != ""){
+				$('#picname').val(data.picname);
+				$('.file-name').val(data.picname);
+			}
 			if($('#user-type').val() == 'user' && $('#status-type').val() != 'unconfirmed' && data.publisher_name != ""){
 				checkBorrowed(material_id).done(function(r){
 					console.log(r);
