@@ -2,42 +2,6 @@ if( /iPhone|iPad|iPod/i.test(navigator.userAgent) ) {
 	$('.admin-pic').css("transform", "rotate(-90deg)");
 }
 
-// $(document).on('click', '.user-login',  function(){
-// 	$(this).removeClass('login-hover');
-// 	$('.has-error').removeClass('has-error');
-// 	$('.help-block').remove();
-// 	$('.user-login').removeClass('user-active');
-// 	$('.user-login').removeClass('up-color');
-// 	$(this).addClass('user-active');
-// 	$(this).addClass('up-color');
-// 	if($.trim($(this).text()) == 'ADMIN'){
-// 		$('.user-label').text('Admin Number:');
-// 		$('#role').val('admin');
-// 	}
-// 	else if($.trim($(this).text()) == 'USER'){
-// 		$('.user-label').text('Student Number:');
-// 		$('#role').val('student');
-// 	}
-// 	else if($.trim($(this).text()) == 'STAFF'){
-// 		$('.user-label').text('Employee Number:');
-// 		$('#role').val('staff');
-// 	}
-// });
-
-// $(document).on('mouseover', '.user-login',  function(){
-// 	if($(this).hasClass('user-active') == false){
-// 		$(this).css('color', 'black');
-// 		$(this).addClass('login-hover');
-// 	}
-// });
-
-// $(document).on('mouseleave', '.user-login',  function(){
-// 	$(this).css('color', 'black');
-// 	if($(this).hasClass('user-active') == false){
-// 		$(this).removeClass('login-hover');
-// 	}
-// });
-
 $(document).on('click', '.up-register', function(){
 	$(this).removeClass('login-hover');
 	if(!($(".up-register").hasClass("up-color"))){
@@ -127,8 +91,8 @@ $(document).ready(function (){
 
 	// register script
 	
-	if($('.student-number-panel').hasClass('studentnumber-status') == true){
-		$('.student-number-panel').fadeIn().delay(2000).fadeOut();
+	if($('.student-success').hasClass('studentnumber-status') == true){
+		$('.student-success').fadeIn().delay(2000).fadeOut();
 	}
 
 	if($('.user-panel').hasClass('user-success') == true){

@@ -2280,16 +2280,18 @@ $(document).ready(function (){
 		$('#delete-borrowed-confirm-modal').modal('hide');
 		acqNumber = $('#staff-delete-close').val();
 		username = $('#staff-borrowed-confirm-delete').val();
-		$('.borrowed-materials-tbody').children('tr.' + username).remove();
 		deleteBorrowedMaterials(acqNumber, username).done(function(){
+			$('.borrowed-materials-tbody').children('tr.' + username).remove();
 			$('.delete-borrowed-status').removeClass('alert-success').addClass('alert-danger');
 			$('.delete-borrowed-status').text("Borrowed material '" + acqNumber + "' deleted successfully");
 			$('.delete-borrowed-status').fadeIn().delay(2000).fadeOut();
 			if($('.borrowed-materials-tbody').children().length == 0){
-				$('#no-borrowed-materials').toggle(true);
+				$('#no-borrowed-materials').removeClass('hidden');
+				$('#no-borrowed-materials').parent().children('tr:nth-child(1)').addClass('hidden');
 			}
 			else{
-				$('#no-borrowed-materials').toggle(false);		
+				$('#no-borrowed-materials').addClass('hidden');
+				$('#no-borrowed-materials').parent().children('tr:nth-child(1)').removeClass('hidden');
 			}						
 		});
 	});
@@ -2508,7 +2510,7 @@ $(document).ready(function (){
 		x = $(this);
 		confirmMaterials($(this)).done(function(data){
 			x.val(data.borrowed_acqNumber);
-			x.parent().children('button:nth-child(1)').val(data.original_acq);
+			x.parent().children('button:nth-child(1)').val(data.borrowed_acqNumber);
 			x.parent().children('button:nth-child(2)').val(data.borrowed_acqNumber);
 			console.log(data);
 			if(data.error == 'full'){
@@ -2542,9 +2544,9 @@ $(document).ready(function (){
 	$('body').on('click', '.unconfirm-borrowed-button', function(){
 		x = $(this);
 		unconfirmMaterials($(this)).done(function(data){
-			x.val(data.original_acq);
-			x.parent().children('button:nth-child(1)').val(data.original_acq);
-			x.parent().children('button:nth-child(3)').val(data.original_acq);
+			x.val(data.borrowed_acqNumber);
+			x.parent().children('button:nth-child(1)').val(data.borrowed_acqNumber);
+			x.parent().children('button:nth-child(3)').val(data.borrowed_acqNumber);
 			x.parent().parent().children('td:nth-child(2)').text('');
 			$('.unconfirm-borrowed-status').text("Borrowed material '" + data.initial + "' unconfirmed successfully!");
 			$('.unconfirm-borrowed-status').fadeIn().delay(2000).fadeOut();
@@ -2560,10 +2562,27 @@ $(document).ready(function (){
 	// end of borrow materials script
 	// search and sort script
 
+	$('.sort-buttons').each(function(){
+		if($(this).hasClass('active')){
+			$(this).removeClass('btn-default').addClass('btn-success active');
+		}
+	})
+
 	$('.sort-buttons').click(function(){
 		$('.sort-buttons').removeClass('btn-success active').addClass('btn-default');
 		$(this).removeClass('btn-default').addClass('btn-success active');
 	});
+
+	$('.borrow-sort-buttons').each(function(){
+		if($(this).hasClass('active')){
+			$(this).removeClass('btn-default').addClass('btn-success active');
+		}
+	})
+
+	$('.borrow-sort-buttons').click(function(){
+		$('.borrow-sort-buttons').removeClass('btn-success active').addClass('btn-default');
+		$(this).removeClass('btn-default').addClass('btn-success active');
+	});	
 
 	var sortType = 'materials';
 	$('#sort-materials').click(function(){
@@ -2748,7 +2767,6 @@ $(document).ready(function (){
 				resultsData = data;
 				$('body').css({"cursor": "default"});
 				var dataLength = data.length;
-				console.log(dataLength);
 				var dataMat = data;
 				if(searchType == 'Title' || searchType == 'Accession Number'){
 					dataMat = data.accession;
@@ -2782,6 +2800,7 @@ $(document).ready(function (){
 					if(searchType == 'Donor'){
 						dataMat = data.donor;
 						dataLength = data.donor.length;
+						console.log(dataLength);
 					}
 					if(dataLength == 0){
 						$('.author-th').addClass('hidden');
@@ -3452,9 +3471,9 @@ $(document).ready(function (){
 								}										
 								var newUser = $(document.createElement('tr')).attr('class', data[i].username);
 								newUser.after().html(
-									"<td class='text-left'>{{" + data[i].username + "}}</td>" +
-									"<td class='text-left'>{{" + data[i].firstname + ' ' + data[i].middlename + ' ' + data[i].lastname + "}}</td>" +
-									"<td class='text-left'>{{" + data[i].institution + "}}</td>" +
+									"<td class='text-left'>" + data[i].username + "</td>" +
+									"<td class='text-left'>" + data[i].firstname + ' ' + data[i].middlename + ' ' + data[i].lastname + "</td>" +
+									"<td class='text-left'>" + data[i].institution + "</td>" +
 									"<td class='confirm-buttons'>" +
 									"<input type='hidden' value ='" + data[i].username + "'/>" +
 									"<button type='button' class='user-confirm-button " + unconfirmedBtn +  "'>unconfirmed</button>" +

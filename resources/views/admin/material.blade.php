@@ -72,13 +72,13 @@
 	</div>
 	<div class='text-center borrowed-results-div hidden'><p>Sort Results By</p>
 		<div class='btn-group' data-toggle='buttons'>
-			<label class="btn btn-default active" id="sort-all-materials">
+			<label class="btn btn-default active borrow-sort-buttons" id="sort-all-materials">
 			 	<input type="radio" name="sort-borrowed-options" autocomplete="off" checked> All Materials
   			</label>
-			<label class="btn btn-default" id="sort-borrowed-materials">
+			<label class="btn btn-default borrow-sort-buttons" id="sort-borrowed-materials">
 				<input type="radio" name="sort-borrowed-options" autocomplete="off"> Borrowed
 			</label>
-			<label class="btn btn-default" id="sort-pending-materials">
+			<label class="btn btn-default borrow-sort-buttons" id="sort-pending-materials">
 				<input type="radio" name="sort-borrowed-options" autocomplete="off"> Pending
 			</label>  			
 		</div>

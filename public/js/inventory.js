@@ -891,15 +891,17 @@ $(document).ready(function (){
 	$('.owners-table').tablesorter();
 
 	function createPagination(data){
-		console.log(data.inventory.length);
+		console.log(data);
 		$('.inventory-items').children().remove();
 		$('.owner-items').children().remove();
 		$('#no-inventories').addClass('hidden');
 		$('#no-donors').addClass('hidden');
 		var dataLength = 0;
-		if(data.inventory.length == 0){
-			$('.inventory-search').prop('disabled', true);
-			$('.inventory-search-type').prop('disabled', true);
+		if($('.inventory-search-type').val() == 'Accession Number' || $('.inventory-search-type').val() == 'Object'){
+			if(data.inventory.length == 0){
+				$('.inventory-search').prop('disabled', true);
+				$('.inventory-search-type').prop('disabled', true);
+			}
 		}
 		if(data.owner != undefined){
 			$('.owners-table').removeClass('hidden');

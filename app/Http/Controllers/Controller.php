@@ -586,7 +586,7 @@ class Controller extends BaseController
 					$producer->save();
 					$material->producer()->attach($producer->producer_id);
 				}
-			}            
+			}
 		}
 
 		$material->copy_count = $total_copies;

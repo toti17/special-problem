@@ -10,7 +10,7 @@
 </div>
 
 @if(session('studentnumberStatus'))
-<div class="col-xs-12 col-md-6 col-md-offset-3  alert alert-success student-number-panel @if(session('studentnumberStatus')) studentnumber-status @endif ">
+<div class="col-xs-12 col-md-6 col-md-offset-3  alert alert-success student-success student-number-panel @if(session('studentnumberStatus')) studentnumber-status @endif ">
    {{ session('studentnumberStatus') }}
 </div>
 @endif

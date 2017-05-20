@@ -220,6 +220,7 @@ class SearchController extends Controller
 			])->get();
 			return $user;
 		}
+
 		else if($type == 'Fullname'){
 			$fullname = explode(" ", $term);
 			$fullname_array = [];
@@ -232,12 +233,15 @@ class SearchController extends Controller
 			}
 			return $fullname_array;
 		}
+
+
 		else if($type == 'Institution'){
-			$institution = User::where('institution', 'LIKE', '%' . $term . '%')
-			->where('institution', '!=', ')University of the Philippines Visayas')
-			->get();
+			$institution = DB::table('users')->where('institution', '!=', 'University of the Philippines Visayas')->where(function ($query) use ($term){
+  				$query->where('institution', 'LIKE', '%' . $term . '%');
+  			})->get();
 			return $institution;
 		}
+
 		else if($type == 'borrowedUsername'){
 			$borrowed_materials = DB::table('borrowed')
 			->where('username', 'LIKE', '%' . $term . '%')
@@ -320,13 +324,29 @@ class SearchController extends Controller
 		return $producer;
 	}
 
-	public function retrieveDonor(){		
-		$donors = DB::table('donor')->get();
+	public function retrieveDonor(){
+		$donor_id = DB::table('material_donors')->select('donor_id')->get();
 		$donor_name_array = [];
-		foreach($donors as $donor){
-			$donor = Donor_Name::find($donor->donor_name_id);
-			array_push($donor_name_array, $donor);
+		foreach($donor_id as $id){
+			$donor_name_id = DB::table('donor')->where('donor_id', $id->donor_id)->select('donor_name_id')->first();
+			$donor_name = Donor_Name::find($donor_name_id->donor_name_id);
+			if(!(in_array($donor_name, $donor_name_array))){
+				if($donor_name != null){
+					array_push($donor_name_array, $donor_name);
+				}
+			}
 		}
+		// $donors = DB::table('donor')->get();
+		// $donor_name_array = [];
+		// foreach($donors as $donor){
+		// 	$donor = Donor_Name::find($donor->donor_name_id);
+		// 	foreach($donor->donor as $don){
+		// 		$material_count = DB::table('material_donors')->where('donor_id', $don->donor_id)->get()->count();
+		// 		if($material_count != 0){
+		// 			array_push($donor_name_array, $donor);
+		// 		}
+		// 	}
+		// }
 		return response()->json([
 			'donor' => $donor_name_array
 		]);
@@ -419,40 +439,67 @@ class SearchController extends Controller
 
 		}
 		else if($type == 'Publisher'){
-			$publisher_array = [];
 			$material_array = [];
 			$type_array = [];
 			$publisher_name = Publisher_Name::find($id);
-			$publisher = DB::table('publisher')->where('publisher_name_id', $publisher_name->publisher_name_id)->get();
-			foreach($publisher as $pub){
-				array_push($publisher_array, $pub->publisher_id);
+			$publisher = DB::table('publisher')->where('publisher_name_id', $publisher_name->publisher_name_id)->select('publisher_id')->first();
+			if($sortType == 'materials'){
+				$materials = Material::where('publisher_id', $publisher->publisher_id)->get();
 			}
-			foreach($publisher_array as $pub){
-				$material = Material::where('publisher_id', $pub)->get();
-				array_push($material_array, $material[0]);
+			else if($sortType == 'view'){
+				$materials = Material::where('publisher_id', $publisher->publisher_id)->where('view_count', '>', 0)->get();
 			}
-			$materials = $material_array;
+			else if($sortType == 'borrowed'){
+				$materials = Material::where('publisher_id', $publisher->publisher_id)->where('borrowed_count', '>', 0)->get();	
+			}			
 		}
 		else if($type == 'Donor'){
-			$material_array = [];
-			$mat_array = [];
-			$donor_name = Donor_Name::find($id);
-			foreach($donor_name->donor as $don){
-				$material = Material::where('donor_id', $don->donor_id)->get();
-				array_push($material_array, $material);				
+			$donor_id = DB::table('donor')->where('donor_name_id', $id)->select('donor_id')->first();
+			$material_array = [];				
+			$acc_id = DB::table('material_donors')->where('donor_id', $donor_id->donor_id)->select('acqNumber')->get();
+			foreach($acc_id as $id){
+				if($sortType == 'materials'){
+					$material = Material::where('acqNumber', $id->acqNumber)->first();
+					array_push($material_array, $material);
+				}
+				else if($sortType == 'view'){
+					$material = Material::where('acqNumber', $id->acqNumber)->where('view_count', '>', 0)->first();
+					array_push($material_array, $material);
+				}
+				else if($sortType == 'borrowed'){
+					$material = Material::where('acqNumber', $id->acqNumber)->where('borrowed_count', '>', 0)->first();
+					array_push($material_array, $material);
+				}					
+				
 			}
-			for($i=0;$i<sizeof($material_array);$i++){
-				array_push($mat_array, $material_array[$i][0]);
+			if($material_array[0] != null){
+				$materials = $material_array;
 			}
-			$materials = $mat_array;
 		}
 		else if($type == 'Director'){
 			$director = Director::find($id);
-			$materials = $director->material;
+			if($sortType == 'materials'){
+				$materials = $director->material;
+			}
+			else if($sortType == 'view'){
+				$materials = $director->material->where('view_count', '>', 0);
+			}
+			else if($sortType == 'borrowed'){
+				$materials = $director->material->where('borrowed_count', '>', 0);	
+			}
 		}
 		else if($type == 'Producer'){
 			$producer = Producer::find($id);
 			$materials = $producer->material;
+			if($sortType == 'materials'){
+				$materials = $producer->material;
+			}
+			else if($sortType == 'view'){
+				$materials = $producer->material->where('view_count', '>', 0);
+			}
+			else if($sortType == 'borrowed'){
+				$materials = $producer->material->where('borrowed_count', '>', 0);	
+			}				
 		}
 
 		$type_array = [];

@@ -401,7 +401,7 @@ class ViewController extends Controller
         if($acqNumber->material_type->type == 'Compact Discs' 
             || $acqNumber->material_type->type == 'Digital Versatile Discs' || $acqNumber->material_type->type == 'Video Home Systems' 
             || $acqNumber->material_type->type == 'Cassette Tapes'){
-            $duration = $acqNumber->multimedia->first()->duration;
+            $duration = $acqNumber->multimedia->duration;
             for($i=0;$i<sizeof($acqNumber->director);$i++){
                 array_push($directors, $acqNumber->director[$i]->firstname);
                 array_push($directors, $acqNumber->director[$i]->middlename);
