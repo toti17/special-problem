@@ -2,10 +2,14 @@
 @section('material')
 
 <div class='col-lg-12'>
-	<h4>Hello, {{Auth::user()->firstname}} {{Auth::user()->middlename}} {{Auth::user()->lastname}}</h4>
+	<h4 id="welcome-message">Hello, {{Auth::user()->firstname}} {{Auth::user()->middlename}} {{Auth::user()->lastname}}</h4>
+	<button class='btn btn-danger backup pull-right'>Backup &nbsp;<span class='glyphicon glyphicon-floppy-disk'></span></button>
 </div>
 
 <input type='hidden' value="{{Auth::user()->type}}" id='user-type'>
+
+<div class="col-xs-12 col-md-6 alert  alert-success success-status user-status"><span class='success-message'>Successfully backed up database!</span>
+</div>
 
 <div class='col-lg-12'>
 	<div class='col-lg-6 home-table-div'>

@@ -37,6 +37,8 @@ use \App\InventoryDonor;
 use \App\InventoryPurchasedDetails;
 use \App\InventoryPictures;
 
+use \App\ViewTransaction;
+
 class ViewController extends Controller
 {
     public function about(){
@@ -57,7 +59,7 @@ class ViewController extends Controller
     public function inventoryDashboard(){
             if (Auth::user()->type == "admin" || Auth::user()->type == "staff"){
                 return view('admin.inventory');
-            }        
+            }
     }
 
     public function dashboard(){
@@ -341,6 +343,18 @@ class ViewController extends Controller
     }
 
     public function viewMaterial(Material $acqNumber){
+
+        $username = Auth::user()->username;
+        $user_type = Auth::user()->type;
+
+        if($user_type == 'user'){
+            ViewTransaction::create([
+                'acqNumber' => $acqNumber->acqNumber,
+                'username' => $username,
+                'date' =>  date("Y-m-d"),
+            ]);
+        }
+
         $pic_name = '';
         $authors = [];
         $directors =[];
@@ -367,8 +381,8 @@ class ViewController extends Controller
             $publisher_place = $acqNumber->publisher->address->address_name;
         }
         if($acqNumber->material_type->type == 'Thesis'){
-            $school = $acqNumber->thesis->first()->school->name;
-            $course =  $acqNumber->thesis->first()->course->name;
+            $school = $acqNumber->thesis->school->name;
+            $course =  $acqNumber->thesis->course->name;
         }
         else{
             $school ='';

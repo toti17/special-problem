@@ -7,18 +7,15 @@ $(document).ready(function (){
      		if (iSize / 1024 > 1){
         		if (((iSize / 1024) / 1024) > 1){
 		            iSize = (Math.round(((iSize / 1024) / 1024) * 100) / 100);
-		            console.log(iSize + 'gb');
 		            sizeType = 'gb';
         		}
 			else{
 			    iSize = (Math.round((iSize / 1024) * 100) / 100);
-			    console.log(iSize + 'mb');
 			    sizeType = 'mb';
 			}
      		}
 	     else{
 		      iSize = (Math.round(iSize * 100) / 100);
-		      console.log(iSize + 'kb');
 		      sizeType = 'kb';
 	     }		
 		var input = $(this),
@@ -271,7 +268,6 @@ $(document).ready(function (){
 					$('.acqNumber-help').addClass('hidden');
 				}
 				else{
-					console.log('nagsulod di');
 					$('.acqNumber-help').removeClass('hidden');
 					$('.acqNumber-help strong').text('The accession number ' + acqNumber + ' already exists.');					
 					errorCounter++;
@@ -304,7 +300,7 @@ $(document).ready(function (){
 		decorArray = [];
 		markArray = [];
 		unit = '';
-		console.log(measureStatus);
+
 		if(measureStatus == 'Meter'){
 			unit = 'm';
 		}
@@ -389,9 +385,7 @@ $(document).ready(function (){
 
 		$('.english-name-new').each(function(){
 			engName = $.trim($(this).children().children('input').val());
-			console.log(engName.length);
 			if(engName.length > 100){
-				console.log($(this));
 				$(this).children('span').addClass('error');
 				$(this).children('span').removeClass('hidden');
 				$(this).children('span').children('strong').text('The english name field should not exceed 100 characters.');
@@ -891,18 +885,11 @@ $(document).ready(function (){
 	$('.owners-table').tablesorter();
 
 	function createPagination(data){
-		console.log(data);
 		$('.inventory-items').children().remove();
 		$('.owner-items').children().remove();
 		$('#no-inventories').addClass('hidden');
 		$('#no-donors').addClass('hidden');
 		var dataLength = 0;
-		if($('.inventory-search-type').val() == 'Accession Number' || $('.inventory-search-type').val() == 'Object'){
-			if(data.inventory.length == 0){
-				$('.inventory-search').prop('disabled', true);
-				$('.inventory-search-type').prop('disabled', true);
-			}
-		}
 		if(data.owner != undefined){
 			$('.owners-table').removeClass('hidden');
 			dataLength = data.owner.length;
@@ -1125,7 +1112,6 @@ $(document).ready(function (){
 	}
 
 	function showData(data){
-		console.log(data);
 		$('.username').text(data.username);
 		$('#picname').val(data.picture_name);
 		origAcqNumber = data.accession.acqNumber;
@@ -1184,7 +1170,6 @@ $(document).ready(function (){
 		retrieveInventory(acqNumber).done(function(data){
 			$('body').css('cursor', 'default');
 			$('.inventory-view-button').css({'pointer-events': 'auto'});
-			console.log(data);
 			inventoryData = data;
 			showData(data);
 			createTables(data);
@@ -1693,7 +1678,6 @@ $(document).ready(function (){
 	$('body').on('click', '.inventory-owner', function(){
 		$('.owners-table').addClass('hidden');
 		id = $(this).find('input').val();
-		console.log(id);
 		retrieveCreated(id, searchType).done(function(data){
 			createPagination(data);
 		});

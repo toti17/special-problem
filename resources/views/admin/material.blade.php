@@ -1,10 +1,11 @@
 @extends('dashboard')
 @section('material')
 
-<div class='col-md-6'>
+<div class='col-lg-12'>
 	<button id="add-material-button" type="button" class="btn btn-default" data-toggle='modal' data-target='#material-modal'>Add Material &nbsp;<span class='glyphicon glyphicon-plus'></span></button>
 	<button type='button' class='btn btn-default search-material-button'>Search Materials &nbsp;<span class='glyphicon glyphicon-search'></span></button>
 	<button class='btn btn-default confirm-materials-button'>Borrowed Materials &nbsp;<span class='glyphicon glyphicon-book'></span></button>
+	<button class='btn btn-default generate-report'>Generate Report &nbsp;<span class='glyphicon glyphicon-file'></span></button>
 </div>
 
 <div class="col-md-6 alert  alert-success success-status @if(session('status')) has-status @endif">
@@ -150,7 +151,6 @@
 	});
 </script>
 @endif
-
 
 @include('material_modal')
 @include('borrowed_materials_modal')

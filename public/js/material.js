@@ -390,7 +390,6 @@ $(document).ready(function (){
 		acqNumber = $.trim(acqNumber);
 
 
-		console.log(acqPattern.test(acqNumber));
 
 		if(acqNumber == ""){
 			$('.acqNumber-help').addClass('error');
@@ -961,6 +960,7 @@ $(document).ready(function (){
 				$('.con-pub-place').text($('#place').val());
 			}
 			else if(pubStatus == 'Unpublished'){
+				$('.con-pub-status').text('Unpublished');
 			}
 		}
 
@@ -982,7 +982,6 @@ $(document).ready(function (){
 					errorCounter++;
 				}
 				else if(copyPattern.test($(this).children('.donor-copies').children().children("input").val()) == false){
-					console.log('asdfa');
 					$(this).children('.donor-copies').children('span').addClass('error');
 					$(this).children('.donor-copies').children('span').removeClass('hidden');
 					$(this).children('.donor-copies').children('span').children('strong').text('Please enter numbers without a decimal.');
@@ -1266,18 +1265,17 @@ $(document).ready(function (){
 			$('body').css('cursor', 'wait');
 			checkAcq().done(function(r){
 				if(r.accessionNumber != 0){
-					console.log('hahaha');
 					$("body").css("cursor", "default");
 					$('.modal-body').css('cursor', 'default');
 					$('#material-submit').css('cursor', 'default');
 					$('.material-close').prop('disabled', false);
 					$('#material-reset').prop('disabled', false);
 					$('#material-submit').prop('disabled', false);
-					// $('#material-modal').animate({
-					//    scrollTop: ($('.error').first().offset().top)
-					// },500);
-					// $(".modal-body").effect( "shake", { direction: "left", times: 3, distance: 10}, 500 );								
-					// return false;
+					$('#material-modal').animate({
+					   scrollTop: ($('.error').first().offset().top)
+					},500);
+					$(".modal-body").effect( "shake", { direction: "left", times: 3, distance: 10}, 500 );								
+					return false;
 				}
 				else{
 					$('.modal-body').css('cursor', 'wait');
@@ -1297,7 +1295,6 @@ $(document).ready(function (){
 			});	
 		}
 		else{
-			console.log('hehehe');
 			$('.confirm-donors').children().remove();
 			$('.material-close').prop('disabled', false);
 			$('#material-reset').prop('disabled', false);
@@ -1566,7 +1563,6 @@ $(document).ready(function (){
 				if($('#user-type').val() == 'user'){
 					$('#acqNumber').parent().addClass('hidden');
 				}
-				console.log(data);
 				donorsLength = data.donor_firstnames.length;
 				purchLength = data.purch_copies.length;
 				donorsArray = data.donors;
@@ -1587,7 +1583,6 @@ $(document).ready(function (){
 				school = data.school;
 				title = data.title;
 				description = data.description;
-				console.log(data.description);
 				if(data.description == null){
 					$('#description-field').parent().addClass('hidden');
 				}
@@ -1824,7 +1819,6 @@ $(document).ready(function (){
 			}
 			if($('#user-type').val() == 'user' && $('#status-type').val() != 'unconfirmed' && data.publisher_name != ""){
 				checkBorrowed(material_id).done(function(r){
-					console.log(r);
 					if(r.acq_count == 1){
 						$('.tool-tip').tooltip('hide')
 						          .attr('data-original-title', 'You have already borrowed this material.')
@@ -2107,10 +2101,7 @@ $(document).ready(function (){
 			'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
 			},
 			type: "POST",
-			url: 'material/delete/' + material_id + '/' + edit + '/' + 'none/none/request',
-			success: function(data){
-				console.log(data);
-			}
+			url: 'material/delete/' + material_id + '/' + edit + '/' + 'none/none/request'
 		});
 	}
 
@@ -2210,7 +2201,6 @@ $(document).ready(function (){
 			type: 'GET',
 			url: '/dashboard/borrowedmaterials',
 			success: function(data){
-				console.log(data);
 				titleArray = [];
 				statusArray=[];
 				for(i=0;i<data.materials.length;i++){
@@ -2267,7 +2257,9 @@ $(document).ready(function (){
 		});
 	}
 
-	$('body').on('click', '.remove-borrowed-button', function(){	
+	var thisRemove  = "";
+	$('body').on('click', '.remove-borrowed-button', function(){
+		thisRemove = $(this);
 		username = $(this).parent().parent().children('td:nth-child(1)').text();
 		acqNumber = $(this).val();
 		$('.p-delete-invent').text("Please click the delete button to delete material '" + $(this).parent().parent().children("td:nth-child(3)").text() +"'.");
@@ -2281,7 +2273,7 @@ $(document).ready(function (){
 		acqNumber = $('#staff-delete-close').val();
 		username = $('#staff-borrowed-confirm-delete').val();
 		deleteBorrowedMaterials(acqNumber, username).done(function(){
-			$('.borrowed-materials-tbody').children('tr.' + username).remove();
+			thisRemove.parent().parent().remove();
 			$('.delete-borrowed-status').removeClass('alert-success').addClass('alert-danger');
 			$('.delete-borrowed-status').text("Borrowed material '" + acqNumber + "' deleted successfully");
 			$('.delete-borrowed-status').fadeIn().delay(2000).fadeOut();
@@ -2304,7 +2296,6 @@ $(document).ready(function (){
 	}
 
 	function createBorrowedUsersTable(index, max, data){
-		console.log(data.length);
 		if(data.length == 0){
 			$('#no-borrowed-materials').parent().children('tr:nth-child(1)').addClass('hidden');
 			$('#no-borrowed-materials').removeClass('hidden');
@@ -2358,7 +2349,6 @@ $(document).ready(function (){
 
 	function displayBorrowedUsers(){
 		retrieveBorrowedUsers(borrowedSortType).done(function(data){
-			console.log(data);
 			results = data;
 	            var totalPages = data.length;
 	            var minPage = 10;
@@ -2488,9 +2478,6 @@ $(document).ready(function (){
 			},
 			type: 'post',
 			url: '/dashboard/addBorrowCount/' + acqNumber,
-			success: function(data){
-				console.log(data);
-			}
 		})
 	}
 
@@ -2502,7 +2489,7 @@ $(document).ready(function (){
 			'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
 			},			
 			type: 'post',
-			url: '/dashboard/confirm/borrowedmaterials/' + id + '/' + username
+			url: '/dashboard/confirm/borrowedmaterials/' + id + '/' + username + '/' + moment().format('YYYY-MM-DD')
 		});
 	}
 
@@ -2512,7 +2499,6 @@ $(document).ready(function (){
 			x.val(data.borrowed_acqNumber);
 			x.parent().children('button:nth-child(1)').val(data.borrowed_acqNumber);
 			x.parent().children('button:nth-child(2)').val(data.borrowed_acqNumber);
-			console.log(data);
 			if(data.error == 'full'){
 				$('.confirm-borrowed-status').removeClass('alert-success').addClass('alert-danger');
 				$('.confirm-borrowed-status').text("No copies left of material '" + x.val() + "'.");
@@ -2544,14 +2530,14 @@ $(document).ready(function (){
 	$('body').on('click', '.unconfirm-borrowed-button', function(){
 		x = $(this);
 		unconfirmMaterials($(this)).done(function(data){
-			x.val(data.borrowed_acqNumber);
-			x.parent().children('button:nth-child(1)').val(data.borrowed_acqNumber);
-			x.parent().children('button:nth-child(3)').val(data.borrowed_acqNumber);
+			x.val(data.original_acq);
 			x.parent().parent().children('td:nth-child(2)').text('');
 			$('.unconfirm-borrowed-status').text("Borrowed material '" + data.initial + "' unconfirmed successfully!");
 			$('.unconfirm-borrowed-status').fadeIn().delay(2000).fadeOut();
 			x.parent().children('button:nth-child(2)').prop('disabled', true);
-			x.parent().children('button:nth-child(3)').prop('disabled', false);			
+			x.parent().children('button:nth-child(3)').prop('disabled', false);
+			x.parent().children('button:nth-child(1)').val(data.original_acq);
+			x.parent().children('button:nth-child(3)').val(data.original_acq);	
 		});
 	});
 
@@ -2587,7 +2573,6 @@ $(document).ready(function (){
 	var sortType = 'materials';
 	$('#sort-materials').click(function(){
 		if($(this).hasClass('active') == true){
-			console.log('haha');
 			$('.search').val('');
 			sortType = 'materials';		
 			showMaterial(searchType);		
@@ -2763,7 +2748,6 @@ $(document).ready(function (){
 		}
 		if(searchType != 'Username' && searchType != 'Fullname' && searchType != 'Institution'){
 			x.done(function(data){
-				console.log(data);
 				resultsData = data;
 				$('body').css({"cursor": "default"});
 				var dataLength = data.length;
@@ -2800,7 +2784,6 @@ $(document).ready(function (){
 					if(searchType == 'Donor'){
 						dataMat = data.donor;
 						dataLength = data.donor.length;
-						console.log(dataLength);
 					}
 					if(dataLength == 0){
 						$('.author-th').addClass('hidden');
@@ -3356,7 +3339,6 @@ $(document).ready(function (){
 						$('.authors-table').trigger('update');						
 						if(searchType == 'Accession Number' || searchType == 'Title'){
 							dataMat = data.material;
-							console.log(Object.keys(dataMat).length);
 						}
 						else if(searchType == 'Author' || searchType == 'Director' || searchType == 'Producer' || searchType == 'Photographer' || searchType == 'Donor'){
 							dataMat = data.firstname;
@@ -3768,5 +3750,130 @@ $(document).ready(function (){
 	});
 
 	// end of add additional copy script
+
+	function getMostBorrowed(month, year){
+		return $.ajax({
+			type: 'get',
+			url: '/generateReport/' + month +'/' + year
+		});
+	}
+
+	$('.generate-report').click(function(){
+		$('#report-modal').modal('show');
+	});
+
+
+	$(".month-dropdown").on('click', 'li a', function(){
+		$('#month').html($(this).text() + ' <span class="caret"></span>');
+		if($(this).text() == 'JANUARY'){
+			$('#month').val(1);
+		}
+		else if($(this).text() == 'FEBRUARY'){
+			$('#month').val(2);
+		}
+		else if($(this).text() == 'MARCH'){
+			$('#month').val(3);
+		}
+		else if($(this).text() == 'APRIL'){
+			$('#month').val(4);
+		}
+		else if($(this).text() == 'MAY'){
+			$('#month').val(5);
+		}
+		else if($(this).text() == 'JUNE'){
+			$('#month').val(6);
+		}
+		else if($(this).text() == 'JULY'){
+			$('#month').val(7);
+		}
+		else if($(this).text() == 'AUGUST'){
+			$('#month').val(8);
+		}
+		else if($(this).text() == 'SEPTEMBER'){
+			$('#month').val(9);
+		}
+		else if($(this).text() == 'OCTOBER'){
+			$('#month').val(10);
+		}
+		else if($(this).text() == 'NOVEMBER'){
+			$('#month').val(11);
+		}
+		else if($(this).text() == 'DECEMBER'){
+			$('#month').val(12);
+		}
+	});
+
+	$('.year-generate-field').keyup(function(e){
+		if(e.which == 13){
+			$('.generate-button').trigger('click');
+		}
+	});
+
+	$('.generate-button').click(function(){
+		year = $('.year-generate-field').val();
+		if(year == "" || year.length != 4 || year <= 0 || $('#month').val() == "month"){
+			$('.generate-details').addClass('hidden');
+			$('.month-form-group').addClass('has-error has-feedback');
+			$('#helpBlock').removeClass('hidden');
+			$('.year-feedback').removeClass('hidden');
+		}
+
+		if(year.length == 4 && year > 0 && $('#month').val() != "month"){
+			$('.month-form-group').removeClass('has-error has-feedback');
+			$('#helpBlock').addClass('hidden');	
+			$('.year-feedback').addClass('hidden');	
+			$('body').css('cursor', 'wait');
+			getMostBorrowed($('#month').val(), year).done(function(data){
+				$('body').css('cursor', 'default');
+				$('.viewed-materials').children().remove();
+				$('.borrowed-materials').children().remove();
+				$('.generate-details').removeClass('hidden');
+				if(data.borrowed.length == 0){
+					var error = $(document.createElement('h5')).attr('class', 'text-center');
+					error.after().html("No results.");
+					$('.borrowed-materials').append(error);					
+				}
+				
+				if(data.viewed.length == 0){
+					var error = $(document.createElement('h5')).attr('class', 'text-center');
+					error.after().html("No results.");
+					$('.viewed-materials').append(error);					
+				}
+
+				for(i=0;i<data.viewed.length;i++){
+					var title = $(document.createElement('tr')).attr('class', 'text-center');
+					title.after().html(
+						"<td>" + data.viewed[i] + "</td>"
+					);
+					$('.viewed-materials').append(title);					
+				}
+
+				for(i=0;i<data.borrowed.length;i++){
+					var title = $(document.createElement('tr')).attr('class', 'text-center');
+					title.after().html(
+						"<td>" + data.borrowed[i] + "</td>"
+					);
+					$('.borrowed-materials').append(title);
+				}
+			});
+		}
+	});
+
+	function backup(){
+		return $.ajax({
+			headers:{
+				'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+			},			
+			type: 'post',
+			url: '/backup'
+		})
+	}
+
+	$('.backup').click(function(){
+		backup().done(function(data){
+			$('.success-status').addClass('has-status');
+			$('.user-status').fadeIn().delay(2000).fadeOut();
+		});
+	});
 
 });

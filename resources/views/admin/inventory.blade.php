@@ -1,7 +1,7 @@
 @extends('dashboard')
 @section('material')
 
-<div class='col-md-6'>
+<div class='col-lg-12'>
 	<button id="add-inventory-button" type="button" class="btn btn-default" data-toggle='modal' data-target='#inventory-modal'>Add Inventory &nbsp;<span class='glyphicon glyphicon-plus'></button>
 </div>
 

@@ -57,7 +57,7 @@ Route::group(['middleware' => ['login.check']], function () {
 
 	Route::get('/dashboard/delete/borrowed/{acqNumber}', 'BorrowController@delete');
 
-	Route::post('/dashboard/confirm/borrowedmaterials/{acqNumber}/{username}', 'BorrowController@confirmMaterials');
+	Route::post('/dashboard/confirm/borrowedmaterials/{acqNumber}/{username}/{date}', 'BorrowController@confirmMaterials');
 
 	Route::post('/dashboard/unconfirm/borrowedmaterials/{acqNumber}/{username}', 'BorrowController@unconfirmMaterials');
 
@@ -118,5 +118,9 @@ Route::group(['middleware' => ['login.check']], function () {
 	Route::post('/edit/material/{acqNumber}', 'EditController@edit');
 
 	Route::post('dashboard/material/delete/{acqNumber}/{edit}/{picname}/{newAcqNumber}/{request}', 'Controller@deleteMaterial');
+
+	Route::get('/generateReport/{month}/{year}', 'BorrowController@generateReport');
+
+	Route::post('/backup', 'AddController@backup');
 
 });

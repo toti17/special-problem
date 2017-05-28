@@ -545,3 +545,81 @@
 		</div>
 	</div>
 </div>
+
+<div class='modal fade' id="report-modal" role='dialog' data-keyboard='false' data-backdrop='static'>
+	<div class='modal-dialog modal-lg'>
+		<div class='modal-content'>
+			<div class='modal-header'>
+				<button type='button' class='close' data-dismiss='modal' aria-label='Close'>
+					<span aria-hidden='true'>&times;</span>
+				</button>				
+				<h3>Monthly Report</h3>
+			</div>
+			<div class="modal-body">
+				<div class="row">
+					<div class="col-lg-12">
+						<div class="form-group month-form-group">
+							<div class="input-group">
+								<div class="input-group-btn">
+									<div class="dropdown">
+										<button class="btn btn-default dropdown-toggle" type="button" id="month" data-toggle="dropdown" value="month">MONTH <span class='caret'></span></button>
+										<ul class="dropdown-menu month-dropdown">
+											<li><a href="#">JANUARY</a></li>
+											<li><a href="#">FEBRUARY</a></li>
+											<li><a href="#">MARCH</a></li>
+											<li><a href="#">APRIL</a></li>
+											<li><a href="#">MAY</a></li>
+											<li><a href="#">JUNE</a></li>
+											<li><a href="#">JULY</a></li>
+											<li><a href="#">AUGUST</a></li>
+											<li><a href="#">SEPTEMBER</a></li>
+											<li><a href="#">OCTOBER</a></li>
+											<li><a href="#">NOVEMBER</a></li>
+											<li><a href="#">DECEMBER</a></li>
+										</ul>
+									</div>
+								</div>
+								<input type="number" class="form-control year-generate-field" placeholder="2017"/>
+								<span class="glyphicon glyphicon-remove form-control-feedback year-feedback hidden" aria-hidden="true"></span>
+								<span class="input-group-btn">
+									<button type="button" class="btn btn-success generate-button">Generate</button>
+								</span>
+							</div>
+							<span id="helpBlock" class="help-block text-center hidden"><b>Invalid format of year field.</b></span>
+						</div>
+					</div>
+					<div class="generate-details hidden">
+						<div class='col-lg-6'>
+							<br/>
+							<h4 class="text-center">Most Borrowed</h4>
+						</div>
+						<div class='col-lg-6'>
+							<br/>
+							<h4 class="text-center">Most Viewed</h4>
+						</div>
+						<div class="row">
+							<div class='col-lg-6'>
+								<div class="table-responsive results-table">
+									<table class='table table-bordered'>
+										<tbody class='borrowed-materials'>
+
+										</tbody>		
+									</table>
+								</div>
+							</div>
+							<div class='col-lg-6'>
+								<div class="table-responsive results-table">
+									<table class='table table-bordered table-striped'>
+										<tbody class='viewed-materials'>
+
+										</tbody>		
+									</table>
+								</div>								
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

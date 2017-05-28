@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Auth;
 use App\Material;
 use App\User;
+use App\BorrowTransaction;
 use DB;
 class BorrowController extends Controller
 {
@@ -25,26 +26,8 @@ class BorrowController extends Controller
     }
     public function checkBorrowed($acqNumber){
         $username = Auth::user();
-        // $checked_out_materials = DB::table('borrowed')->where('username', $username->username)->where('status', 'checked out')->get();
-        // foreach($checked_out_materials as $checked){
-        //     if($checked->acqNumber == $acqNumber){
-        //         $borrow_count ++;
-        //         break;
-        //     }
-        //     else{
-        //         $copies = DB::table('material_copies')->where('acqNumber', $acqNumber)->get();
-        //         foreach($copies as $copy){
-        //             if($checked->acqNumber == $copy->copy_acqNumber){
-        //                 $borrow_count ++;
-        //                 break;
-        //             }
-        //         }
-        //     }
-        // }
 
         $already_borrowed_count = DB::table('borrowed')->where('acqNumber', $acqNumber)->where('username', $username->username)->get()->count();
-
-        // $check_acq = $borrow_count;
 
         $user_borrowed_count = DB::table('borrowed')->where('username', $username->username)->get()->count();
 
@@ -68,13 +51,19 @@ class BorrowController extends Controller
         DB::table('borrowed')->where('acqNumber', $acqNumber)->delete();
     }
 
-    public function confirmMaterials($acqNumber, $username){
+    public function confirmMaterials($acqNumber, $username, $date){
+        BorrowTransaction::create([
+            'acqNumber' => $acqNumber,
+            'username' => $username,
+            'date' => $date,
+        ]);
+             
         $error = 'none';
         $acq_check_borrow = DB::table('borrowed')->where('acqNumber', $acqNumber)->where('status', 'checked out')->get()->count();
         if($acq_check_borrow == 0){
-            DB::table('borrowed')->where('username', $username)->update([
+            DB::table('borrowed')->where('acqNumber', $acqNumber)->where('username', $username)->update([
                 'acqNumber' => $acqNumber,
-                'status' => 'checked out',
+                'status' => 'checked out'
             ]);
             $borrowed_acqNumber = $acqNumber;
         }
@@ -86,7 +75,7 @@ class BorrowController extends Controller
             foreach($material_copies as $copies){
                 $count = DB::table('borrowed')->where('acqNumber', $copies->copy_acqNumber)->get()->count();
                 if($count == 0){
-                    DB::table('borrowed')->where('username', $username)->update([
+                    DB::table('borrowed')->where('acqNumber', $acqNumber->acqNumber)->where('username', $username)->where('status', 'pending')->update([
                         'acqNumber' => $copies->copy_acqNumber,
                         'status' => 'checked out',
                     ]);
@@ -107,8 +96,11 @@ class BorrowController extends Controller
             'borrowed_acqNumber' => $borrowed_acqNumber,
             'error' => $error,
         ]);
+
     }
+
     public function unconfirmMaterials($acqNumber, $username){
+        DB::table('borrow_transactions')->where('acqNumber', $acqNumber)->where('username', $username)->delete();
         $initial = $acqNumber;
         $material = Material::find($acqNumber);
         if($material == ''){
@@ -119,6 +111,49 @@ class BorrowController extends Controller
         return response()->json([
             'initial' => $initial,
             'original_acq' => $acqNumber,
+        ]);
+    }
+
+    public function generateReport($month, $year){
+        $borrowed_array = [];
+        $borrowed = DB::table('borrow_transactions')
+        ->select('acqNumber', DB::raw('count(acqNumber) as c'))
+        ->where(DB::raw('YEAR(Date)'), $year)
+        ->where(DB::raw('MONTH(Date)'), $month)
+        ->groupBy('acqNumber')
+        ->havingRaw("c >= 1")
+        ->orderBy('c', 'desc')
+        ->limit(10)
+        ->get();
+        if(sizeof($borrowed) != 0){
+            foreach($borrowed as $borrow){
+                $material = Material::find($borrow->acqNumber);
+                $title = $material->title;
+                array_push($borrowed_array, $title);
+            }
+        }
+
+        $viewed_array = [];
+        $viewed = DB::table('view_transactions')
+        ->select('acqNumber', DB::raw('count(acqNumber) as c'))
+        ->where(DB::raw('YEAR(Date)'), $year)
+        ->where(DB::raw('MONTH(Date)'), $month)
+        ->groupBy('acqNumber')
+        ->havingRaw("c >= 1")
+        ->orderBy('c', 'desc')
+        ->limit(10)
+        ->get();
+        if(sizeof($viewed) != 0){
+            foreach($viewed as $view){
+                $material = Material::find($view->acqNumber);
+                $title = $material->title;
+                array_push($viewed_array, $title);
+            }
+        }
+
+        return response()->json([
+            'borrowed' => $borrowed_array,
+            'viewed' => $viewed_array
         ]);
     }
 }

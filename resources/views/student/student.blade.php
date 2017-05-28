@@ -1,6 +1,7 @@
 @extends('layout')
 @section('content')
 
+
 <div class="container-fluid custom-container">
 	<div class="col-md-12 @if(Auth::user()->status == 'unconfirmed') borrowed-div @else confirm-div @endif " data-toggle="tooltip" data-placement="top">
 		<button 
@@ -46,13 +47,13 @@
 			<span class='author-info hidden'><i>Click the author's name to view the list of materials he/she has written.</i></span>
 			<div class='text-center results-div'><p>Sort Results By</p>
 				<div class='btn-group' data-toggle='buttons'>
-					<label class="btn btn-default active" id="sort-materials">
+					<label class="btn btn-default active sort-buttons" id="sort-materials">
 					 	<input type="radio" name="sort-options" autocomplete="off" checked> All Materials
 		  			</label>
-					<label class="btn btn-default" id="sort-most-viewed">
+					<label class="btn btn-default sort-buttons" id="sort-most-viewed">
 						<input type="radio" name="sort-options" autocomplete="off"> Most Viewed
 					</label>
-					<label class="btn btn-default" id="sort-most-borrowed">
+					<label class="btn btn-default sort-buttons" id="sort-most-borrowed">
 						<input type="radio" name="sort-options" autocomplete="off"> Most Borrowed
 					</label>  			
 				</div>

@@ -1,7 +1,7 @@
 @extends('dashboard')
 @section('user')
 
-<div class="row">
+<div class="col-lg-12">
     @if(Auth::user()->type == "admin")
     <button id="student-button" type="button" class="btn btn-default">Add Student/Faculty Number &nbsp;<span class='glyphicon glyphicon-plus'></span></button>
     <button id="user-button" type="button" class="btn btn-default">Add User &nbsp;<span class='glyphicon glyphicon-user'></span></button>

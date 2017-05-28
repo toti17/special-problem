@@ -505,26 +505,6 @@ tbody tr:hover{
 	width: 100%;	
 }
 
-/*.user-search-pagination{
-	top: 300px;
-}
-
-.user-pagination-div{
-	top: 300px;
-}
-
-.user-pagination-div{
-	top: 260px;
-}
-
-.borrowed-pagination{
-	top: 230px;
-}
-
-.student-search-pagination{
-	top: 380px;
-}*/
-
 /*end of pagination*/
 
 /*student page*/
@@ -727,6 +707,19 @@ tbody tr:hover{
 	text-align: center;
 }
 
+
+.year-feedback{
+	right: 86px;
+}
+
+.results-table{
+	margin-left: 5%;
+	margin-right: 5%;
+}
+
+#welcome-message{
+	position: absolute;
+}
 
 @media only screen and (min-width: 70px){
 	.navbar-nav{

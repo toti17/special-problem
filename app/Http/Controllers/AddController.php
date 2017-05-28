@@ -40,6 +40,7 @@ use \App\InventoryDonor;
 use \App\InventoryPurchasedDetails;
 use \App\InventoryPictures;
 use \App\MaterialCopy;
+use Carbon;
 class AddController extends Controller
 {
 
@@ -51,22 +52,20 @@ class AddController extends Controller
             }
             else{
                 $acq = $this->getAcqCount($number);
-                // $acq= Material::find($number);
-                // $invent_acq = Inventory::find($number);
-                // $material_copy = MaterialCopy::find($number);
-                // $acq = strlen($acq) + strlen($invent_acq) + strlen($material_copy);
             }
         }
         // adding
         else{
             $acq = $this->getAcqCount($number);
-            // $acq= Material::find($number);
-            // $invent_acq = Inventory::find($number);
-            // $material_copy = MaterialCopy::find($number);
-            // $acq = strlen($acq) + strlen($invent_acq) + strlen($material_copy);
         }
         return response()->json([
             'accessionNumber' => $acq,
         ]);
+    }
+
+    public function backup(){
+        $filename = "backup-" . Carbon\Carbon::now()->format('Y-m-d_H-i-s') . ".sql";
+        $command = "C:/xampp/mysql/bin/mysqldump -u root sp1 > " . $filename;
+        exec($command);   
     }
 }

@@ -308,7 +308,6 @@ $(document).ready(function (){
 			}
 		}
 
-		console.log(errorCounter);
 
 		if(errorCounter == 0){
 			event.preventDefault();
@@ -573,7 +572,6 @@ $(document).ready(function (){
 
 	$("#add-student-number").click(function(){
 		if($("#studentNumber").val() != "" && $("#studentNumber").val().length == 9 && Number.isInteger(parseInt($("#studentNumber").val()))){
-			console.log('aaa');
 	    		if(jQuery.inArray($("#studentNumber").val(), studentNumberArray) == -1 ){
 				$(".student-number").append("<div class='panel panel-default col-md-2 numbers'><div class='panel-heading'><h3 class='panel-title'>" + $("#studentNumber").val()  + "</h3><span class='pull-right clickable-number glyphicon glyphicon-remove'></span></div></div>");
 	    			studentNumberArray.push($("#studentNumber").val());
@@ -585,7 +583,6 @@ $(document).ready(function (){
 	    		}
 		}
 		else{
-			console.log('asdfa');
 			$("#error-text").text("Invalid student number. (E.g. 201354053)");
 			$('.student-number-panel').fadeIn().delay(2000).fadeOut();
 		}
