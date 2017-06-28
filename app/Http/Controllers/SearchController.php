@@ -454,28 +454,36 @@ class SearchController extends Controller
 			}			
 		}
 		else if($type == 'Donor'){
-			$donor_id = DB::table('donor')->where('donor_name_id', $id)->select('donor_id')->first();
-			$material_array = [];				
-			$acc_id = DB::table('material_donors')->where('donor_id', $donor_id->donor_id)->select('acqNumber')->get();
-			foreach($acc_id as $id){
+			$donor_id = DB::table('donor')->where('donor_name_id', $id)->select('donor_id')->get();
+			$material_array = [];
+			$donor_array = [];
+			$acq_array = [];
+			foreach($donor_id as $id){
+				array_push($donor_array, $id->donor_id);
+			}
+			foreach($donor_array as $donor_id){
+				$acc_id = DB::table('material_donors')->where('donor_id', $donor_id)->select('acqNumber')->first();
+				array_push($acq_array, $acc_id->acqNumber);
+			}
+			foreach($acq_array as $id){
 				if($sortType == 'materials'){
-					$material = Material::where('acqNumber', $id->acqNumber)->first();
+					$material = Material::where('acqNumber', $id)->first();
 					array_push($material_array, $material);
 				}
 				else if($sortType == 'view'){
-					$material = Material::where('acqNumber', $id->acqNumber)->where('view_count', '>', 0)->first();
+					$material = Material::where('acqNumber', $id)->where('view_count', '>', 0)->first();
 					array_push($material_array, $material);
 				}
 				else if($sortType == 'borrowed'){
-					$material = Material::where('acqNumber', $id->acqNumber)->where('borrowed_count', '>', 0)->first();
+					$material = Material::where('acqNumber', $id)->where('borrowed_count', '>', 0)->first();
 					array_push($material_array, $material);
-				}					
-				
+				}	
 			}
 			if($material_array[0] != null){
 				$materials = $material_array;
 			}
 		}
+
 		else if($type == 'Director'){
 			$director = Director::find($id);
 			if($sortType == 'materials'){
