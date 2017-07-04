@@ -71,7 +71,7 @@
 
 						<div class='input-group'>
 							<span class="input-group-addon label-title">Accession Number*</span>
-							<input type='text' id='acqNumber' class='form-control' placeholder='B12345' name='acqNumber' value="{{ old('acqNumber') }}" />
+							<input type='text' id='acqNumber' class='form-control' placeholder='BK-12345' name='acqNumber' value="{{ old('acqNumber') }}" />
 						</div>
 
 
