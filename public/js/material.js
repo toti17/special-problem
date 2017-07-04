@@ -580,6 +580,11 @@ $(document).ready(function (){
 					$(this).children('.prod-firstnames').children('span').removeClass('hidden');
 					$(this).children('.prod-firstnames').children('span').children('strong').text('The first name of the producer should not exceed 100 characters.');
 				}
+				else if($(this).children('.prod-firstnames').children().children('input').val().indexOf(',') > -1){
+					$(this).children('.prod-firstnames').children('span').addClass('error');
+					$(this).children('.prod-firstnames').children('span').removeClass('hidden');
+					$(this).children('.prod-firstnames').children('span').children('strong').text('Commas are not allowed.');
+				}				
 				else{
 					$(this).children('.prod-firstnames').children('span').removeClass('error');
 					$(this).children('.prod-firstnames').children('span').addClass('hidden');
@@ -597,6 +602,12 @@ $(document).ready(function (){
 					$(this).children('.prod-middlenames').children('span').children('strong').text('The middle name of the producer should not exceed 100 characters.');
 					errorCounter++;
 				}
+				else if($(this).children('.prod-middlenames').children().children('input').val().indexOf(',') > -1){
+					$(this).children('.prod-middlenames').children('span').addClass('error');
+					$(this).children('.prod-middlenames').children('span').removeClass('hidden');
+					$(this).children('.prod-middlenames').children('span').children('strong').text('Commas are not allowed.');
+					errorCounter++;
+				}				
 				else{
 					$(this).children('.prod-middlenames').children('span').removeClass('error');
 					$(this).children('.prod-middlenames').children('span').addClass('hidden');
@@ -614,6 +625,12 @@ $(document).ready(function (){
 					$(this).children('.prod-lastnames').children('span').children('strong').text('The last name of the producer should not exceed 100 characters.');
 					errorCounter++;
 				}
+				else if($(this).children('.prod-lastnames').children().children('input').val().indexOf(',') > -1){
+					$(this).children('.prod-lastnames').children('span').addClass('error');
+					$(this).children('.prod-lastnames').children('span').removeClass('hidden');
+					$(this).children('.prod-lastnames').children('span').children('strong').text('Commas are not allowed.');
+					errorCounter++;
+				}				
 				else{
 					$(this).children('.prod-lastnames').children('span').removeClass('error');
 					$(this).children('.prod-lastnames').children('span').addClass('hidden');
@@ -799,6 +816,12 @@ $(document).ready(function (){
 					$(this).children('.firstnames').children('span').children('strong').text('The first name field should not exceed 100 characters.');
 					errorCounter++;								
 				}
+				else if($(this).children('.firstnames').children().children("input").val().indexOf(',') > -1){
+					$(this).children('.firstnames').children('span').addClass('error');
+					$(this).children('.firstnames').children('span').removeClass('hidden');
+					$(this).children('.firstnames').children('span').children('strong').text('Commas are not allowed.');
+					errorCounter++;						
+				}
 				else{
 					$(this).children('.firstnames').children('span').removeClass('error');
 					$(this).children('.firstnames').children('span').addClass('hidden');
@@ -808,12 +831,18 @@ $(document).ready(function (){
 					$(this).children('.middlenames').children().children("input").val(" ");
 					nameArray.push($(this).children('.middlenames').children().children("input").val());
 				}
+				else if($(this).children('.middlenames').children().children("input").val().indexOf(',') > -1){
+					$(this).children('.middlenames').children('span').addClass('error');
+					$(this).children('.middlenames').children('span').removeClass('hidden');
+					$(this).children('.middlenames').children('span').children('strong').text('Commas are not allowed.');
+					errorCounter++;			
+				}
 				else if($(this).children('.middlenames').children().children("input").val().length >=100){
 					$(this).children('.middlenames').children('span').addClass('error');
 					$(this).children('.middlenames').children('span').removeClass('hidden');
 					$(this).children('.middlenames').children('span').children('strong').text('The middle name field should not exceed 100 characters.');
 					errorCounter++;			
-				}
+				}				
 				else{
 					$(this).children('.middlenames').children('span').removeClass('error');
 					$(this).children('.middlenames').children('span').addClass('hidden');
@@ -831,6 +860,12 @@ $(document).ready(function (){
 					$(this).children('.lastnames').children('span').children('strong').text('The last name field should not exceed 100 characters.');
 					errorCounter++;
 				}
+				else if($(this).children('.lastnames').children().children("input").val().indexOf(',') > -1){
+					$(this).children('.lastnames').children('span').addClass('error');
+					$(this).children('.lastnames').children('span').removeClass('hidden');
+					$(this).children('.lastnames').children('span').children('strong').text('Commas are not allowed.');
+					errorCounter++;
+				}				
 				else{
 					$(this).children('.lastnames').children('span').removeClass('error');
 					$(this).children('.lastnames').children('span').addClass('hidden');
@@ -873,6 +908,12 @@ $(document).ready(function (){
 				$(this).children('span').children('strong').text('The tag field should not exceed 100 characters.');
 				errorCounter++;
 			}
+			else if($(this).children().children('input').val().indexOf(',') > -1){
+				$(this).children('span').removeClass('hidden');
+				$(this).children('span').addClass('error');
+				$(this).children('span').children('strong').text('Commas are not allowed.');
+				errorCounter++;
+			}			
 			else{
 				$(this).children('span').removeClass('error');
 				$(this).children('span').addClass('hidden');
