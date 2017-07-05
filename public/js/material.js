@@ -146,7 +146,7 @@ $(document).ready(function (){
 		$('.view-close').addClass('hidden');
 		$('#description-field').parent().removeClass('hidden');
 		addCounter = true;
-		$('.search-type').html('Accession Number ' + "<span class='caret'></span>");
+		$('.search-type').html('Title ' + "<span class='caret'></span>");
 		$('.type-dropdown').removeClass('hidden');
 		$('.borrowed-dropdown').addClass('hidden');
 		var base_url = '<?php echo base_url();?>';
